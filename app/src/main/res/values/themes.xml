@@ -6,4 +6,13 @@
     </style>
 
     <style name="Theme.SaveUp" parent="Base.Theme.SaveUp" />
+
+    <style name="Theme.SaveUp.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.SaveUp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.SaveUp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
