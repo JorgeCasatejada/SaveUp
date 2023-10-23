@@ -1,18 +1,14 @@
 package com.example.saveup;
 
+import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 
 import com.example.saveup.databinding.ActivityAddExpenseBinding;
 
@@ -22,6 +18,7 @@ public class AddExpense extends AppCompatActivity {
 
     private String[] categories; // Categorias de la transacción
     private AutoCompleteTextView autocompleteCategory;
+    private Button buttonCancel;
     private ArrayAdapter<String> categoryAdapter;
 
     @Override
@@ -31,15 +28,24 @@ public class AddExpense extends AppCompatActivity {
         binding = ActivityAddExpenseBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        initializeElements();
+        initializeVariables();
 
         autocompleteCategory.setAdapter(categoryAdapter);
+
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentAddExpense = new Intent(AddExpense.this, MainActivity.class);
+                startActivity(intentAddExpense);
+            }
+        });
     }
 
-    private void initializeElements() {
+    private void initializeVariables() {
         categories = getResources().getStringArray(R.array.categories);
-        Log.d("Categories", categories[0]);
         autocompleteCategory = findViewById(R.id.autocompleteCategory);
+        buttonCancel = findViewById(R.id.tbCancel);
+
         categoryAdapter = new ArrayAdapter<>(this, R.layout.list_item, categories);
     }
 }
