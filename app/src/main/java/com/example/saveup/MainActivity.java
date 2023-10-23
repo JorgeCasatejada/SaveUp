@@ -1,5 +1,6 @@
 package com.example.saveup;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saveup.model.Account;
 import com.example.saveup.model.Transaction;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -17,16 +19,18 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    View mainLayout;
-    RecyclerView transactionsListView;
-    TextView txBalance;
-    Account account;
+    private View mainLayout;
+    private RecyclerView transactionsListView;
+    private TextView txBalance;
+    private Account account;
+    private FloatingActionButton fabAdd;
 
     private void initializeVariables() {
         mainLayout = findViewById(R.id.mainLayout);
         transactionsListView = findViewById(R.id.recyclerTransactions);
         transactionsListView.setHasFixedSize(true);
         txBalance = findViewById(R.id.txBalance);
+        fabAdd = findViewById(R.id.fabAdd);
 
         account = new Account("1", "prueba@gmail.com", "pass")
                 .setTransactionsList(loadTransactions());
@@ -42,6 +46,14 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         transactionsListView.setLayoutManager(layoutManager);
+
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intentAddExpense = new Intent(MainActivity.this, AddExpense.class);
+//                startActivity(intentAddExpense);
+            }
+        });
 
         TransactionsListAdapter lpAdapter = new TransactionsListAdapter(account.getTransactionsList(),
                 new TransactionsListAdapter.OnItemClickListener() {
