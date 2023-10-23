@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SaveUp</string>
+    <string name="lblBalance">Balance:</string>
+    <string name="lblFilter">Filtrar:</string>
 </resources>
