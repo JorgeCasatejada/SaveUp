@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".AddExpense"
+    tools:showIn="@layout/activity_add_expense">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/outlinedTextFieldTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/labelExpenseTitle"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etExpenseTitle"
+                android:layout_width="match_parent"
+                android:layout_height="67dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/outlinedTextFieldQuantity"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="195dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/labelExpenseQuantity">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etExpenseQuantity"
+                        android:layout_width="195dp"
+                        android:layout_height="67dp"
+                        android:inputType="numberDecimal" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/tvEuroSymbol"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|start"
+                    android:text="@string/euroSymbol"
+                    android:textSize="25sp"/>
+
+            </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/menuCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/labelExpenseCategory"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/autocompleteCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/datePickerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/labelExpenseDate"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etExpenseDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableRight="@android:drawable/ic_menu_my_calendar"
+                android:inputType="date" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfExpenseDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="249dp"
+                android:gravity="start"
+                android:hint="@string/labelExpenseDescription" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/tbAdd"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_width="111dp"
+                android:layout_height="44dp"
+                android:text="@string/txAdd"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.179"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/tbCancel"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_width="111dp"
+                android:layout_height="44dp"
+                android:text="@string/txCancel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.816"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

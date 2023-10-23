@@ -2,4 +2,14 @@
     <string name="app_name">SaveUp</string>
     <string name="lblBalance">Balance:</string>
     <string name="lblFilter">Filtrar:</string>
+    <string name="title_activity_add_expense">AddExpense</string>
+    <string name="action_settings">Settings</string>
+    <string name="labelExpenseTitle">Título gasto</string>
+    <string name="labelExpenseQuantity">Cantidad</string>
+    <string name="labelExpenseCategory">Categoría</string>
+    <string name="euroSymbol">€</string>
+    <string name="labelExpenseDate">Selecciona la fecha</string>
+    <string name="labelExpenseDescription">Descripción del gasto</string>
+    <string name="txAdd">Añadir</string>
+    <string name="txCancel">Cancelar</string>
 </resources>

@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intentAddExpense = new Intent(MainActivity.this, AddExpense.class);
-//                startActivity(intentAddExpense);
+                Intent intentAddExpense = new Intent(MainActivity.this, AddExpense.class);
+                startActivity(intentAddExpense);
             }
         });
 
