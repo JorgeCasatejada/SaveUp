@@ -2,6 +2,7 @@ package com.example.saveup;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity {
@@ -9,7 +10,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_expense);
+        Intent intent = new Intent(MainActivity.this, AddExpense.class);
+        startActivity(intent);
     }
 
 }
