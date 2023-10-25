@@ -64,7 +64,7 @@
             android:hint="@string/labelExpenseCategory"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
 
-            <AutoCompleteTextView
+                <AutoCompleteTextView
                 android:id="@+id/autocompleteCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,6 +93,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDescription"
                 android:layout_width="match_parent"
                 android:layout_height="249dp"
                 android:gravity="start"

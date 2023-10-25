@@ -5,7 +5,22 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.Date;
+
 public class Transaction implements Parcelable {
+    private boolean isExpense; //true = gasto
+    private String name;
+    private double value;
+    private Category category;
+    private Date date;
+    private String description;
+
+    protected Transaction(Parcel in) {
+        isExpense = in.readByte() != 0;
+        name = in.readString();
+        value = in.readDouble();
+        description = in.readString();
+    }
 
     public static final Creator<Transaction> CREATOR = new Creator<Transaction>() {
         @Override
@@ -19,35 +34,6 @@ public class Transaction implements Parcelable {
         }
     };
 
-    private final double value;
-    private final String name;
-    private final String description;
-
-    public Transaction(double value, String name, String description) {
-        this.value = value;
-        this.name = name;
-        this.description = description;
-    }
-
-
-    protected Transaction(Parcel in) {
-        value = in.readDouble();
-        name = in.readString();
-        description = in.readString();
-    }
-
-    public double getValue() {
-        return value;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -55,16 +41,63 @@ public class Transaction implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeDouble(value);
+        parcel.writeByte((byte) (isExpense ? 1 : 0));
         parcel.writeString(name);
+        parcel.writeDouble(value);
         parcel.writeString(description);
+    }
+
+    public Transaction(boolean isExpense, String name, double value, Category category, Date date, String description) {
+        this.isExpense = isExpense;
+        this.name = name;
+        this.value = value;
+        this.category = category;
+        this.date = date;
+        this.description = description;
+    }
+
+    public Transaction(boolean isExpense, double value, String name, String description) {
+        this.name = name;
+        this.value = value;
+        this.description = description;
+        this.isExpense = isExpense;
+        this.category = Category.OTROS;
+        this.date = new Date();
+    }
+
+    public boolean isExpense() {
+        return isExpense;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override
     public String toString() {
         return "Transaction{" +
-                "value=" + value +
+                "isExpense=" + isExpense +
                 ", name='" + name + '\'' +
+                ", value=" + value +
+                ", category=" + category +
+                ", date=" + date +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

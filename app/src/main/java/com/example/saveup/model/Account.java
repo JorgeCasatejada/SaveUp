@@ -79,4 +79,7 @@ public class Account {
         setBalance(balance);
     }
 
+    public void addTransaction(Transaction transaction) {
+        transactionsList.add(transaction);
+    }
 }

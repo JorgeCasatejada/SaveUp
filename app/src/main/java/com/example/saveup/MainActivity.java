@@ -47,6 +47,17 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         transactionsListView.setLayoutManager(layoutManager);
 
+        //Recepción datos
+        Intent transactionIntent = getIntent();
+
+        Transaction transaction = transactionIntent.getParcelableExtra(AddExpense.CREATED_EXPENSE);
+        if (transaction!=null){
+            account.addTransaction(transaction);
+            account.calculateBalance();
+            txBalance.setText(String.format(Locale.getDefault(),"%.2f €", account.getBalance()));
+        }
+
+
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,19 +84,19 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Transaction> loadTransactions() {
         ArrayList<Transaction> transactionsList = new ArrayList<>();
-        transactionsList.add(new Transaction(1.12345, "Gasto 1", "Una dola,"));
-        transactionsList.add(new Transaction(2.05, "Gasto 2", "tela catola,"));
-        transactionsList.add(new Transaction(3, "Gasto 3", "quila, quilete,"));
-        transactionsList.add(new Transaction(-4.0000, "Gasto 4", "estaba la reina"));
-        transactionsList.add(new Transaction(5.99, "Gasto 5", "en su gabinete,"));
-        transactionsList.add(new Transaction(6.995, "Gasto 6", "vino Gil,"));
-        transactionsList.add(new Transaction(7, "Gasto 7", "apagó el candil,"));
-        transactionsList.add(new Transaction(8, "Gasto 8", "candil candilón,"));
-        transactionsList.add(new Transaction(1000.10, "Gasto 9", " las veinte que las veinte son."));
-        transactionsList.add(new Transaction(-1000.10, "Gasto 10", "cuenta las  que  veinte son."));
-        transactionsList.add(new Transaction(1000.10, "Gasto 11", " las veinte que las veinte ."));
-        transactionsList.add(new Transaction(-1000.10, "Gasto 12", "cuenta las veinte que las  son."));
-        transactionsList.add(new Transaction(1000.10, "Gasto 13", "veinte son."));
+        transactionsList.add(new Transaction(false, 1.12345, "Gasto 1", "Una dola,"));
+        transactionsList.add(new Transaction(false,2.05, "Gasto 2", "tela catola,"));
+        transactionsList.add(new Transaction(false, 3, "Gasto 3", "quila, quilete,"));
+        transactionsList.add(new Transaction(true, 4.0000, "Gasto 4", "estaba la reina"));
+        transactionsList.add(new Transaction(false, 5.99, "Gasto 5", "en su gabinete,"));
+        transactionsList.add(new Transaction(false, 6.995, "Gasto 6", "vino Gil,"));
+        transactionsList.add(new Transaction(false, 7, "Gasto 7", "apagó el candil,"));
+        transactionsList.add(new Transaction(false, 8, "Gasto 8", "candil candilón,"));
+        transactionsList.add(new Transaction(false, 1000.10, "Gasto 9", " las veinte que las veinte son."));
+        transactionsList.add(new Transaction(true, 1000.10, "Gasto 10", "cuenta las  que  veinte son."));
+        transactionsList.add(new Transaction(false, 1000.10, "Gasto 11", " las veinte que las veinte ."));
+        transactionsList.add(new Transaction(true, 1000.10, "Gasto 12", "cuenta las veinte que las  son."));
+        transactionsList.add(new Transaction(false, 1000.10, "Gasto 13", "veinte son."));
         return transactionsList;
     }
 }
