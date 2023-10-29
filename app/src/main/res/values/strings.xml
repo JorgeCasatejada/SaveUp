@@ -12,4 +12,6 @@
     <string name="labelExpenseDescription">Descripción del gasto</string>
     <string name="txAdd">Añadir</string>
     <string name="txCancel">Cancelar</string>
+    <string name="expense">Gasto</string>
+    <string name="income">Ingreso</string>
 </resources>

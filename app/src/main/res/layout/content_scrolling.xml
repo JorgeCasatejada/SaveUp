@@ -11,79 +11,87 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:divider="@drawable/divider8p"
+        android:orientation="vertical"
+        android:showDividers="middle">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/outlinedTextFieldTitle"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/labelExpenseTitle"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:hint="@string/labelExpenseTitle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etExpenseTitle"
                 android:layout_width="match_parent"
-                android:layout_height="67dp" />
+                android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/outlinedTextFieldQuantity"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/labelExpenseQuantity"
+            app:suffixText="@string/euroSymbol">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etExpenseQuantity"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checkedButton="@+id/radio_button_1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_gasto"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:text="@string/expense" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/outlinedTextFieldQuantity"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="195dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/labelExpenseQuantity">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etExpenseQuantity"
-                        android:layout_width="195dp"
-                        android:layout_height="67dp"
-                        android:inputType="numberDecimal" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/tvEuroSymbol"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center|start"
-                    android:text="@string/euroSymbol"
-                    android:textSize="25sp"/>
-
-            </LinearLayout>
+            <RadioButton
+                android:id="@+id/rb_ingreso"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/income" />
+        </RadioGroup>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/menuCategory"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/labelExpenseCategory"
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+            android:hint="@string/labelExpenseCategory">
 
-                <AutoCompleteTextView
+            <AutoCompleteTextView
                 android:id="@+id/autocompleteCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/datePickerLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/labelExpenseDate"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:hint="@string/labelExpenseDate">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etExpenseDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableRight="@android:drawable/ic_menu_my_calendar"
+                android:drawableEnd="@android:drawable/ic_menu_my_calendar"
                 android:inputType="date" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -95,7 +103,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDescription"
                 android:layout_width="match_parent"
-                android:layout_height="249dp"
+                android:layout_height="245dp"
                 android:gravity="start"
                 android:hint="@string/labelExpenseDescription" />
 
@@ -106,6 +114,17 @@
             android:layout_height="match_parent">
 
             <Button
+                android:id="@+id/tbCancel"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_width="111dp"
+                android:layout_height="44dp"
+                android:text="@string/txCancel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tbAdd"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
                 android:id="@+id/tbAdd"
                 style="@style/Widget.MaterialComponents.Button.Icon"
                 android:layout_width="111dp"
@@ -113,22 +132,10 @@
                 android:text="@string/txAdd"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.179"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/tbCancel"
-                style="@style/Widget.MaterialComponents.Button.Icon"
-                android:layout_width="111dp"
-                android:layout_height="44dp"
-                android:text="@string/txCancel"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.816"
+                app:layout_constraintHorizontal_bias="0.804"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
