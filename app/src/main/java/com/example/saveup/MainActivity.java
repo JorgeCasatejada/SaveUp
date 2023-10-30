@@ -1,10 +1,13 @@
 package com.example.saveup;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,15 +16,19 @@ import com.example.saveup.model.Account;
 import com.example.saveup.model.Transaction;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int INTENT_ADD_TRANSACTION = 1;
     private View mainLayout;
     private RecyclerView transactionsListView;
-    private TextView txBalance;
+    private TextInputEditText etBalance;
     private Account account;
     private FloatingActionButton fabAdd;
 
@@ -29,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
         mainLayout = findViewById(R.id.mainLayout);
         transactionsListView = findViewById(R.id.recyclerTransactions);
         transactionsListView.setHasFixedSize(true);
-        txBalance = findViewById(R.id.txBalance);
+        etBalance = findViewById(R.id.etBalance);
         fabAdd = findViewById(R.id.fabAdd);
 
         account = new Account("1", "prueba@gmail.com", "pass")
                 .setTransactionsList(loadTransactions());
-        txBalance.setText(String.format(Locale.getDefault(),"%.2f €", account.getBalance()));
+        etBalance.setText(account.getStrBalance());
     }
 
     @Override
@@ -47,22 +54,11 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         transactionsListView.setLayoutManager(layoutManager);
 
-        //Recepción datos
-        Intent transactionIntent = getIntent();
-
-        Transaction transaction = transactionIntent.getParcelableExtra(AddExpense.CREATED_EXPENSE);
-        if (transaction!=null){
-            account.addTransaction(transaction);
-            account.calculateBalance();
-            txBalance.setText(String.format(Locale.getDefault(),"%.2f €", account.getBalance()));
-        }
-
-
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentAddExpense = new Intent(MainActivity.this, AddExpense.class);
-                startActivity(intentAddExpense);
+                Intent intentAddTransaction = new Intent(MainActivity.this, AddTransaction.class);
+                startActivityForResult(intentAddTransaction, INTENT_ADD_TRANSACTION);
             }
         });
 
@@ -77,26 +73,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clickOnItem(Transaction transaction) {
-        Snackbar.make(mainLayout,
-                "Ha hecho click en la transaccion: " + transaction.getName(),
-                Snackbar.LENGTH_LONG).show();
+        showSnackBar("Ha hecho click en la transaccion: " + transaction.getName());
+    }
+
+    private void showSnackBar(String text){
+        Snackbar.make(mainLayout, text, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == INTENT_ADD_TRANSACTION){
+            if(resultCode == Activity.RESULT_OK){
+                Transaction transaction = data.getParcelableExtra(AddTransaction.CREATED_EXPENSE);
+                account.addTransaction(transaction);
+                etBalance.setText(account.getStrBalance());
+                ((TransactionsListAdapter)transactionsListView.getAdapter()).updateData(TransactionsListAdapter.APPEND);
+            }
+        }
     }
 
     private ArrayList<Transaction> loadTransactions() {
         ArrayList<Transaction> transactionsList = new ArrayList<>();
-        transactionsList.add(new Transaction(false, 1.12345, "Gasto 1", "Una dola,"));
-        transactionsList.add(new Transaction(false,2.05, "Gasto 2", "tela catola,"));
-        transactionsList.add(new Transaction(false, 3, "Gasto 3", "quila, quilete,"));
-        transactionsList.add(new Transaction(true, 4.0000, "Gasto 4", "estaba la reina"));
-        transactionsList.add(new Transaction(false, 5.99, "Gasto 5", "en su gabinete,"));
-        transactionsList.add(new Transaction(false, 6.995, "Gasto 6", "vino Gil,"));
-        transactionsList.add(new Transaction(false, 7, "Gasto 7", "apagó el candil,"));
-        transactionsList.add(new Transaction(false, 8, "Gasto 8", "candil candilón,"));
-        transactionsList.add(new Transaction(false, 1000.10, "Gasto 9", " las veinte que las veinte son."));
-        transactionsList.add(new Transaction(true, 1000.10, "Gasto 10", "cuenta las  que  veinte son."));
-        transactionsList.add(new Transaction(false, 1000.10, "Gasto 11", " las veinte que las veinte ."));
-        transactionsList.add(new Transaction(true, 1000.10, "Gasto 12", "cuenta las veinte que las  son."));
-        transactionsList.add(new Transaction(false, 1000.10, "Gasto 13", "veinte son."));
+        transactionsList.add(new Transaction(false, "Gasto 1", 1.12345, "Una dola,"));
+        transactionsList.add(new Transaction(false,"Gasto 2", 2.05, "tela catola,"));
+        transactionsList.add(new Transaction(false, "Gasto 3", 3, "quila, quilete,"));
+        transactionsList.add(new Transaction(true, "Gasto 4", 4.0000, "estaba la reina"));
+        transactionsList.add(new Transaction(false, "Gasto 5", 5.99, "en su gabinete,"));
+        transactionsList.add(new Transaction(false, "Gasto 6", 6.995, "vino Gil,"));
+        transactionsList.add(new Transaction(false, "Gasto 7", 7, "apagó el candil,"));
+        transactionsList.add(new Transaction(false, "Gasto 8", 8, "candil candilón,"));
+        transactionsList.add(new Transaction(false, "Gasto 9", 1000.10, " las veinte que las veinte son."));
+        transactionsList.add(new Transaction(true, "Gasto 10", 1000.10, "cuenta las  que  veinte son."));
+        transactionsList.add(new Transaction(false, "Gasto 11", 1000.10, " las veinte que las veinte ."));
+        transactionsList.add(new Transaction(true, "Gasto 12", 1000.10, "cuenta las veinte que las  son."));
+        transactionsList.add(new Transaction(false, "Gasto 13", 1000.10, "veinte son."));
         return transactionsList;
     }
 }

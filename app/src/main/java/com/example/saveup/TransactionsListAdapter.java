@@ -18,12 +18,22 @@ import java.util.Locale;
 
 public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsListAdapter.TransactionViewHolder> {
 
+    public static final int APPEND = 0;
     private final List<Transaction> transactionsList;
     private final OnItemClickListener listener;
 
     public TransactionsListAdapter(List<Transaction> transactionsList, OnItemClickListener listener) {
         this.transactionsList = transactionsList;
         this.listener = listener;
+    }
+
+    public void updateData(int flag) {
+        if (flag == APPEND) { //append
+            notifyItemInserted(getItemCount());
+            notifyItemRangeChanged(0, getItemCount());
+        } else { //clear all
+            notifyDataSetChanged();
+        }
     }
 
     @NonNull

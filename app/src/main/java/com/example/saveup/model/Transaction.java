@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import java.util.Date;
+import java.util.Locale;
 
 public class Transaction implements Parcelable {
     private boolean isExpense; //true = gasto
@@ -19,6 +20,8 @@ public class Transaction implements Parcelable {
         isExpense = in.readByte() != 0;
         name = in.readString();
         value = in.readDouble();
+        category = Category.valueOf(in.readString());
+        date = new Date(in.readLong());
         description = in.readString();
     }
 
@@ -44,6 +47,8 @@ public class Transaction implements Parcelable {
         parcel.writeByte((byte) (isExpense ? 1 : 0));
         parcel.writeString(name);
         parcel.writeDouble(value);
+        parcel.writeString(category.name());
+        parcel.writeLong(date.getTime());
         parcel.writeString(description);
     }
 
@@ -56,13 +61,13 @@ public class Transaction implements Parcelable {
         this.description = description;
     }
 
-    public Transaction(boolean isExpense, double value, String name, String description) {
+    public Transaction(boolean isExpense, String name, double value, String description) {
         this.name = name;
         this.value = value;
         this.description = description;
         this.isExpense = isExpense;
         this.category = Category.OTROS;
-        this.date = new Date();
+        this.date = new Date(1);
     }
 
     public boolean isExpense() {
@@ -87,6 +92,15 @@ public class Transaction implements Parcelable {
 
     public String getDescription() {
         return description;
+    }
+
+    public double getSignedValue(){
+        if(isExpense()) return (-1) * getValue();
+        return getValue();
+    }
+
+    public String getStrSignedValue(){
+        return String.format(Locale.getDefault(),"%.2f", getSignedValue());
     }
 
     @Override

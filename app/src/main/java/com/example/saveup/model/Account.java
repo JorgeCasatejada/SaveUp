@@ -1,6 +1,9 @@
 package com.example.saveup.model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Account {
 
@@ -8,14 +11,14 @@ public class Account {
     private String userName;
     private String email;
     private String password;
-    private ArrayList<Transaction> transactionsList;
+    private TransactionManager transactionManager;
     private double balance;
 
     public Account(String ID, String email, String password) {
         this.ID = ID;
         this.email = email;
         this.password = password;
-        this.transactionsList = new ArrayList<>();
+        this.transactionManager = new TransactionManager(new ArrayList<>());
         this.balance = 0;
     }
 
@@ -53,12 +56,12 @@ public class Account {
     }
 
     public ArrayList<Transaction> getTransactionsList() {
-        return transactionsList;
+        return transactionManager.getTransactionsList();
     }
 
     public Account setTransactionsList(ArrayList<Transaction> transactionsList) {
-        this.transactionsList = transactionsList;
-        calculateBalance();
+        transactionManager.setTransactionsList(transactionsList);
+        setBalance(transactionManager.getBalance());
         return this;
     }
 
@@ -66,20 +69,17 @@ public class Account {
         return balance;
     }
 
-    public Account setBalance(double balance) {
+    private Account setBalance(double balance) {
         this.balance = balance;
         return this;
     }
 
-    public void calculateBalance(){
-        double balance = 0;
-        for (Transaction t: transactionsList) {
-            balance += t.getValue();
-        }
-        setBalance(balance);
+    public void addTransaction(Transaction transaction) {
+        transactionManager.addTransaction(transaction);
+        setBalance(transactionManager.getBalance());
     }
 
-    public void addTransaction(Transaction transaction) {
-        transactionsList.add(transaction);
+    public String getStrBalance(){
+        return String.format(Locale.getDefault(),"%.2f", getBalance());
     }
 }
