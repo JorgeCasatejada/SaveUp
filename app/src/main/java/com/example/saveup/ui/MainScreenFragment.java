@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -13,11 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saveup.AddTransaction;
-import com.example.saveup.MainActivity;
 import com.example.saveup.R;
 import com.example.saveup.TransactionsListAdapter;
 import com.example.saveup.model.Account;
 import com.example.saveup.model.Transaction;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -27,26 +28,14 @@ import java.util.ArrayList;
 // Fragmento para la pantalla principal
 public class MainScreenFragment extends Fragment {
 
-    private View root;
-
     public static final int INTENT_ADD_TRANSACTION = 1;
+    private View root;
     private View mainLayout;
     private RecyclerView transactionsListView;
-    private TextInputEditText etBalance;
     private Account account;
+    private TextInputEditText etBalance;
+    private MaterialButtonToggleGroup toggleButton;
     private FloatingActionButton fabAdd;
-
-    private void initializeVariables() {
-        mainLayout = root.findViewById(R.id.mainLayout);
-        transactionsListView = root.findViewById(R.id.recyclerTransactions);
-        transactionsListView.setHasFixedSize(true);
-        etBalance = root.findViewById(R.id.etBalance);
-        fabAdd = root.findViewById(R.id.fabAdd);
-
-        account = new Account("1", "prueba@gmail.com", "pass")
-                .setTransactionsList(loadTransactions());
-        etBalance.setText(account.getStrBalance());
-    }
 
     public static MainScreenFragment newInstance() {
         MainScreenFragment fragment = new MainScreenFragment();
@@ -56,6 +45,20 @@ public class MainScreenFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+    private void initializeVariables() {
+        mainLayout = root.findViewById(R.id.mainLayout);
+        transactionsListView = root.findViewById(R.id.recyclerTransactions);
+        transactionsListView.setHasFixedSize(true);
+        etBalance = root.findViewById(R.id.etBalance);
+        toggleButton = root.findViewById(R.id.toggleButton);
+        fabAdd = root.findViewById(R.id.fabAdd);
+
+        account = new Account("1", "prueba@gmail.com", "pass")
+                .setTransactionsList(loadTransactions());
+        etBalance.setText(account.getStrBalance());
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,18 +93,28 @@ public class MainScreenFragment extends Fragment {
                 });
         transactionsListView.setAdapter(lpAdapter);
 
+        toggleButton.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
+            @Override
+            public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+                Button selected = root.findViewById(checkedId);
+                if (isChecked) {
+                    showSnackBar("Filtrar: " + selected.getText().toString());
+                }
+            }
+        });
+
         return root;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(resultCode, resultCode, data);
-        if(requestCode == INTENT_ADD_TRANSACTION){
-            if(resultCode == Activity.RESULT_OK){
+        if (requestCode == INTENT_ADD_TRANSACTION) {
+            if (resultCode == Activity.RESULT_OK) {
                 Transaction transaction = data.getParcelableExtra(AddTransaction.CREATED_EXPENSE);
                 account.addTransaction(transaction);
                 etBalance.setText(account.getStrBalance());
-                ((TransactionsListAdapter)transactionsListView.getAdapter()).updateData(TransactionsListAdapter.APPEND);
+                ((TransactionsListAdapter) transactionsListView.getAdapter()).updateData(TransactionsListAdapter.APPEND);
             }
         }
     }
@@ -110,14 +123,14 @@ public class MainScreenFragment extends Fragment {
         showSnackBar("Ha hecho click en la transaccion: " + transaction.getName());
     }
 
-    private void showSnackBar(String text){
+    private void showSnackBar(String text) {
         Snackbar.make(mainLayout, text, Snackbar.LENGTH_LONG).show();
     }
 
     private ArrayList<Transaction> loadTransactions() {
         ArrayList<Transaction> transactionsList = new ArrayList<>();
         transactionsList.add(new Transaction(false, "Gasto 1", 1.12345, "Una dola,"));
-        transactionsList.add(new Transaction(false,"Gasto 2", 2.05, "tela catola,"));
+        transactionsList.add(new Transaction(false, "Gasto 2", 2.05, "tela catola,"));
         transactionsList.add(new Transaction(false, "Gasto 3", 3, "quila, quilete,"));
         transactionsList.add(new Transaction(true, "Gasto 4", 4.0000, "estaba la reina"));
         transactionsList.add(new Transaction(false, "Gasto 5", 5.99, "en su gabinete,"));

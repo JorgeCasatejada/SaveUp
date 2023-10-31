@@ -16,4 +16,7 @@
     <string name="income">Ingreso</string>
     <string name="errCampoVacio">Este campo es obligatorio</string>
     <string name="errFechaInvalida">No se reconoce como una fecha</string>
+    <string name="filterIncome">Ingresos</string>
+    <string name="filterAll">Todo</string>
+    <string name="filterExpense">Gastos</string>
 </resources>
