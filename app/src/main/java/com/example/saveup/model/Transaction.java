@@ -9,22 +9,6 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Transaction implements Parcelable {
-    private boolean isExpense; //true = gasto
-    private String name;
-    private double value;
-    private Category category;
-    private Date date;
-    private String description;
-
-    protected Transaction(Parcel in) {
-        isExpense = in.readByte() != 0;
-        name = in.readString();
-        value = in.readDouble();
-        category = Category.valueOf(in.readString());
-        date = new Date(in.readLong());
-        description = in.readString();
-    }
-
     public static final Creator<Transaction> CREATOR = new Creator<Transaction>() {
         @Override
         public Transaction createFromParcel(Parcel in) {
@@ -36,20 +20,20 @@ public class Transaction implements Parcelable {
             return new Transaction[size];
         }
     };
+    private final boolean isExpense; //true = gasto
+    private final String name;
+    private final double value;
+    private final Category category;
+    private final Date date;
+    private final String description;
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeByte((byte) (isExpense ? 1 : 0));
-        parcel.writeString(name);
-        parcel.writeDouble(value);
-        parcel.writeString(category.name());
-        parcel.writeLong(date.getTime());
-        parcel.writeString(description);
+    protected Transaction(Parcel in) {
+        isExpense = in.readByte() != 0;
+        name = in.readString();
+        value = in.readDouble();
+        category = Category.valueOf(in.readString());
+        date = new Date(in.readLong());
+        description = in.readString();
     }
 
     public Transaction(boolean isExpense, String name, double value, Category category, Date date, String description) {
@@ -68,6 +52,21 @@ public class Transaction implements Parcelable {
         this.isExpense = isExpense;
         this.category = Category.OTROS;
         this.date = new Date(1);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeByte((byte) (isExpense ? 1 : 0));
+        parcel.writeString(name);
+        parcel.writeDouble(value);
+        parcel.writeString(category.name());
+        parcel.writeLong(date.getTime());
+        parcel.writeString(description);
     }
 
     public boolean isExpense() {
@@ -94,13 +93,13 @@ public class Transaction implements Parcelable {
         return description;
     }
 
-    public double getSignedValue(){
-        if(isExpense()) return (-1) * getValue();
+    public double getSignedValue() {
+        if (isExpense()) return (-1) * getValue();
         return getValue();
     }
 
-    public String getStrSignedValue(){
-        return String.format(Locale.getDefault(),"%.2f", getSignedValue());
+    public String getStrSignedValue() {
+        return String.format(Locale.getDefault(), "%.2f", getSignedValue());
     }
 
     @Override

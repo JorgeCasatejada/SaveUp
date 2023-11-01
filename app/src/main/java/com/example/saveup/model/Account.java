@@ -1,17 +1,31 @@
 package com.example.saveup.model;
 
-import android.util.Log;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class Account {
+public class Account implements Parcelable {
 
+    public static final Creator<Account> CREATOR = new Creator<Account>() {
+        @Override
+        public Account createFromParcel(Parcel in) {
+            return new Account(in);
+        }
+
+        @Override
+        public Account[] newArray(int size) {
+            return new Account[size];
+        }
+    };
+    private final TransactionManager transactionManager;
     private String ID;
     private String userName;
     private String email;
     private String password;
-    private TransactionManager transactionManager;
     private double balance;
 
     public Account(String ID, String email, String password) {
@@ -20,6 +34,15 @@ public class Account {
         this.password = password;
         this.transactionManager = new TransactionManager(new ArrayList<>());
         this.balance = 0;
+    }
+
+    protected Account(Parcel in) {
+        ID = in.readString();
+        userName = in.readString();
+        email = in.readString();
+        password = in.readString();
+        transactionManager = in.readParcelable(TransactionManager.class.getClassLoader());
+        balance = in.readDouble();
     }
 
     public String getID() {
@@ -79,7 +102,22 @@ public class Account {
         setBalance(transactionManager.getBalance());
     }
 
-    public String getStrBalance(){
-        return String.format(Locale.getDefault(),"%.2f", getBalance());
+    public String getStrBalance() {
+        return String.format(Locale.getDefault(), "%.2f", getBalance());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(ID);
+        parcel.writeString(userName);
+        parcel.writeString(email);
+        parcel.writeString(password);
+        parcel.writeParcelable(transactionManager, 1);
+        parcel.writeDouble(balance);
     }
 }
