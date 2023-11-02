@@ -88,6 +88,10 @@ public class Account implements Parcelable {
         return this;
     }
 
+    public ArrayList<Transaction> getFilteredTransactionsList(int filter) {
+        return transactionManager.getFilteredTransactionsList(filter);
+    }
+
     public double getBalance() {
         return balance;
     }

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -18,6 +17,7 @@ import com.example.saveup.R;
 import com.example.saveup.TransactionsListAdapter;
 import com.example.saveup.model.Account;
 import com.example.saveup.model.Transaction;
+import com.example.saveup.model.TransactionManager;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -32,9 +32,11 @@ public class MainScreenFragment extends Fragment {
     private View root;
     private View mainLayout;
     private RecyclerView transactionsListView;
+    private TransactionsListAdapter ltAdapter;
     private TextInputEditText etBalance;
     private MaterialButtonToggleGroup toggleButton;
     private FloatingActionButton fabAdd;
+    private int appliedFilter;
 
     public static MainScreenFragment newInstance(Account account) {
         MainScreenFragment fragment = new MainScreenFragment();
@@ -61,6 +63,7 @@ public class MainScreenFragment extends Fragment {
         toggleButton = root.findViewById(R.id.toggleButton);
         fabAdd = root.findViewById(R.id.fabAdd);
         etBalance.setText(account.getStrBalance());
+        appliedFilter = 0;
     }
 
     /* Al crear la vista, cargamos los valores necesarios */
@@ -83,21 +86,28 @@ public class MainScreenFragment extends Fragment {
             }
         });
 
-        TransactionsListAdapter lpAdapter = new TransactionsListAdapter(account.getTransactionsList(),
+        ltAdapter = new TransactionsListAdapter(account.getTransactionsList(),
                 new TransactionsListAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(Transaction transaction) {
                         clickOnItem(transaction);
                     }
                 });
-        transactionsListView.setAdapter(lpAdapter);
+        transactionsListView.setAdapter(ltAdapter);
 
         toggleButton.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
             @Override
             public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-                Button selected = root.findViewById(checkedId);
                 if (isChecked) {
-                    showSnackBar("Filtrar: " + selected.getText().toString());
+                    if (checkedId == R.id.filterIncome) {
+                        appliedFilter = TransactionManager.FILTER_INCOMES;
+                    } else if (checkedId == R.id.filterExpense) {
+                        appliedFilter = TransactionManager.FILTER_EXPENSES;
+                    } else if (checkedId == R.id.filterAll) {
+                        appliedFilter = TransactionManager.FILTER_ALL;
+                    }
+                    ltAdapter.setTransactionsList(
+                            account.getFilteredTransactionsList(appliedFilter));
                 }
             }
         });
@@ -113,7 +123,9 @@ public class MainScreenFragment extends Fragment {
                 Transaction transaction = data.getParcelableExtra(AddTransaction.CREATED_EXPENSE);
                 account.addTransaction(transaction);
                 etBalance.setText(account.getStrBalance());
-                ((TransactionsListAdapter) transactionsListView.getAdapter()).updateData(TransactionsListAdapter.APPEND);
+//                ((TransactionsListAdapter) transactionsListView.getAdapter()).updateData(TransactionsListAdapter.APPEND);
+                ltAdapter.setTransactionsList(
+                        account.getFilteredTransactionsList(appliedFilter));
             }
         }
     }

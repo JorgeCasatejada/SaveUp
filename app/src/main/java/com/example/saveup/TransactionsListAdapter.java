@@ -19,7 +19,9 @@ import java.util.Locale;
 public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsListAdapter.TransactionViewHolder> {
 
     public static final int APPEND = 0;
-    private final List<Transaction> transactionsList;
+    public static final int CHANGE_TRANSACTION_LIST = 1;
+
+    private List<Transaction> transactionsList;
     private final OnItemClickListener listener;
 
     public TransactionsListAdapter(List<Transaction> transactionsList, OnItemClickListener listener) {
@@ -31,9 +33,14 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
         if (flag == APPEND) { //append
             notifyItemInserted(getItemCount());
             notifyItemRangeChanged(0, getItemCount());
-        } else { //clear all
+        } else {
             notifyDataSetChanged();
         }
+    }
+
+    public void setTransactionsList(List<Transaction> transactionsList) {
+        this.transactionsList = transactionsList;
+        updateData(CHANGE_TRANSACTION_LIST);
     }
 
     @NonNull
@@ -78,11 +85,17 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
             value = itemView.findViewById(R.id.valueTransaction);
         }
 
+        public static String cutString(String str, int len) {
+            if (str == null) return "";
+            if (str.length() <= len) return str;
+            return str.substring(0, len) + "...";
+        }
+
         public void assignComponentsValues(final Transaction transaction, final OnItemClickListener listener) {
             title.setText(cutString(transaction.getName(), 10));
             description.setText(cutString(transaction.getDescription(), 32));
             value.setText(String.format(Locale.getDefault(), "%.2f €", transaction.getValue()));
-            if(transaction.getValue() < 0){
+            if (transaction.getValue() < 0) {
                 recyclerLineLayout.setBackground(Drawable.createFromPath("@android:color/holo_red_light"));
             } else {
                 recyclerLineLayout.setBackground(Drawable.createFromPath("@android:color/holo_green_light"));
@@ -93,12 +106,6 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
                     listener.onItemClick(transaction);
                 }
             });
-        }
-
-        public static String cutString(String str, int len){
-            if (str == null) return "";
-            if(str.length() <= len) return str;
-            return str.substring(0, len) + "...";
         }
     }
 
