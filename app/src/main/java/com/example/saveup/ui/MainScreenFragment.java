@@ -26,6 +26,10 @@ import com.google.android.material.textfield.TextInputEditText;
 // Fragmento para la pantalla principal
 public class MainScreenFragment extends Fragment {
 
+    public static final String TRANSACTION_DETAILS = "transaction_details";
+    public static final String ACTIVITY_MODE = "activity_mode";
+    private static final int MODE_ADD = 1;
+    private static final int MODE_DETAILS = 2;
     public static final int INTENT_ADD_TRANSACTION = 1;
     private static final String ACCOUNT = "Account";
     private Account account;
@@ -82,6 +86,7 @@ public class MainScreenFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intentAddTransaction = new Intent(getActivity(), AddTransaction.class);
+                intentAddTransaction.putExtra(ACTIVITY_MODE, MODE_ADD);
                 startActivityForResult(intentAddTransaction, INTENT_ADD_TRANSACTION);
             }
         });
@@ -120,8 +125,20 @@ public class MainScreenFragment extends Fragment {
         super.onActivityResult(resultCode, resultCode, data);
         if (requestCode == INTENT_ADD_TRANSACTION) {
             if (resultCode == Activity.RESULT_OK) {
-                Transaction transaction = data.getParcelableExtra(AddTransaction.CREATED_EXPENSE);
-                account.addTransaction(transaction);
+                int mode = data.getIntExtra(AddTransaction.MODE, 0);
+                if (mode == AddTransaction.MODE_ADD) {
+                    Transaction transactionAdd = data.getParcelableExtra(AddTransaction.CREATED_EXPENSE);
+                    account.addTransaction(transactionAdd);
+                } else if (mode == AddTransaction.MODE_DELETE) {
+                    Transaction transactionRemove = data.getParcelableExtra(AddTransaction.DETAILS_TRANSACTION);
+                    account.removeTransaction(transactionRemove);
+                } else if (mode == AddTransaction.MODE_MODIFY) {
+                    Transaction transactionOld = data.getParcelableExtra(AddTransaction.OLD_MODIFIED_TRANSACTION);
+                    Transaction transactionNew = data.getParcelableExtra(AddTransaction.NEW_MODIFIED_TRANSACTION);
+                    account.modifyTransaction(transactionOld, transactionNew);
+                }
+
+
                 etBalance.setText(account.getStrBalance());
 //                ((TransactionsListAdapter) transactionsListView.getAdapter()).updateData(TransactionsListAdapter.APPEND);
                 ltAdapter.setTransactionsList(
@@ -131,7 +148,11 @@ public class MainScreenFragment extends Fragment {
     }
 
     private void clickOnItem(Transaction transaction) {
-        showSnackBar("Ha hecho click en la transaccion: " + transaction.getName());
+        //Mostar activity_add_transaction con 3 botones (cancelar, modificar, eliminar)
+        Intent intentAddTransaction = new Intent(getActivity(), AddTransaction.class);
+        intentAddTransaction.putExtra(ACTIVITY_MODE, MODE_DETAILS);
+        intentAddTransaction.putExtra(TRANSACTION_DETAILS, transaction);
+        startActivityForResult(intentAddTransaction, INTENT_ADD_TRANSACTION);
     }
 
     private void showSnackBar(String text) {

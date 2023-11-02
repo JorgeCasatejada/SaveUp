@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Transaction implements Parcelable {
     public static final Creator<Transaction> CREATOR = new Creator<Transaction>() {
@@ -100,6 +101,19 @@ public class Transaction implements Parcelable {
 
     public String getStrSignedValue() {
         return String.format(Locale.getDefault(), "%.2f", getSignedValue());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return isExpense == that.isExpense && Double.compare(that.value, value) == 0 && Objects.equals(name, that.name) && category == that.category && Objects.equals(date, that.date) && Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(isExpense, name, value, category, date, description);
     }
 
     @Override

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -16,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.saveup.model.Category;
 import com.example.saveup.model.Transaction;
+import com.example.saveup.ui.MainScreenFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -27,12 +27,22 @@ import java.util.Locale;
 public class AddTransaction extends AppCompatActivity {
 
     public static final String CREATED_EXPENSE = "created_expense";
-
+    public static final String DETAILS_TRANSACTION = "details_transaction";
+    public static final String OLD_MODIFIED_TRANSACTION = "old_modified_transaction";
+    public static final String NEW_MODIFIED_TRANSACTION = "new_modified_transaction";
+    public static final String MODE = "action_mode";
+    public static final int MODE_ADD = 1;
+    public static final int MODE_DELETE = 2;
+    public static final int MODE_MODIFY = 3;
     private String[] categories; // Categorias de la transacción
     private AutoCompleteTextView autocompleteCategory;
     private TextInputLayout autocompleteCategoryLayout;
-    private Button buttonCancel;
+    private Button buttonCancel_1;
+    private Button buttonCancel_2;
     private Button buttonAdd;
+    private Button buttonModify;
+    private Button buttonDelete;
+    private Button buttonSaveChangues;
     private TextInputEditText etTitle;
     private TextInputLayout etTitleLayout;
     private TextInputEditText etValue;
@@ -42,6 +52,9 @@ public class AddTransaction extends AppCompatActivity {
     private TextInputEditText etDescription;
     private ArrayAdapter<String> categoryAdapter;
     private RadioButton rbExpense;
+    private RadioButton rbIncome;
+    private SimpleDateFormat sdf;
+    private Transaction transactionDetails = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +63,16 @@ public class AddTransaction extends AppCompatActivity {
 
         initializeVariables();
 
+        //Mirar si viene de añadir o de detalles
+        Intent intent = getIntent();
+        int mode = intent.getIntExtra(MainScreenFragment.ACTIVITY_MODE, 1);
+        if (mode == 1){
+            showAddMode();
+        } else if (mode ==2) {
+            transactionDetails = intent.getParcelableExtra(MainScreenFragment.TRANSACTION_DETAILS);
+            showDetailsMode(transactionDetails);
+        }
+
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,34 +80,152 @@ public class AddTransaction extends AppCompatActivity {
                 if (transaction != null) {
                     Intent data = new Intent();
                     data.putExtra(CREATED_EXPENSE, transaction);
+                    data.putExtra(MODE, MODE_ADD);
                     setResult(Activity.RESULT_OK, data);
                     finish();
                 }
             }
         });
 
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener cancelClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setResult(Activity.RESULT_CANCELED);
                 finish();
             }
+        };
+
+        buttonCancel_1.setOnClickListener(cancelClickListener);
+        buttonCancel_2.setOnClickListener(cancelClickListener);
+
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent data = new Intent();
+                data.putExtra(DETAILS_TRANSACTION, transactionDetails);
+                data.putExtra(MODE, MODE_DELETE);
+                setResult(Activity.RESULT_OK, data);
+                finish();
+            }
+        });
+
+        buttonModify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etTitle.setFocusableInTouchMode(true);
+                etValue.setFocusableInTouchMode(true);
+                rbExpense.setFocusableInTouchMode(true);
+                rbIncome.setEnabled(true);
+                rbExpense.setEnabled(true);
+                autocompleteCategory.setEnabled(true);
+                autocompleteCategory.setFocusableInTouchMode(true);
+                etDate.setFocusableInTouchMode(true);
+                etDescription.setFocusableInTouchMode(true);
+                loadCategories();
+                etTitle.requestFocus();
+
+                buttonDelete.setVisibility(View.GONE);
+                buttonModify.setVisibility(View.GONE);
+                buttonSaveChangues.setVisibility(View.VISIBLE);
+            }
+        });
+
+        buttonSaveChangues.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Transaction transaction = validateTransactionData();
+                if (transaction != null) {
+                    Intent data = new Intent();
+                    data.putExtra(NEW_MODIFIED_TRANSACTION, transaction);
+                    data.putExtra(OLD_MODIFIED_TRANSACTION, transactionDetails);
+                    data.putExtra(MODE, MODE_MODIFY);
+                    setResult(Activity.RESULT_OK, data);
+                    finish();
+                }
+            }
         });
     }
 
+    private void showAddMode() {
+        //Visibilidad
+        buttonCancel_1.setVisibility(View.VISIBLE);
+        buttonAdd.setVisibility(View.VISIBLE);
+
+        buttonCancel_2.setVisibility(View.GONE);
+        buttonModify.setVisibility(View.GONE);
+        buttonDelete.setVisibility(View.GONE);
+        buttonSaveChangues.setVisibility(View.GONE);
+        //Comportamiento necesario?
+        /*buttonCancel_1.setClickable(true);
+        buttonAdd.setClickable(true);
+
+        buttonCancel_2.setClickable(false);
+        buttonModify.setClickable(false);
+        buttonDelete.setClickable(false);*/
+    }
+
+    private void showDetailsMode(Transaction transaction) {
+        //Visibilidad
+        buttonCancel_1.setVisibility(View.GONE);
+        buttonAdd.setVisibility(View.GONE);
+        buttonSaveChangues.setVisibility(View.GONE);
+
+        buttonCancel_2.setVisibility(View.VISIBLE);
+        buttonModify.setVisibility(View.VISIBLE);
+        buttonDelete.setVisibility(View.VISIBLE);
+
+        //Comportamiento necesario?
+        /*buttonCancel_1.setClickable(false);
+        buttonAdd.setClickable(false);
+
+        buttonCancel_2.setClickable(true);
+        buttonModify.setClickable(true);
+        buttonDelete.setClickable(true);*/
+
+        //Añadir datos
+        etTitle.setText(transaction.getName());
+        etValue.setText(String.valueOf(transaction.getValue()));
+        if (transaction.isExpense()){
+            rbExpense.setChecked(true);
+            rbIncome.setChecked(false);
+        } else {
+            rbExpense.setChecked(false);
+            rbIncome.setChecked(true);
+        }
+        autocompleteCategory.setText(categoryAdapter.getItem(Category.getIndex(transaction.getCategory())));
+        etDate.setText(sdf.format(transaction.getDate()));
+        etDescription.setText(transaction.getDescription());
+
+        //Que no se puedan modificar
+        etTitle.setFocusableInTouchMode(false);
+        etValue.setFocusableInTouchMode(false);
+        rbExpense.setFocusableInTouchMode(false);
+        rbIncome.setEnabled(false);
+        rbExpense.setEnabled(false);
+        autocompleteCategory.setEnabled(false);
+        autocompleteCategory.setFocusableInTouchMode(false);
+        etDate.setFocusableInTouchMode(false);
+        etDescription.setFocusableInTouchMode(false);
+    }
+
     private void initializeVariables() {
-        buttonCancel = findViewById(R.id.tbCancel);
-        buttonAdd = findViewById(R.id.tbAdd);
+        buttonCancel_1 = findViewById(R.id.btCancel_1);
+        buttonCancel_2 = findViewById(R.id.btCancel_2);
+        buttonModify = findViewById(R.id.btModify);
+        buttonDelete = findViewById(R.id.btDelete);
+        buttonAdd = findViewById(R.id.btAdd);
+        buttonSaveChangues = findViewById(R.id.btSaveChangues);
         etTitle = findViewById(R.id.etExpenseTitle);
         etTitleLayout = findViewById(R.id.outlinedTextFieldTitle);
         etValue = findViewById(R.id.etExpenseQuantity);
         etValueLayout = findViewById(R.id.outlinedTextFieldQuantity);
         etDate = findViewById(R.id.etExpenseDate);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         etDate.setText(sdf.format(new Date()));
         etDateLayout = findViewById(R.id.datePickerLayout);
         etDescription = findViewById(R.id.etDescription);
         rbExpense = findViewById(R.id.rb_gasto);
+        rbIncome = findViewById(R.id.rb_ingreso);
         etTitle.addTextChangedListener(new ValidationTextWatcher(etTitleLayout));
         etTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -107,6 +248,19 @@ public class AddTransaction extends AppCompatActivity {
             }
         });
 
+        loadCategories();
+
+//        // Experimento fallido, lo dejo por aqui para acordarnos de volver a intentar implementarlo en un futuro
+//        MaterialDatePicker datePicker =
+//                MaterialDatePicker.Builder.datePicker()
+//                        .setTitleText("Select transaction date")
+//                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+//                        .setInputMode(MaterialDatePicker.INPUT_MODE_TEXT)
+//                        .build();
+//        datePicker.show(supportFragmentManager, "tag");
+    }
+
+    private void loadCategories() {
         categories = Category.enumToStringArray();
         categoryAdapter = new ArrayAdapter<>(this, R.layout.list_item, categories);
         autocompleteCategory = findViewById(R.id.autocompleteCategory);
@@ -120,15 +274,6 @@ public class AddTransaction extends AppCompatActivity {
                 validateFocusField(autocompleteCategoryLayout, hasFocus);
             }
         });
-
-//        // Experimento fallido, lo dejo por aqui para acordarnos de volver a intentar implementarlo en un futuro
-//        MaterialDatePicker datePicker =
-//                MaterialDatePicker.Builder.datePicker()
-//                        .setTitleText("Select transaction date")
-//                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-//                        .setInputMode(MaterialDatePicker.INPUT_MODE_TEXT)
-//                        .build();
-//        datePicker.show(supportFragmentManager, "tag");
     }
 
     private boolean validateFocusField(TextInputLayout component, boolean hasFocus) {

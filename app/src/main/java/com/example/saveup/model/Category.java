@@ -13,4 +13,13 @@ public enum Category {
 
         return stringArray;
     }
+
+    public static int getIndex(Category category) {
+        Category[] enumValues = values();
+        for (int i = 0; i < enumValues.length; i++) {
+            if (category.name().equals(enumValues[i].name()))
+                return i;
+        }
+        return 0;
+    }
 }
