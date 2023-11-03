@@ -2,6 +2,8 @@ package com.example.saveup.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 // Fragmento para la pantalla principal
 public class MainScreenFragment extends Fragment {
@@ -37,6 +40,8 @@ public class MainScreenFragment extends Fragment {
     private MaterialButtonToggleGroup toggleButton;
     private FloatingActionButton fabAdd;
     private int appliedFilter;
+
+    private TextInputLayout outlinedTextFieldBalance;
 
     public static MainScreenFragment newInstance(Account account) {
         MainScreenFragment fragment = new MainScreenFragment();
@@ -60,10 +65,21 @@ public class MainScreenFragment extends Fragment {
         transactionsListView = root.findViewById(R.id.recyclerTransactions);
         transactionsListView.setHasFixedSize(true);
         etBalance = root.findViewById(R.id.etBalance);
+        outlinedTextFieldBalance = root.findViewById(R.id.outlinedTextFieldBalance);
+        updateColor();
         toggleButton = root.findViewById(R.id.toggleButton);
         fabAdd = root.findViewById(R.id.fabAdd);
         etBalance.setText(account.getStrBalance());
         appliedFilter = 0;
+    }
+
+    private void updateColor() {
+        int color;
+        if (account.getBalance() > 0)
+            color = getResources().getColor(R.color.green);
+        else
+            color = getResources().getColor(R.color.red);
+        outlinedTextFieldBalance.setBoxBackgroundColor(color);
     }
 
     /* Al crear la vista, cargamos los valores necesarios */
@@ -126,6 +142,7 @@ public class MainScreenFragment extends Fragment {
 //                ((TransactionsListAdapter) transactionsListView.getAdapter()).updateData(TransactionsListAdapter.APPEND);
                 ltAdapter.setTransactionsList(
                         account.getFilteredTransactionsList(appliedFilter));
+                updateColor();
             }
         }
     }
