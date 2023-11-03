@@ -25,4 +25,11 @@
     <string name="mnItmGroups">Grupos</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="user">Usuario</string>
+    <string name="email">Email</string>
+    <string name="emailPrueba">prueba@gmail.com</string>
+    <string name="btEditarDatos">Editar datos</string>
+    <string name="exit">Salir</string>
+    <string name="closeSession">Cerrar Sesión</string>
+    <string name="userPrueba">prueba33</string>
 </resources>

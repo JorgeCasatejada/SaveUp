@@ -28,8 +28,9 @@ public class Account implements Parcelable {
     private String password;
     private double balance;
 
-    public Account(String ID, String email, String password) {
+    public Account(String ID, String userName, String email, String password) {
         this.ID = ID;
+        this.userName = userName;
         this.email = email;
         this.password = password;
         this.transactionManager = new TransactionManager(new ArrayList<>());

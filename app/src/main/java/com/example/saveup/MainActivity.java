@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment selectedFragment;
 
     private void inicializarVariables() {
-        account = new Account("1", "prueba@gmail.com", "pass")
+        account = new Account("1", getResources().getString(R.string.userPrueba), getResources().getString(R.string.emailPrueba), "pass")
                 .setTransactionsList(loadTransactions());
 
         selectedFragment = MainScreenFragment.newInstance(account);
