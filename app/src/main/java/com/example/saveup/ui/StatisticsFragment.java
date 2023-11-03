@@ -10,7 +10,13 @@ import androidx.fragment.app.Fragment;
 
 import com.example.saveup.R;
 import com.example.saveup.model.Account;
+import com.example.saveup.model.Transaction;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,22 +64,41 @@ public class StatisticsFragment extends Fragment {
         /* vamos a enviar texto plano */
         itSend.setType("text/plain");
         // itSend.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{para});
-        itSend.putExtra(Intent.EXTRA_SUBJECT, "mono");
-                //getString(R.string.menu_item_compartir) + ": " + pelicula.getTitulo());
-        itSend.putExtra(Intent.EXTRA_TEXT, "con diarrea");
-//                getString(R.string.titulo)
-//                +": "+pelicula.getTitulo()+"\n"+
-//                getString(R.string.contenido)
-//                +": "+pelicula.getArgumento());
+        itSend.putExtra(Intent.EXTRA_SUBJECT, "Registro de gastos e ingresos");
+        StringBuilder stringBuilder = new StringBuilder("Historial de gastos / ingresos\n");
+        for (Transaction transaction : account.getTransactionsList()) {
+            if (transaction.isExpense()) {
+                stringBuilder.append("-");
+            } else {
+                stringBuilder.append("+");
+            }
 
-        /* iniciamos la actividad */
-                /* puede haber más de una aplicacion a la que hacer un ACTION_SEND,
-                   nos sale un ventana que nos permite elegir una.
-                   Si no lo pongo y no hay activity disponible, pueda dar un error */
+            double value = transaction.getValue();
+            value = round(value, 2);
+            stringBuilder.append(value).append("€").append(" ").append("|").append(" ");
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy",
+                    Locale.getDefault());
+            String date = simpleDateFormat.format(transaction.getDate());
+            stringBuilder.append(transaction.getName()).append(" ").append("|").append(" ")
+                    .append(date).append("\n\r").append("\n\r");
+        }
+        stringBuilder.append("------------------------------------\n");
+        stringBuilder.append("Balance Total: ").append(round(account.getBalance(), 2)).append("€");
+        itSend.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString());
+
         Intent shareIntent=Intent.createChooser(itSend, null);
 
         startActivity(shareIntent);
 
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     @Override
