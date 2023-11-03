@@ -28,4 +28,5 @@
     <string name="txModify">Modificar</string>
     <string name="txDelete">Eliminar</string>
     <string name="txSave">Guardar cambios</string>
+    <string name="txClose">Cerrar</string>
 </resources>

@@ -117,7 +117,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/btCancel_1"
+                android:id="@+id/btCancel"
                 style="@style/Widget.MaterialComponents.Button.Icon"
                 android:layout_width="111dp"
                 android:layout_height="44dp"

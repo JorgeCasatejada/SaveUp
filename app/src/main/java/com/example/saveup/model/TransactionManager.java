@@ -87,7 +87,7 @@ public class TransactionManager implements Parcelable {
     public void removeTransaction(Transaction transaction) {
         transactionsList.remove(transaction);
         transactionsList.sort(Collections.reverseOrder(Comparator.comparing(Transaction::getDate)));
-        balance += transaction.getSignedValue();
+        balance -= transaction.getSignedValue();
     }
 
     @Override

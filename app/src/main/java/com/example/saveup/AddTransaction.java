@@ -37,8 +37,8 @@ public class AddTransaction extends AppCompatActivity {
     private String[] categories; // Categorias de la transacción
     private AutoCompleteTextView autocompleteCategory;
     private TextInputLayout autocompleteCategoryLayout;
-    private Button buttonCancel_1;
-    private Button buttonCancel_2;
+    private Button buttonCancel;
+    private Button buttonClose;
     private Button buttonAdd;
     private Button buttonModify;
     private Button buttonDelete;
@@ -95,8 +95,8 @@ public class AddTransaction extends AppCompatActivity {
             }
         };
 
-        buttonCancel_1.setOnClickListener(cancelClickListener);
-        buttonCancel_2.setOnClickListener(cancelClickListener);
+        buttonCancel.setOnClickListener(cancelClickListener);
+        buttonClose.setOnClickListener(cancelClickListener);
 
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,20 +112,22 @@ public class AddTransaction extends AppCompatActivity {
         buttonModify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etTitle.setFocusableInTouchMode(true);
-                etValue.setFocusableInTouchMode(true);
-                rbExpense.setFocusableInTouchMode(true);
+                etTitle.setEnabled(true);
+                etValue.setEnabled(true);
+                rbExpense.setEnabled(true);
                 rbIncome.setEnabled(true);
                 rbExpense.setEnabled(true);
                 autocompleteCategory.setEnabled(true);
                 autocompleteCategory.setFocusableInTouchMode(true);
-                etDate.setFocusableInTouchMode(true);
-                etDescription.setFocusableInTouchMode(true);
+                etDate.setEnabled(true);
+                etDescription.setEnabled(true);
                 loadCategories();
                 etTitle.requestFocus();
 
                 buttonDelete.setVisibility(View.GONE);
                 buttonModify.setVisibility(View.GONE);
+                buttonCancel.setVisibility(View.GONE);
+                buttonClose.setVisibility(View.VISIBLE);
                 buttonSaveChangues.setVisibility(View.VISIBLE);
             }
         });
@@ -148,39 +150,24 @@ public class AddTransaction extends AppCompatActivity {
 
     private void showAddMode() {
         //Visibilidad
-        buttonCancel_1.setVisibility(View.VISIBLE);
+        buttonCancel.setVisibility(View.VISIBLE);
         buttonAdd.setVisibility(View.VISIBLE);
 
-        buttonCancel_2.setVisibility(View.GONE);
+        buttonClose.setVisibility(View.GONE);
         buttonModify.setVisibility(View.GONE);
         buttonDelete.setVisibility(View.GONE);
         buttonSaveChangues.setVisibility(View.GONE);
-        //Comportamiento necesario?
-        /*buttonCancel_1.setClickable(true);
-        buttonAdd.setClickable(true);
-
-        buttonCancel_2.setClickable(false);
-        buttonModify.setClickable(false);
-        buttonDelete.setClickable(false);*/
     }
 
     private void showDetailsMode(Transaction transaction) {
         //Visibilidad
-        buttonCancel_1.setVisibility(View.GONE);
+        buttonCancel.setVisibility(View.GONE);
         buttonAdd.setVisibility(View.GONE);
         buttonSaveChangues.setVisibility(View.GONE);
 
-        buttonCancel_2.setVisibility(View.VISIBLE);
+        buttonClose.setVisibility(View.VISIBLE);
         buttonModify.setVisibility(View.VISIBLE);
         buttonDelete.setVisibility(View.VISIBLE);
-
-        //Comportamiento necesario?
-        /*buttonCancel_1.setClickable(false);
-        buttonAdd.setClickable(false);
-
-        buttonCancel_2.setClickable(true);
-        buttonModify.setClickable(true);
-        buttonDelete.setClickable(true);*/
 
         //Añadir datos
         etTitle.setText(transaction.getName());
@@ -197,20 +184,20 @@ public class AddTransaction extends AppCompatActivity {
         etDescription.setText(transaction.getDescription());
 
         //Que no se puedan modificar
-        etTitle.setFocusableInTouchMode(false);
-        etValue.setFocusableInTouchMode(false);
-        rbExpense.setFocusableInTouchMode(false);
+        etTitle.setEnabled(false);
+        etValue.setEnabled(false);
+        rbExpense.setEnabled(false);
         rbIncome.setEnabled(false);
         rbExpense.setEnabled(false);
         autocompleteCategory.setEnabled(false);
         autocompleteCategory.setFocusableInTouchMode(false);
-        etDate.setFocusableInTouchMode(false);
-        etDescription.setFocusableInTouchMode(false);
+        etDate.setEnabled(false);
+        etDescription.setEnabled(false);
     }
 
     private void initializeVariables() {
-        buttonCancel_1 = findViewById(R.id.btCancel_1);
-        buttonCancel_2 = findViewById(R.id.btCancel_2);
+        buttonCancel = findViewById(R.id.btCancel);
+        buttonClose = findViewById(R.id.btClose);
         buttonModify = findViewById(R.id.btModify);
         buttonDelete = findViewById(R.id.btDelete);
         buttonAdd = findViewById(R.id.btAdd);
