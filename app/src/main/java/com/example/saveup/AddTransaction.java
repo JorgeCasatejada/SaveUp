@@ -6,16 +6,23 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.RadioButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.transition.TransitionManager;
 
 import com.example.saveup.model.Category;
 import com.example.saveup.model.Transaction;
 import com.example.saveup.ui.MainScreenFragment;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -40,8 +47,6 @@ public class AddTransaction extends AppCompatActivity {
     private Button buttonCancel;
     private Button buttonClose;
     private Button buttonAdd;
-    private Button buttonModify;
-    private Button buttonDelete;
     private Button buttonSaveChangues;
     private TextInputEditText etTitle;
     private TextInputLayout etTitleLayout;
@@ -55,6 +60,18 @@ public class AddTransaction extends AppCompatActivity {
     private RadioButton rbIncome;
     private SimpleDateFormat sdf;
     private Transaction transactionDetails = null;
+    private ExtendedFloatingActionButton buttonEdit;
+    private ExtendedFloatingActionButton buttonDelete;
+    private Button buttonCloseDetails;
+    private FloatingActionButton fabEdit;
+    private Animation rotateOpen;
+    private Animation rotateClose;
+    private Animation fromBottom;
+    private Animation toBottom;
+    private boolean clicked = false;
+    private ConstraintLayout cancelAddLayout;
+    private ConstraintLayout saveChanguesLayout;
+    private ConstraintLayout fabContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +114,7 @@ public class AddTransaction extends AppCompatActivity {
 
         buttonCancel.setOnClickListener(cancelClickListener);
         buttonClose.setOnClickListener(cancelClickListener);
+        buttonCloseDetails.setOnClickListener(cancelClickListener);
 
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +127,7 @@ public class AddTransaction extends AppCompatActivity {
             }
         });
 
-        buttonModify.setOnClickListener(new View.OnClickListener() {
+        buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 etTitle.setEnabled(true);
@@ -124,11 +142,11 @@ public class AddTransaction extends AppCompatActivity {
                 loadCategories();
                 etTitle.requestFocus();
 
-                buttonDelete.setVisibility(View.GONE);
-                buttonModify.setVisibility(View.GONE);
-                buttonCancel.setVisibility(View.GONE);
-                buttonClose.setVisibility(View.VISIBLE);
-                buttonSaveChangues.setVisibility(View.VISIBLE);
+                //Visibilidad
+                cancelAddLayout.setVisibility(View.GONE);
+                saveChanguesLayout.setVisibility(View.VISIBLE);
+                fabContainer.setVisibility(View.GONE);
+                buttonCloseDetails.setVisibility(View.GONE);
             }
         });
 
@@ -146,28 +164,53 @@ public class AddTransaction extends AppCompatActivity {
                 }
             }
         });
+
+        fabEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setVisibility();
+                setAnimation();
+                clicked = !clicked;
+            }
+        });
+    }
+
+    private void setVisibility() {
+        if(!clicked){
+            buttonEdit.setVisibility(View.VISIBLE);
+            buttonDelete.setVisibility(View.VISIBLE);
+        } else {
+            buttonEdit.setVisibility(View.GONE);
+            buttonDelete.setVisibility(View.GONE);
+        }
+    }
+
+    private void setAnimation() {
+        if(!clicked){
+            buttonEdit.startAnimation(fromBottom);
+            buttonDelete.startAnimation(fromBottom);
+            fabEdit.setAnimation(rotateOpen);
+        } else {
+            buttonEdit.startAnimation(toBottom);
+            buttonDelete.startAnimation(toBottom);
+            fabEdit.setAnimation(rotateClose);
+        }
     }
 
     private void showAddMode() {
         //Visibilidad
-        buttonCancel.setVisibility(View.VISIBLE);
-        buttonAdd.setVisibility(View.VISIBLE);
-
-        buttonClose.setVisibility(View.GONE);
-        buttonModify.setVisibility(View.GONE);
-        buttonDelete.setVisibility(View.GONE);
-        buttonSaveChangues.setVisibility(View.GONE);
+        cancelAddLayout.setVisibility(View.VISIBLE);
+        saveChanguesLayout.setVisibility(View.GONE);
+        fabContainer.setVisibility(View.GONE);
+        buttonCloseDetails.setVisibility(View.GONE);
     }
 
     private void showDetailsMode(Transaction transaction) {
         //Visibilidad
-        buttonCancel.setVisibility(View.GONE);
-        buttonAdd.setVisibility(View.GONE);
-        buttonSaveChangues.setVisibility(View.GONE);
-
-        buttonClose.setVisibility(View.VISIBLE);
-        buttonModify.setVisibility(View.VISIBLE);
-        buttonDelete.setVisibility(View.VISIBLE);
+        cancelAddLayout.setVisibility(View.GONE);
+        saveChanguesLayout.setVisibility(View.GONE);
+        fabContainer.setVisibility(View.VISIBLE);
+        buttonCloseDetails.setVisibility(View.VISIBLE);
 
         //Añadir datos
         etTitle.setText(transaction.getName());
@@ -196,37 +239,43 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     private void initializeVariables() {
+        //Layouts
+        cancelAddLayout = findViewById(R.id.cancelAddLayout);
+        saveChanguesLayout = findViewById(R.id.saveChanguesLayout);
+        fabContainer = findViewById(R.id.fabContainer);
+
+        //Animaciones FAB
+        rotateOpen = AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim);
+        rotateClose = AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim);
+        fromBottom = AnimationUtils.loadAnimation(this, R.anim.from_bottom_anim);
+        toBottom = AnimationUtils.loadAnimation(this, R.anim.to_bottom_anim);
+
+        //Botones
         buttonCancel = findViewById(R.id.btCancel);
         buttonClose = findViewById(R.id.btClose);
-        buttonModify = findViewById(R.id.btModify);
-        buttonDelete = findViewById(R.id.btDelete);
         buttonAdd = findViewById(R.id.btAdd);
         buttonSaveChangues = findViewById(R.id.btSaveChangues);
+        fabEdit = findViewById(R.id.primary_fab);
+        buttonEdit = findViewById(R.id.edit_fab);
+        buttonDelete = findViewById(R.id.delete_fab);
+        buttonCloseDetails = findViewById(R.id.btClose_details);
+
+        //EditText
         etTitle = findViewById(R.id.etExpenseTitle);
         etTitleLayout = findViewById(R.id.outlinedTextFieldTitle);
         etValue = findViewById(R.id.etExpenseQuantity);
         etValueLayout = findViewById(R.id.outlinedTextFieldQuantity);
         etDate = findViewById(R.id.etExpenseDate);
-        sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        etDate.setText(sdf.format(new Date()));
         etDateLayout = findViewById(R.id.datePickerLayout);
         etDescription = findViewById(R.id.etDescription);
+
+        //Radio buttons
         rbExpense = findViewById(R.id.rb_gasto);
         rbIncome = findViewById(R.id.rb_ingreso);
-        etTitle.addTextChangedListener(new ValidationTextWatcher(etTitleLayout));
-        etTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                validateFocusField(etTitleLayout, hasFocus);
-            }
-        });
-        etValue.addTextChangedListener(new ValidationTextWatcher(etValueLayout));
-        etValue.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                validateFocusField(etValueLayout, hasFocus);
-            }
-        });
+
+        //Date
+        sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        etDate.setText(sdf.format(new Date()));
         etDate.addTextChangedListener(new ValidationTextWatcher(etDateLayout));
         etDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -235,6 +284,25 @@ public class AddTransaction extends AppCompatActivity {
             }
         });
 
+        //Titulo
+        etTitle.addTextChangedListener(new ValidationTextWatcher(etTitleLayout));
+        etTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                validateFocusField(etTitleLayout, hasFocus);
+            }
+        });
+
+        //Cantidad
+        etValue.addTextChangedListener(new ValidationTextWatcher(etValueLayout));
+        etValue.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                validateFocusField(etValueLayout, hasFocus);
+            }
+        });
+
+        //Categorías
         loadCategories();
 
 //        // Experimento fallido, lo dejo por aqui para acordarnos de volver a intentar implementarlo en un futuro
