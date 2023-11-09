@@ -7,25 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.StatisticsFragment">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutStatistics"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="hola" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="adios" />
-
-    </LinearLayout>
+    <include layout="@layout/content_scrolling_graphs" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/shareFab"
