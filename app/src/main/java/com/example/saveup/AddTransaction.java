@@ -362,7 +362,6 @@ public class AddTransaction extends AppCompatActivity {
 
         String description = etDescription.getText().toString();
 
-        // SE ME AÑADEN DEL REVES LOS COSTES, CHEQUEAR ESO
         Transaction transaction = new Transaction(isExpense, name, value, cat, date, description);
         return transaction;
     }
