@@ -2,8 +2,6 @@ package com.example.saveup.ui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,8 +38,8 @@ public class MainScreenFragment extends Fragment {
     private MaterialButtonToggleGroup toggleButton;
     private FloatingActionButton fabAdd;
     private int appliedFilter;
-
     private TextInputLayout outlinedTextFieldBalance;
+
 
     public static MainScreenFragment newInstance(Account account) {
         MainScreenFragment fragment = new MainScreenFragment();
@@ -66,7 +64,6 @@ public class MainScreenFragment extends Fragment {
         transactionsListView.setHasFixedSize(true);
         etBalance = root.findViewById(R.id.etBalance);
         outlinedTextFieldBalance = root.findViewById(R.id.outlinedTextFieldBalance);
-        updateColor();
         toggleButton = root.findViewById(R.id.toggleButton);
         fabAdd = root.findViewById(R.id.fabAdd);
         etBalance.setText(account.getStrBalance());
@@ -102,7 +99,7 @@ public class MainScreenFragment extends Fragment {
             }
         });
 
-        ltAdapter = new TransactionsListAdapter(account.getTransactionsList(),
+        ltAdapter = new TransactionsListAdapter(requireContext(), account.getTransactionsList(),
                 new TransactionsListAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(Transaction transaction) {
@@ -110,6 +107,8 @@ public class MainScreenFragment extends Fragment {
                     }
                 });
         transactionsListView.setAdapter(ltAdapter);
+
+        updateColor();
 
         toggleButton.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
             @Override

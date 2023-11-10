@@ -1,5 +1,6 @@
 package com.example.saveup;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,10 +24,12 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
 
     private List<Transaction> transactionsList;
     private final OnItemClickListener listener;
+    private Context context;
 
-    public TransactionsListAdapter(List<Transaction> transactionsList, OnItemClickListener listener) {
+    public TransactionsListAdapter(Context context, List<Transaction> transactionsList, OnItemClickListener listener) {
         this.transactionsList = transactionsList;
         this.listener = listener;
+        this.context = context;
     }
 
     public void updateData(int flag) {
@@ -58,7 +61,7 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
         Log.i("Lista", "Visualiza elemento: " + transaction);
         // llama al método de nuestro holder para asignar valores a los componentes
         // además, pasamos el listener del evento onClick
-        holder.assignComponentsValues(transaction, listener);
+        holder.assignComponentsValues(context, transaction, listener);
     }
 
     @Override
@@ -91,7 +94,7 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
             return str.substring(0, len) + "...";
         }
 
-        public void assignComponentsValues(final Transaction transaction, final OnItemClickListener listener) {
+        public void assignComponentsValues(final Context context, final Transaction transaction, final OnItemClickListener listener) {
             title.setText(cutString(transaction.getName(), 10));
             description.setText(cutString(transaction.getDescription(), 32));
             value.setText(String.format(Locale.getDefault(), "%.2f €", transaction.getValue()));
@@ -106,6 +109,21 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
                     listener.onItemClick(transaction);
                 }
             });
+            updateColor(context, transaction);
+        }
+
+        private void updateColor(Context context, Transaction transaction) {
+            int isExpense = context.getColor(R.color.red);
+            int isIncome = context.getColor(R.color.green);
+            if (transaction.isExpense()){
+                title.setBackgroundColor(isExpense);
+                description.setBackgroundColor(isExpense);
+                value.setBackgroundColor(isExpense);
+            } else {
+                title.setBackgroundColor(isIncome);
+                description.setBackgroundColor(isIncome);
+                value.setBackgroundColor(isIncome);
+            }
         }
     }
 
