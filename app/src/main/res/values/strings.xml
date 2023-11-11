@@ -27,6 +27,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="txModify">Editar</string>
     <string name="txDelete">Eliminar</string>
-    <string name="txSave">Guardar cambios</string>
+    <string name="txSave">Guardar</string>
     <string name="txClose">Cerrar</string>
+    <string name="fab_cd">Editar o eliminar transacción</string>
 </resources>

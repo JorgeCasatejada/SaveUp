@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+
+    <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".AddTransaction"
-    tools:showIn="@layout/activity_add_transaction">
-
-    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".AddTransaction"
         tools:showIn="@layout/activity_add_transaction">
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,6 +19,42 @@
             android:divider="@drawable/divider8p"
             android:orientation="vertical"
             android:showDividers="middle">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/removeEditLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible">
+
+                <Button
+                    android:id="@+id/btRemove"
+                    style="@style/Widget.MaterialComponents.Button.Icon"
+                    android:layout_width="136dp"
+                    android:layout_height="50dp"
+                    android:text="@string/txDelete"
+                    app:icon="@android:drawable/ic_menu_delete"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <Button
+                    android:id="@+id/btEdit"
+                    style="@style/Widget.MaterialComponents.Button.Icon"
+                    android:layout_width="136dp"
+                    android:layout_height="50dp"
+                    android:text="@string/txModify"
+                    app:icon="@android:drawable/ic_menu_edit"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toEndOf="@+id/btRemove"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/outlinedTextFieldTitle"
@@ -104,6 +138,12 @@
                     android:inputType="date" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".AddTransaction"
+                tools:showIn="@layout/activity_add_transaction">
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tfExpenseDescription"
                 android:layout_width="match_parent"
@@ -117,6 +157,69 @@
                     android:hint="@string/labelExpenseDescription" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/fabContainer"
+                    android:layout_width="150dp"
+                    android:layout_height="228dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="200dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/tfExpenseDescription"
+                    app:layout_constraintTop_toBottomOf="@+id/tfExpenseDescription">
+
+                    <!-- FAB 1 -->
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/primary_fab"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:contentDescription="@string/fab_cd"
+                        android:src="@android:drawable/ic_input_add"
+                        android:visibility="gone"
+                        app:elevation="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                    <!-- FAB 2 -->
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:id="@+id/edit_fab"
+                        android:layout_width="124dp"
+                        android:layout_height="52dp"
+                        android:layout_marginBottom="16dp"
+                        android:drawableStart="@android:drawable/ic_menu_edit"
+                        android:text="@string/txModify"
+                        android:visibility="gone"
+                        app:icon="@android:drawable/ic_menu_edit"
+                        app:iconSize="24dp"
+                        app:layout_constraintBottom_toTopOf="@+id/primary_fab"
+                        app:layout_constraintEnd_toEndOf="@+id/primary_fab" />
+
+                    <!-- FAB 3 -->
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:id="@+id/delete_fab"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:drawableStart="@android:drawable/ic_menu_delete"
+                        android:text="@string/txDelete"
+                        android:visibility="gone"
+                        app:icon="@android:drawable/ic_menu_delete"
+                        app:iconSize="24dp"
+                        app:layout_constraintBottom_toTopOf="@+id/edit_fab"
+                        app:layout_constraintEnd_toEndOf="@+id/edit_fab" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </RelativeLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cancelAddLayout"
@@ -190,78 +293,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                    <Button
-                        android:id="@+id/btClose_details"
-                        style="@style/Widget.MaterialComponents.Button.Icon"
-                        android:layout_width="137dp"
-                        android:layout_height="49dp"
-                        android:text="@string/txClose"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="1.0"
-                        android:visibility="gone"/>
+                <Button
+                    android:id="@+id/btClose_details"
+                    style="@style/Widget.MaterialComponents.Button.Icon"
+                    android:layout_width="137dp"
+                    android:layout_height="49dp"
+                    android:text="@string/txClose"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
+
+
+
+
     </androidx.core.widget.NestedScrollView>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fabContainer"
-        android:layout_width="150dp"
-        android:layout_height="228dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="3dp">
-
-        <!-- FAB 1 -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/primary_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
-            android:src="@android:drawable/ic_input_add"
-            app:elevation="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- FAB 2 -->
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/edit_fab"
-            android:layout_width="124dp"
-            android:layout_height="52dp"
-            android:layout_marginBottom="16dp"
-            android:drawableStart="@android:drawable/ic_menu_edit"
-            android:text="@string/txModify"
-            android:visibility="gone"
-            app:icon="@android:drawable/ic_menu_edit"
-            app:iconSize="24dp"
-            app:layout_constraintBottom_toTopOf="@+id/primary_fab"
-            app:layout_constraintEnd_toEndOf="@+id/primary_fab" />
-
-        <!-- FAB 3 -->
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/delete_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:drawableStart="@android:drawable/ic_menu_delete"
-            android:text="@string/txDelete"
-            android:visibility="gone"
-            app:icon="@android:drawable/ic_menu_delete"
-            app:iconSize="24dp"
-            app:layout_constraintBottom_toTopOf="@+id/edit_fab"
-            app:layout_constraintEnd_toEndOf="@+id/edit_fab" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</RelativeLayout>
