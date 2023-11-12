@@ -32,4 +32,13 @@
     <string name="exit">Salir</string>
     <string name="closeSession">Cerrar Sesión</string>
     <string name="userPrueba">prueba33</string>
+    <string name="welcomeTo">Bienvenido a</string>
+    <string name="login">Login</string>
+    <string name="dontHaveAccount">¿No tienes cuenta? Registrate</string>
+    <string name="password">Contraseña</string>
+    <string name="signUp">Sign Up</string>
+    <string name="alreadyHaveAccount">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="loginIn">Iniciar Sesión</string>
+    <string name="signinUp">Resgistrarse</string>
+    <string name="passwordRepeat">Repetir contraseña</string>
 </resources>
