@@ -1,41 +1,45 @@
 package com.example.saveup
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.saveup.databinding.ActivityLoginBinding
+import com.example.saveup.databinding.ActivitySignupBinding
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 
-class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+class SignUpActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySignupBinding
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
 
         binding.etEmail.addTextChangedListener(ValidationTextWatcher(binding.outlinedTextFieldEmail))
         binding.etPassword.addTextChangedListener(ValidationTextWatcher(binding.outlinedTextFieldPassword))
+        binding.etPasswordRepeat.addTextChangedListener(ValidationTextWatcher(binding.outlinedTextFieldPasswordRepeat))
 
-        binding.btSwitchToRegister.setOnClickListener {
-            startActivity(Intent(this, SignUpActivity::class.java))
-        }
+        binding.btSwitchToLogin.setOnClickListener { finish() }
 
-        binding.btLogin.setOnClickListener {
+        binding.btSignUp.setOnClickListener {
             if (validateFormData()) {
                 enableForm(false)
                 val email = binding.etEmail.text.toString()
                 val password = binding.etPassword.text.toString()
-                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        startActivity(Intent(this, MainActivity::class.java))
+                        Toast.makeText(
+                            this,
+                            resources.getString(R.string.infoCreatedUser),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        finish()
                     } else {
                         enableForm(true)
                         Toast.makeText(this, it.exception.toString(), Toast.LENGTH_LONG).show()
@@ -43,39 +47,43 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        binding.etEmail.text = null
-        binding.etPassword.text = null
-        enableForm(true)
-        binding.etEmail.requestFocus()
     }
 
     private fun validateFormData(): Boolean {
         val email = binding.etEmail.text.toString()
         val password = binding.etPassword.text.toString()
-        var isFormValid = true
-        if (password.isBlank()) {
-            binding.outlinedTextFieldPassword.error = resources.getString(R.string.errCampoVacio)
-            binding.etPassword.requestFocus()
-            isFormValid = false
-        }
+        val passwordRepeat = binding.etPasswordRepeat.text.toString()
+        var etFocus: TextInputEditText? = null
+
         if (email.isBlank()) {
             binding.outlinedTextFieldEmail.error = resources.getString(R.string.errCampoVacio)
-            binding.etEmail.requestFocus()
-            isFormValid = false
+            etFocus = binding.etEmail
         }
-        return isFormValid
+        val minLen = 4
+        if (password.length < minLen) {
+            binding.outlinedTextFieldPassword.error =
+                resources.getString(R.string.errMinLengthPassword, minLen)
+            if (etFocus == null) etFocus = binding.etPassword
+        }
+        if (password.isBlank()) {
+            binding.outlinedTextFieldPassword.error = resources.getString(R.string.errCampoVacio)
+            if (etFocus == null) etFocus = binding.etPassword
+        }
+        if (passwordRepeat != password) {
+            binding.outlinedTextFieldPasswordRepeat.error =
+                resources.getString(R.string.errMismatchingPasswords)
+            if (etFocus == null) etFocus = binding.etPasswordRepeat
+        }
+        etFocus?.requestFocus()
+        return etFocus == null
     }
 
     private fun enableForm(isEnabled: Boolean) {
         binding.outlinedTextFieldEmail.isEnabled = isEnabled
         binding.outlinedTextFieldPassword.isEnabled = isEnabled
-        binding.btLogin.isEnabled = isEnabled
-        binding.btSwitchToRegister.isEnabled = isEnabled
+        binding.outlinedTextFieldPasswordRepeat.isEnabled = isEnabled
+        binding.btSignUp.isEnabled = isEnabled
+        binding.btSwitchToLogin.isEnabled = isEnabled
         binding.progressBar.visibility = if (isEnabled) View.GONE else View.VISIBLE
     }
 
@@ -87,4 +95,5 @@ class LoginActivity : AppCompatActivity() {
             etLayout.error = null
         }
     }
+
 }

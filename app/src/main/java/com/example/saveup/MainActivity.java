@@ -15,17 +15,21 @@ import com.example.saveup.ui.ProfileFragment;
 import com.example.saveup.ui.StatisticsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
+    private FirebaseUser activeUser;
     private Account account;
     private BottomNavigationView bottomNavigation;
     private Fragment selectedFragment;
 
     private void inicializarVariables() {
-        account = new Account("1", getResources().getString(R.string.userPrueba), getResources().getString(R.string.emailPrueba), "pass")
+        activeUser = FirebaseAuth.getInstance().getCurrentUser();
+        account = new Account("1", activeUser.getDisplayName(), activeUser.getEmail(), "pass")
                 .setTransactionsList(loadTransactions());
 
         selectedFragment = MainScreenFragment.newInstance(account);

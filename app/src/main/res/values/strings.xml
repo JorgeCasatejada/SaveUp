@@ -41,4 +41,8 @@
     <string name="loginIn">Iniciar Sesión</string>
     <string name="signinUp">Resgistrarse</string>
     <string name="passwordRepeat">Repetir contraseña</string>
+    <string name="infoCreatedUser">Se ha creado el usuario</string>
+    <string name="errMismatchingPasswords">Las contraseñas no coinciden</string>
+    <string name="errMinLengthPassword">Tiene que tener al menos %1$d carácteres</string>
+    <string name="infoLoggedOut">Se ha cerrado la sesión</string>
 </resources>

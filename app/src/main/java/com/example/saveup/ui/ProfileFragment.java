@@ -6,14 +6,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.example.saveup.R;
+import com.example.saveup.databinding.FragmentProfileBinding;
 import com.example.saveup.model.Account;
-import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -25,10 +25,7 @@ public class ProfileFragment extends Fragment {
 
     private static final String ACCOUNT = "Account";
     private Account account;
-    private View root;
-    private Button btExit;
-    private TextInputLayout etUserLayout, etEmailLayout;
-    private ImageView imgProfile;
+    private FragmentProfileBinding binding;
 
     public static ProfileFragment newInstance(Account account) {
         ProfileFragment fragment = new ProfileFragment();
@@ -47,30 +44,35 @@ public class ProfileFragment extends Fragment {
     }
 
     private void initializeVariables() {
-        btExit = root.findViewById(R.id.btExit);
-        etUserLayout = root.findViewById(R.id.outlinedTextFieldUser);
-        etEmailLayout = root.findViewById(R.id.outlinedTextFieldEmail);
-        imgProfile = root.findViewById(R.id.imgProfile);
-        etUserLayout.getEditText().setText(account.getUserName());
-        etEmailLayout.getEditText().setText(account.getEmail());
-        Picasso.get().load(R.drawable.user_image).fit().into(imgProfile);
+        binding.etUser.setText(account.getUserName());
+        binding.etEmail.setText(account.getEmail());
+        Picasso.get().load(R.drawable.user_image).fit().into(binding.imgProfile);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        root = inflater.inflate(R.layout.fragment_profile, container, false);
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
 
         initializeVariables();
 
-        btExit.setOnClickListener(new View.OnClickListener() {
+        binding.btExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finishAffinity(getActivity());
             }
         });
 
-        return root;
+        binding.btCloseSession.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                getActivity().finish();
+                Toast.makeText(getContext(), getResources().getString(R.string.infoLoggedOut), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        return binding.getRoot();
     }
 }
