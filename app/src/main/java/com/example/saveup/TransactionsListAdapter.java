@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saveup.model.Transaction;
@@ -76,6 +77,8 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
     public static class TransactionViewHolder extends RecyclerView.ViewHolder {
 
         private final LinearLayout recyclerLineLayout;
+
+        private final CardView cardView;
         private final TextView title;
         private final TextView description;
         private final TextView value;
@@ -86,6 +89,7 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
             title = itemView.findViewById(R.id.titleTransaction);
             description = itemView.findViewById(R.id.descriptionTransaction);
             value = itemView.findViewById(R.id.valueTransaction);
+            cardView = itemView.findViewById(R.id.cardView);
         }
 
         public static String cutString(String str, int len) {
@@ -97,7 +101,7 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
         public void assignComponentsValues(final Context context, final Transaction transaction, final OnItemClickListener listener) {
             title.setText(cutString(transaction.getName(), 10));
             description.setText(cutString(transaction.getDescription(), 32));
-            value.setText(String.format(Locale.getDefault(), "%.2f €", transaction.getValue()));
+            value.setText(String.format(Locale.getDefault(), "%.2f €", transaction.getSignedValue()));
             if (transaction.getValue() < 0) {
                 recyclerLineLayout.setBackground(Drawable.createFromPath("@android:color/holo_red_light"));
             } else {
@@ -113,16 +117,12 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
         }
 
         private void updateColor(Context context, Transaction transaction) {
-            int isExpense = context.getColor(R.color.red);
-            int isIncome = context.getColor(R.color.green);
+            int isExpense = context.getColor(R.color.redExpense);
+            int isIncome = context.getColor(R.color.greenIncome);
             if (transaction.isExpense()){
-                title.setBackgroundColor(isExpense);
-                description.setBackgroundColor(isExpense);
-                value.setBackgroundColor(isExpense);
+                cardView.setCardBackgroundColor(isExpense);
             } else {
-                title.setBackgroundColor(isIncome);
-                description.setBackgroundColor(isIncome);
-                value.setBackgroundColor(isIncome);
+                cardView.setCardBackgroundColor(isIncome);
             }
         }
     }

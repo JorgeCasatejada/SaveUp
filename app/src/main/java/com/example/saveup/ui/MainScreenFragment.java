@@ -73,9 +73,9 @@ public class MainScreenFragment extends Fragment {
     private void updateColor() {
         int color;
         if (account.getBalance() > 0)
-            color = getResources().getColor(R.color.green);
+            color = getResources().getColor(R.color.greenBalance);
         else
-            color = getResources().getColor(R.color.red);
+            color = getResources().getColor(R.color.redBalance);
         outlinedTextFieldBalance.setBoxBackgroundColor(color);
     }
 

@@ -1,42 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/recyclerLineLayout"
+    android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:drawable/button_onoff_indicator_on"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:layout_marginRight="16dp"
-    android:layout_marginLeft="16dp"
-    android:layout_marginBottom="8dp">
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
-        android:layout_width="111dp"
+        android:id="@+id/recyclerLineLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="111dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/titleTransaction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <TextView
+                android:id="@+id/descriptionTransaction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/titleTransaction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
-
-        <TextView
-            android:id="@+id/descriptionTransaction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+            android:id="@+id/valueTransaction"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/valueTransaction"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_weight="1"
-        android:textAlignment="textEnd"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>
