@@ -4,7 +4,9 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
     app:cardCornerRadius="8dp">
 
     <LinearLayout
@@ -39,10 +41,10 @@
         <TextView
             android:id="@+id/valueTransaction"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:textAlignment="textEnd"
+            android:gravity="center_vertical|end"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     </LinearLayout>
