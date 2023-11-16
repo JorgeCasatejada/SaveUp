@@ -20,42 +20,6 @@
             android:orientation="vertical"
             android:showDividers="middle">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/removeEditLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="visible">
-
-                <Button
-                    android:id="@+id/btRemove"
-                    style="@style/Widget.MaterialComponents.Button.Icon"
-                    android:layout_width="136dp"
-                    android:layout_height="50dp"
-                    android:text="@string/txDelete"
-                    app:icon="@android:drawable/ic_menu_delete"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <Button
-                    android:id="@+id/btEdit"
-                    style="@style/Widget.MaterialComponents.Button.Icon"
-                    android:layout_width="136dp"
-                    android:layout_height="50dp"
-                    android:text="@string/txModify"
-                    app:icon="@android:drawable/ic_menu_edit"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@+id/btRemove"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/outlinedTextFieldTitle"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -166,7 +130,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginStart="200dp"
+                    android:layout_marginStart="180dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
@@ -183,7 +147,6 @@
                         android:layout_marginBottom="16dp"
                         android:contentDescription="@string/fab_cd"
                         android:src="@android:drawable/ic_input_add"
-                        android:visibility="gone"
                         app:elevation="0dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
