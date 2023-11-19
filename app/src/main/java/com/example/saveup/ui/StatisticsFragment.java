@@ -1,11 +1,19 @@
 package com.example.saveup.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Range;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.ToggleButton;
 
 import androidx.fragment.app.Fragment;
 
@@ -13,7 +21,6 @@ import com.example.saveup.R;
 import com.example.saveup.model.Account;
 import com.example.saveup.model.Category;
 import com.example.saveup.model.Transaction;
-import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -27,25 +34,29 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.IntUnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,11 +68,22 @@ public class StatisticsFragment extends Fragment {
     private static final String ACCOUNT = "Account";
     private Account account;
     private View root;
-
+    private Button buttonFilterExpense;
+    private Button buttonFilterIncome;
+    private boolean showExpenses = true;
+    private int yearToShow;
     private FloatingActionButton shareFab;
 
     private LineChart lineChart;
     private PieChart pieChart;
+
+    private List<Integer> years;
+
+    private ArrayAdapter<Integer> yearsAdapter;
+
+    private AutoCompleteTextView autocompleteYear;
+
+    private TextInputLayout autocompleteYearLayout;
 
     public static StatisticsFragment newInstance(Account account) {
         StatisticsFragment fragment = new StatisticsFragment();
@@ -80,6 +102,29 @@ public class StatisticsFragment extends Fragment {
     }
 
     private void initializeVariables() {
+        buttonFilterExpense = root.findViewById(R.id.selectExpense);
+        buttonFilterIncome = root.findViewById(R.id.selectIncome);
+
+        System.out.println(buttonFilterExpense);
+        buttonFilterExpense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showExpenses = true;
+                createPieChart();
+            }
+        });
+        buttonFilterIncome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showExpenses = false;
+                createPieChart();
+            }
+        });
+
+
+        lineChart = root.findViewById(R.id.lineChart);
+        pieChart = root.findViewById(R.id.pieChart);
+
         shareFab = root.findViewById(R.id.shareFab);
         shareFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,17 +133,35 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
+        years = IntStream.range(1899, new Date().getYear() + 1900 + 1).boxed().sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+
+        yearToShow = years.get(0);
+
         createLineChart();
         createPieChart();
+
+        yearsAdapter = new ArrayAdapter<>(this.getContext(), R.layout.list_item, years);
+        autocompleteYear = root.findViewById(R.id.autocompleteYear);
+        autocompleteYear.setAdapter(yearsAdapter);
+        autocompleteYear.setText(yearsAdapter.getItem(0).toString(), false);
+        autocompleteYearLayout = root.findViewById(R.id.menuCategory);
+
+        autocompleteYear.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                yearToShow = yearsAdapter.getItem(position);
+                createLineChart();
+                createPieChart();
+            }
+        });
     }
 
     private void createLineChart() {
         String[] values = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
                 "Julio", "Agosto", "Septiempre", "Octubre", "Noviembre", "Diciembre"};
 
-        Map<Integer, List<Transaction>> map = getGroupedTransactions(2023 - 1900);
-
-        lineChart = root.findViewById(R.id.lineChart);
+        Map<Integer, List<Transaction>> map = account.getGroupedTransactions(yearToShow);
 
         lineChart.setDragEnabled(false);
         lineChart.setScaleEnabled(false);
@@ -134,7 +197,6 @@ public class StatisticsFragment extends Fragment {
             List<Transaction> transactions = map.getOrDefault(month, new ArrayList<>());
             for (Transaction transaction : transactions) {
                 balance += transaction.getSignedValue();
-                System.out.println(transaction.getSignedValue());
                 if (balance < minBalance) minBalance = balance;
                 else if (balance > maxBalance) maxBalance = balance;
             }
@@ -158,19 +220,18 @@ public class StatisticsFragment extends Fragment {
         lineChart.animateXY(1000, 1000);
     }
 
-    private Map<Integer, List<Transaction>> getGroupedTransactions(int year) {
-        account.getTransactionsList().forEach(System.out::println);
-        return account.getTransactionsList().stream().filter(t -> t.getDate().getYear() == year).collect(Collectors.groupingBy(t -> t.getDate().getMonth()));
-    }
-
     private void createPieChart() {
-        pieChart = root.findViewById(R.id.pieChart);
         ArrayList<PieEntry> categories = new ArrayList<>();
 
-        Map<Category, Double> map = getCategories();
+        Map<Category, Double> map = account.getCategories(yearToShow, showExpenses);
         map.keySet().forEach(category -> categories.add(
                 new PieEntry(Float.parseFloat(Objects.requireNonNull(map.get(category)).toString()),
                         category.toString())));
+
+        double totalBalance = 0;
+        for (Category key : map.keySet()) {
+            totalBalance += map.getOrDefault(key, 0.0);
+        }
 
         int[] colors = {
                 Color.parseColor("#488f31"),
@@ -191,7 +252,7 @@ public class StatisticsFragment extends Fragment {
         PieDataSet pieDataSet = new PieDataSet(categories, "Categorias");
         pieDataSet.setColors(colors);
         pieDataSet.setValueTextColor(Color.BLACK);
-        pieDataSet.setValueTextSize(10f);
+        pieDataSet.setValueTextSize(15f);
 
         PieData pieData = new PieData(pieDataSet);
 
@@ -208,26 +269,32 @@ public class StatisticsFragment extends Fragment {
 
         pieChart.setData(pieData);
         pieChart.getDescription().setEnabled(false);
-        pieChart.setCenterText("Categorias");
+        pieChart.setCenterText(totalBalance + " €");
         pieChart.setCenterTextSize(15f);
-        pieChart.setEntryLabelTextSize(10f);
+        pieChart.setEntryLabelTextSize(0f);
         pieChart.setEntryLabelColor(Color.BLACK);
         pieChart.setHoleRadius(40f);
         pieChart.setTransparentCircleRadius(45f);
         pieChart.animateXY(1000, 1000);
     }
 
-    private Map<Category, Double> getCategories() {
-        return account.getTransactionsList().stream().collect(
-                Collectors.groupingBy(Transaction::getCategory,
-                    Collectors.mapping(Transaction::getValue, Collectors.summingDouble(Double::doubleValue))));
-    }
-
     public void shareStatistics(){
+        /*
+        Bitmap img = getBitmapGraph();
+
+        String filename = "${System.currentTimeMillis()}.jpg";
+
+        try (FileOutputStream out = new FileOutputStream("filename")) {
+            img.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+            // PNG is a lossless format, the compression factor (100) is ignored
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+
         /* es necesario hacer un intent con la constate ACTION_SEND */
         /*Llama a cualquier app que haga un envío*/
         Intent itSend = new Intent(Intent.ACTION_SEND);
-        /* vamos a enviar texto plano */
         itSend.setType("text/plain");
         // itSend.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{para});
         itSend.putExtra(Intent.EXTRA_SUBJECT, "Registro de gastos e ingresos");
@@ -256,7 +323,17 @@ public class StatisticsFragment extends Fragment {
         Intent shareIntent=Intent.createChooser(itSend, null);
 
         startActivity(shareIntent);
+    }
 
+    private Bitmap getBitmapGraph() {
+
+        Bitmap bitmap = Bitmap.createBitmap(lineChart.getWidth(), lineChart.getHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        requireView().layout(lineChart.getLeft(), lineChart.getTop(), lineChart.getRight(),
+                lineChart.getBottom());
+        requireView().draw(canvas);
+        return bitmap;
     }
 
     public static double round(double value, int places) {
@@ -281,13 +358,7 @@ public class StatisticsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("///////////////////////////////////////////" +
-                "///////////////////////////////////////////" +
-                "///////////////////////////////////////////" +
-                "///////////////////////////////////////////" +
-                "///////////////////////////////////////////" +
-                "///////////////////////////////////////////");
-        createLineChart();
-        createPieChart();
+//        createLineChart(2023);
+//        createPieChart(2023, false);
     }
 }

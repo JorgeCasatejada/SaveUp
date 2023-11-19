@@ -6,7 +6,10 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Account implements Parcelable {
 
@@ -104,6 +107,14 @@ public class Account implements Parcelable {
 
     public String getStrBalance() {
         return String.format(Locale.getDefault(), "%.2f", getBalance());
+    }
+
+    public Map<Category, Double> getCategories(int year, boolean areExpenses) {
+        return transactionManager.getCategories(year, areExpenses);
+    }
+
+    public Map<Integer, List<Transaction>> getGroupedTransactions(int year) {
+        return transactionManager.getGroupedTransactions(year);
     }
 
     @Override

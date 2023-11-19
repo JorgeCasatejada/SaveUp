@@ -21,6 +21,7 @@
     <string name="filterExpense">Gastos</string>
     <string name="mnItmProfile">Perfil</string>
     <string name="mnItmStatistics">Estadísticas</string>
+    <string name="labelYear">Año</string>
     <string name="mnItmBalance">Balance</string>
     <string name="mnItmGroups">Grupos</string>
     <!-- TODO: Remove or change this placeholder text -->
