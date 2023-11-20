@@ -69,6 +69,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        // Do nothing
+    }
+
     private ArrayList<Transaction> loadTransactions() {
         ArrayList<Transaction> transactionsList = new ArrayList<>();
         transactionsList.add(new Transaction(false, "Gasto 1", 1.12345, "Una dola,"));
