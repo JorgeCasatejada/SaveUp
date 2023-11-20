@@ -22,6 +22,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 // Fragmento para la pantalla principal
 public class MainScreenFragment extends Fragment {
@@ -41,6 +42,8 @@ public class MainScreenFragment extends Fragment {
     private MaterialButtonToggleGroup toggleButton;
     private FloatingActionButton fabAdd;
     private int appliedFilter;
+    private TextInputLayout outlinedTextFieldBalance;
+
 
     public static MainScreenFragment newInstance(Account account) {
         MainScreenFragment fragment = new MainScreenFragment();
@@ -64,10 +67,20 @@ public class MainScreenFragment extends Fragment {
         transactionsListView = root.findViewById(R.id.recyclerTransactions);
         transactionsListView.setHasFixedSize(true);
         etBalance = root.findViewById(R.id.etBalance);
+        outlinedTextFieldBalance = root.findViewById(R.id.outlinedTextFieldBalance);
         toggleButton = root.findViewById(R.id.toggleButton);
         fabAdd = root.findViewById(R.id.fabAdd);
         etBalance.setText(account.getStrBalance());
         appliedFilter = 0;
+    }
+
+    private void updateColor() {
+        int color;
+        if (account.getBalance() > 0)
+            color = getResources().getColor(R.color.greenBalance);
+        else
+            color = getResources().getColor(R.color.redBalance);
+        outlinedTextFieldBalance.setBoxBackgroundColor(color);
     }
 
     /* Al crear la vista, cargamos los valores necesarios */
@@ -91,7 +104,7 @@ public class MainScreenFragment extends Fragment {
             }
         });
 
-        ltAdapter = new TransactionsListAdapter(account.getTransactionsList(),
+        ltAdapter = new TransactionsListAdapter(requireContext(), account.getTransactionsList(),
                 new TransactionsListAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(Transaction transaction) {
@@ -99,6 +112,8 @@ public class MainScreenFragment extends Fragment {
                     }
                 });
         transactionsListView.setAdapter(ltAdapter);
+
+        updateColor();
 
         toggleButton.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
             @Override
@@ -143,6 +158,7 @@ public class MainScreenFragment extends Fragment {
 //                ((TransactionsListAdapter) transactionsListView.getAdapter()).updateData(TransactionsListAdapter.APPEND);
                 ltAdapter.setTransactionsList(
                         account.getFilteredTransactionsList(appliedFilter));
+                updateColor();
             }
         }
     }
