@@ -107,6 +107,17 @@ public class Account implements Parcelable {
         setBalance(transactionManager.getBalance());
     }
 
+    public void removeTransaction(Transaction transaction) {
+        transactionManager.removeTransaction(transaction);
+        setBalance(transactionManager.getBalance());
+    }
+
+    public void modifyTransaction(Transaction transactionOld, Transaction transactionNew) {
+        removeTransaction(transactionOld);
+        addTransaction(transactionNew);
+        setBalance(transactionManager.getBalance());
+    }
+
     public String getStrBalance() {
         return String.format(Locale.getDefault(), "%.2f", getBalance());
     }
