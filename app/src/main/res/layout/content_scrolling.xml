@@ -192,29 +192,25 @@
 
                 <Button
                     android:id="@+id/btCancel"
-                    style="@style/Widget.MaterialComponents.Button.Icon"
-                    android:layout_width="123dp"
-                    android:layout_height="51dp"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/txCancel"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.067"
+                    app:layout_constraintEnd_toStartOf="@+id/btAdd"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
                     android:id="@+id/btAdd"
-                    style="@style/Widget.MaterialComponents.Button.Icon"
-                    android:layout_width="123dp"
-                    android:layout_height="51dp"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/txAdd"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.838"
                     app:layout_constraintStart_toEndOf="@+id/btCancel"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -225,30 +221,26 @@
                 android:visibility="gone">
 
                 <Button
+                    android:id="@+id/btClose"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txClose"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btSaveChangues"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
                     android:id="@+id/btSaveChangues"
-                    style="@style/Widget.MaterialComponents.Button.Icon"
-                    android:layout_width="170dp"
-                    android:layout_height="54dp"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/txSave"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toEndOf="@+id/btClose"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0" />
-
-                <Button
-                    android:id="@+id/btClose"
-                    style="@style/Widget.MaterialComponents.Button.Icon"
-                    android:layout_width="113dp"
-                    android:layout_height="47dp"
-                    android:text="@string/txClose"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -258,16 +250,15 @@
 
                 <Button
                     android:id="@+id/btClose_details"
-                    style="@style/Widget.MaterialComponents.Button.Icon"
-                    android:layout_width="137dp"
-                    android:layout_height="49dp"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="135dp"
+                    android:layout_height="wrap_content"
                     android:text="@string/txClose"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
