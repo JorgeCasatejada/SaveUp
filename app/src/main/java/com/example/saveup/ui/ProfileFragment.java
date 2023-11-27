@@ -2,6 +2,7 @@ package com.example.saveup.ui;
 
 import static androidx.core.app.ActivityCompat.finishAffinity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.saveup.LoginActivity;
 import com.example.saveup.R;
 import com.example.saveup.databinding.FragmentProfileBinding;
 import com.example.saveup.model.Account;
@@ -68,6 +70,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getContext(), LoginActivity.class));
                 getActivity().finish();
                 Toast.makeText(getContext(), getResources().getString(R.string.infoLoggedOut), Toast.LENGTH_LONG).show();
             }

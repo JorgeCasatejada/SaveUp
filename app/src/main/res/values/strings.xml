@@ -51,4 +51,5 @@
     <string name="errMismatchingPasswords">Las contraseñas no coinciden</string>
     <string name="errMinLengthPassword">Tiene que tener al menos %1$d carácteres</string>
     <string name="infoLoggedOut">Se ha cerrado la sesión</string>
+    <string name="infoLoggedIn">Se ha iniciado sesión</string>
 </resources>

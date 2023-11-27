@@ -71,10 +71,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        // Do nothing
-    }
+//    @Override
+//    public void onBackPressed() {
+//        // Do nothing
+//    }
 
     private ArrayList<Transaction> loadTransactions() {
         ArrayList<Transaction> transactionsList = new ArrayList<>();

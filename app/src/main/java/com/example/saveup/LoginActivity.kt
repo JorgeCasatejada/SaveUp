@@ -20,6 +20,12 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
+        if (auth.currentUser != null) {
+            startActivity(Intent(this, MainActivity::class.java))
+            Toast.makeText(this, resources.getString(R.string.infoLoggedIn), Toast.LENGTH_LONG)
+                .show()
+            finish()
+        }
 
         binding.etEmail.addTextChangedListener(ValidationTextWatcher(binding.outlinedTextFieldEmail))
         binding.etPassword.addTextChangedListener(ValidationTextWatcher(binding.outlinedTextFieldPassword))
@@ -36,6 +42,12 @@ class LoginActivity : AppCompatActivity() {
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
                         startActivity(Intent(this, MainActivity::class.java))
+                        Toast.makeText(
+                            this,
+                            resources.getString(R.string.infoLoggedIn),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        finish()
                     } else {
                         enableForm(true)
                         Toast.makeText(this, it.exception.toString(), Toast.LENGTH_LONG).show()
