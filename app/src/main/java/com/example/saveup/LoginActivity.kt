@@ -58,14 +58,6 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        binding.etEmail.text = null
-        binding.etPassword.text = null
-        enableForm(true)
-        binding.etEmail.requestFocus()
-    }
-
     private fun validateFormData(): Boolean {
         val email = binding.etEmail.text.toString()
         val password = binding.etPassword.text.toString()
