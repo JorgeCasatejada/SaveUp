@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
@@ -16,7 +15,6 @@ import android.widget.RadioButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.transition.TransitionManager;
 
 import com.example.saveup.model.Category;
 import com.example.saveup.model.Transaction;
@@ -83,9 +81,9 @@ public class AddTransaction extends AppCompatActivity {
         //Mirar si viene de añadir o de detalles
         Intent intent = getIntent();
         int mode = intent.getIntExtra(MainScreenFragment.ACTIVITY_MODE, 1);
-        if (mode == 1){
+        if (mode == 1) {
             showAddMode();
-        } else if (mode ==2) {
+        } else if (mode == 2) {
             transactionDetails = intent.getParcelableExtra(MainScreenFragment.TRANSACTION_DETAILS);
             showDetailsMode(transactionDetails);
         }
@@ -176,7 +174,7 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     private void setVisibility() {
-        if(!clicked){
+        if (!clicked) {
             buttonEdit.setVisibility(View.VISIBLE);
             buttonDelete.setVisibility(View.VISIBLE);
         } else {
@@ -186,7 +184,7 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     private void setAnimation() {
-        if(!clicked){
+        if (!clicked) {
             buttonEdit.startAnimation(fromBottom);
             buttonDelete.startAnimation(fromBottom);
             fabEdit.setAnimation(rotateOpen);
@@ -215,7 +213,7 @@ public class AddTransaction extends AppCompatActivity {
         //Añadir datos
         etTitle.setText(transaction.getName());
         etValue.setText(String.valueOf(transaction.getValue()));
-        if (transaction.isExpense()){
+        if (transaction.isExpense()) {
             rbExpense.setChecked(true);
             rbIncome.setChecked(false);
         } else {
@@ -347,9 +345,10 @@ public class AddTransaction extends AppCompatActivity {
         String name = validateTextField(etTitleLayout);
         if (name == null) return null;
 
-        String txValue = validateTextField(etValueLayout); // Falta validación adicional (decimales, etc.)
+        String txValue = validateTextField(etValueLayout);
         if (txValue == null) return null;
         double value = Double.parseDouble(txValue);
+        value = Math.round(value * 100.0) / 100.0; // Redondeo a 2 decimales
 
         boolean isExpense = rbExpense.isChecked();
 
@@ -391,15 +390,19 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     private class ValidationTextWatcher implements TextWatcher {
-        private TextInputLayout etLayout;
+        private final TextInputLayout etLayout;
+
         private ValidationTextWatcher(TextInputLayout etLayout) {
             this.etLayout = etLayout;
         }
+
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         }
+
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
         }
+
         public void afterTextChanged(Editable editable) {
             etLayout.setError(null);
         }
