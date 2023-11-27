@@ -2,6 +2,7 @@ package com.example.saveup;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,6 +46,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         inicializarVariables();
+        if (savedInstanceState != null) {
+            int mnItemSelected = savedInstanceState.getInt("SelectedMenu");
+            switchSelectedFragment(mnItemSelected);
+            if (selectedFragment == null) {
+                Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
 
         getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container, selectedFragment).commit();
 
@@ -52,16 +61,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
-                selectedFragment = null;
-                if (itemId == R.id.mnItmGroups) {
-                    selectedFragment = GroupsFragment.newInstance(account);
-                } else if (itemId == R.id.mnItmBalance) {
-                    selectedFragment = MainScreenFragment.newInstance(account);
-                } else if (itemId == R.id.mnItmStatistics) {
-                    selectedFragment = StatisticsFragment.newInstance(account);
-                } else if (itemId == R.id.mnItmProfile) {
-                    selectedFragment = ProfileFragment.newInstance(account);
-                }
+                switchSelectedFragment(itemId);
                 if (selectedFragment != null) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container, selectedFragment).commit();
                     return true;
@@ -69,6 +69,26 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    private void switchSelectedFragment(int mnItmID) {
+        selectedFragment = null;
+        if (mnItmID == R.id.mnItmGroups) {
+            selectedFragment = GroupsFragment.newInstance(account);
+        } else if (mnItmID == R.id.mnItmBalance) {
+            selectedFragment = MainScreenFragment.newInstance(account);
+        } else if (mnItmID == R.id.mnItmStatistics) {
+            selectedFragment = StatisticsFragment.newInstance(account);
+        } else if (mnItmID == R.id.mnItmProfile) {
+            selectedFragment = ProfileFragment.newInstance(account);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int mnItemSelected = bottomNavigation.getSelectedItemId();
+        outState.putInt("SelectedMenu", mnItemSelected);
     }
 
     private ArrayList<Transaction> loadTransactions() {
