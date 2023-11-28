@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Range;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,8 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
@@ -84,6 +87,8 @@ public class StatisticsFragment extends Fragment {
     private AutoCompleteTextView autocompleteYear;
 
     private TextInputLayout autocompleteYearLayout;
+
+    private double totalBalance;
 
     public static StatisticsFragment newInstance(Account account) {
         StatisticsFragment fragment = new StatisticsFragment();
@@ -224,11 +229,15 @@ public class StatisticsFragment extends Fragment {
         ArrayList<PieEntry> categories = new ArrayList<>();
 
         Map<Category, Double> map = account.getCategories(yearToShow, showExpenses);
+        ArrayList<Category> categoriesToShow = new ArrayList<>();
+        for (Category category : map.keySet()) {
+            categoriesToShow.add(category);
+        }
         map.keySet().forEach(category -> categories.add(
                 new PieEntry(Float.parseFloat(Objects.requireNonNull(map.get(category)).toString()),
                         category.toString())));
 
-        double totalBalance = 0;
+        totalBalance = 0;
         for (Category key : map.keySet()) {
             totalBalance += map.getOrDefault(key, 0.0);
         }
@@ -267,9 +276,21 @@ public class StatisticsFragment extends Fragment {
         l.setYOffset(100f);
         l.setWordWrapEnabled(false);
 
+        pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                pieChart.setCenterText(round(e.getY(), 2) + " €" + "\n" + categoriesToShow.get(pieDataSet.getEntryIndex(e)));
+            }
+
+            @Override
+            public void onNothingSelected() {
+                pieChart.setCenterText(round(totalBalance, 2) + " €" + "\n" + "TOTAL");
+            }
+        });
+
         pieChart.setData(pieData);
         pieChart.getDescription().setEnabled(false);
-        pieChart.setCenterText(totalBalance + " €");
+        pieChart.setCenterText(round(totalBalance, 2) + " €" + "\n" + "TOTAL");
         pieChart.setCenterTextSize(15f);
         pieChart.setEntryLabelTextSize(0f);
         pieChart.setEntryLabelColor(Color.BLACK);
