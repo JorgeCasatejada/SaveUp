@@ -244,17 +244,11 @@ public class StatisticsFragment extends Fragment {
 
         int[] colors = {
                 Color.parseColor("#488f31"),
-//                Color.parseColor("#6a9832"),
                 Color.parseColor("#88a037"),
-//                Color.parseColor("#a5a73f"),
                 Color.parseColor("#c0af4a"),
-//                Color.parseColor("#dbb659"),
                 Color.parseColor("#f4bd6a"),
-//                Color.parseColor("#f2a95e"),
                 Color.parseColor("#ef9556"),
-//                Color.parseColor("#eb8050"),
                 Color.parseColor("#e56b4e"),
-//                Color.parseColor("#dd554f"),
                 Color.parseColor("#de425b"),
         };
 
