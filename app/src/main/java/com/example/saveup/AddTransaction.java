@@ -9,19 +9,14 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.RadioButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.example.saveup.databinding.ActivityAddTransactionBinding;
+import com.example.saveup.databinding.ContentScrollingBinding;
 import com.example.saveup.model.Category;
 import com.example.saveup.model.Transaction;
 import com.example.saveup.ui.MainScreenFragment;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.ParseException;
@@ -31,6 +26,7 @@ import java.util.Locale;
 
 public class AddTransaction extends AppCompatActivity {
 
+    // Constants
     public static final String CREATED_EXPENSE = "created_expense";
     public static final String DETAILS_TRANSACTION = "details_transaction";
     public static final String OLD_MODIFIED_TRANSACTION = "old_modified_transaction";
@@ -39,294 +35,230 @@ public class AddTransaction extends AppCompatActivity {
     public static final int MODE_ADD = 1;
     public static final int MODE_DELETE = 2;
     public static final int MODE_MODIFY = 3;
-    private String[] categories; // Categorias de la transacción
-    private AutoCompleteTextView autocompleteCategory;
-    private TextInputLayout autocompleteCategoryLayout;
-    private Button buttonCancel;
-    private Button buttonClose;
-    private Button buttonAdd;
-    private Button buttonSaveChangues;
-    private TextInputEditText etTitle;
-    private TextInputLayout etTitleLayout;
-    private TextInputEditText etValue;
-    private TextInputLayout etValueLayout;
-    private TextInputEditText etDate;
-    private TextInputLayout etDateLayout;
-    private TextInputEditText etDescription;
-    private ArrayAdapter<String> categoryAdapter;
-    private RadioButton rbExpense;
-    private RadioButton rbIncome;
-    private SimpleDateFormat sdf;
+    public static final int FROM_MODE_ADD = 1;
+    public static final int FROM_MODE_DETAILS = 2;
+
+    // View Binding
+    private ActivityAddTransactionBinding binding;
+    private ContentScrollingBinding contentBinding;
+
+    // Transaction Details
     private Transaction transactionDetails = null;
-    private ExtendedFloatingActionButton buttonEdit;
-    private ExtendedFloatingActionButton buttonDelete;
-    private Button buttonCloseDetails;
-    private FloatingActionButton fabEdit;
+
+    // Main fab clicked
+    private boolean clicked = false;
+
+    // Categories
+    private String[] categories; // Categorias de la transacción
+    private ArrayAdapter<String> categoryAdapter;
+
+    // Date Format
+    private SimpleDateFormat sdf;
+
+    // Animations
     private Animation rotateOpen;
     private Animation rotateClose;
     private Animation fromBottom;
     private Animation toBottom;
-    private boolean clicked = false;
-    private ConstraintLayout cancelAddLayout;
-    private ConstraintLayout saveChanguesLayout;
-    private ConstraintLayout fabContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_transaction);
+        binding = ActivityAddTransactionBinding.inflate(getLayoutInflater());
+        contentBinding = binding.contentScrolling;
+        View view = binding.getRoot();
+        setContentView(view);
 
         initializeVariables();
 
-        //Mirar si viene de añadir o de detalles
+        // Check if coming from add or details
         Intent intent = getIntent();
-        int mode = intent.getIntExtra(MainScreenFragment.ACTIVITY_MODE, 1);
-        if (mode == 1) {
+        int mode = intent.getIntExtra(MainScreenFragment.ACTIVITY_MODE, FROM_MODE_ADD);
+        if (mode == FROM_MODE_ADD) {
             showAddMode();
-        } else if (mode == 2) {
+        } else if (mode == FROM_MODE_DETAILS) {
             transactionDetails = intent.getParcelableExtra(MainScreenFragment.TRANSACTION_DETAILS);
             showDetailsMode(transactionDetails);
         }
 
-        buttonAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Transaction transaction = validateTransactionData();
-                if (transaction != null) {
-                    Intent data = new Intent();
-                    data.putExtra(CREATED_EXPENSE, transaction);
-                    data.putExtra(MODE, MODE_ADD);
-                    setResult(Activity.RESULT_OK, data);
-                    finish();
-                }
-            }
-        });
+        setClickListeners();
+    }
 
-        View.OnClickListener cancelClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResult(Activity.RESULT_CANCELED);
-                finish();
-            }
-        };
-
-        buttonCancel.setOnClickListener(cancelClickListener);
-        buttonClose.setOnClickListener(cancelClickListener);
-        buttonCloseDetails.setOnClickListener(cancelClickListener);
-
-        buttonDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void setClickListeners() {
+        // Add Button Click Listener
+        contentBinding.btAdd.setOnClickListener(v -> {
+            Transaction transaction = validateTransactionData();
+            if (transaction != null) {
                 Intent data = new Intent();
-                data.putExtra(DETAILS_TRANSACTION, transactionDetails);
-                data.putExtra(MODE, MODE_DELETE);
+                data.putExtra(CREATED_EXPENSE, transaction);
+                data.putExtra(MODE, MODE_ADD);
                 setResult(Activity.RESULT_OK, data);
                 finish();
             }
         });
 
-        buttonEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                etTitle.setEnabled(true);
-                etValue.setEnabled(true);
-                rbExpense.setEnabled(true);
-                rbIncome.setEnabled(true);
-                rbExpense.setEnabled(true);
-                autocompleteCategory.setEnabled(true);
-                autocompleteCategory.setFocusableInTouchMode(true);
-                etDate.setEnabled(true);
-                etDescription.setEnabled(true);
-                loadCategories();
-                etTitle.requestFocus();
+        // Cancel Button Click Listeners
+        View.OnClickListener cancelClickListener = v -> {
+            setResult(Activity.RESULT_CANCELED);
+            finish();
+        };
+        contentBinding.btCancel.setOnClickListener(cancelClickListener);
+        contentBinding.btClose.setOnClickListener(cancelClickListener);
+        contentBinding.btCloseDetails.setOnClickListener(cancelClickListener);
 
-                //Visibilidad
-                cancelAddLayout.setVisibility(View.GONE);
-                saveChanguesLayout.setVisibility(View.VISIBLE);
-                fabContainer.setVisibility(View.GONE);
-                buttonCloseDetails.setVisibility(View.GONE);
+        // Delete Button Click Listener
+        contentBinding.deleteFab.setOnClickListener(v -> {
+            Intent data = new Intent();
+            data.putExtra(DETAILS_TRANSACTION, transactionDetails);
+            data.putExtra(MODE, MODE_DELETE);
+            setResult(Activity.RESULT_OK, data);
+            finish();
+        });
+
+        // Edit Button Click Listener
+        contentBinding.editFab.setOnClickListener(v -> {
+            enableEditFields();
+            setVisibility();
+        });
+
+        // Save Changes Button Click Listener
+        contentBinding.btSaveChangues.setOnClickListener(v -> {
+            Transaction transaction = validateTransactionData();
+            if (transaction != null) {
+                Intent data = new Intent();
+                data.putExtra(NEW_MODIFIED_TRANSACTION, transaction);
+                data.putExtra(OLD_MODIFIED_TRANSACTION, transactionDetails);
+                data.putExtra(MODE, MODE_MODIFY);
+                setResult(Activity.RESULT_OK, data);
+                finish();
             }
         });
 
-        buttonSaveChangues.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Transaction transaction = validateTransactionData();
-                if (transaction != null) {
-                    Intent data = new Intent();
-                    data.putExtra(NEW_MODIFIED_TRANSACTION, transaction);
-                    data.putExtra(OLD_MODIFIED_TRANSACTION, transactionDetails);
-                    data.putExtra(MODE, MODE_MODIFY);
-                    setResult(Activity.RESULT_OK, data);
-                    finish();
-                }
-            }
-        });
-
-        fabEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setVisibility();
-                setAnimation();
-                clicked = !clicked;
-            }
+        // Primary Fab Button Click Listener
+        contentBinding.primaryFab.setOnClickListener(v -> {
+            setVisibility();
+            setAnimation();
+            clicked = !clicked;
         });
     }
 
+    private void enableEditFields() {
+        contentBinding.etExpenseTitle.setEnabled(true);
+        contentBinding.etExpenseQuantity.setEnabled(true);
+        contentBinding.rbGasto.setEnabled(true);
+        contentBinding.rbIngreso.setEnabled(true);
+        contentBinding.autocompleteCategory.setEnabled(true);
+        contentBinding.autocompleteCategory.setFocusableInTouchMode(true);
+        contentBinding.etExpenseDate.setEnabled(true);
+        contentBinding.etDescription.setEnabled(true);
+        loadCategories();
+        contentBinding.etExpenseTitle.requestFocus();
+
+        // Visibility
+        contentBinding.cancelAddLayout.setVisibility(View.GONE);
+        contentBinding.saveChanguesLayout.setVisibility(View.VISIBLE);
+        contentBinding.fabContainer.setVisibility(View.GONE);
+        contentBinding.btCloseDetails.setVisibility(View.GONE);
+    }
+
     private void setVisibility() {
-        if (!clicked) {
-            buttonEdit.setVisibility(View.VISIBLE);
-            buttonDelete.setVisibility(View.VISIBLE);
-        } else {
-            buttonEdit.setVisibility(View.GONE);
-            buttonDelete.setVisibility(View.GONE);
-        }
+        int visibility = clicked ? View.GONE : View.VISIBLE;
+        contentBinding.editFab.setVisibility(visibility);
+        contentBinding.deleteFab.setVisibility(visibility);
     }
 
     private void setAnimation() {
         if (!clicked) {
-            buttonEdit.startAnimation(fromBottom);
-            buttonDelete.startAnimation(fromBottom);
-            fabEdit.setAnimation(rotateOpen);
+            contentBinding.editFab.startAnimation(fromBottom);
+            contentBinding.deleteFab.startAnimation(fromBottom);
+            contentBinding.primaryFab.setAnimation(rotateOpen);
         } else {
-            buttonEdit.startAnimation(toBottom);
-            buttonDelete.startAnimation(toBottom);
-            fabEdit.setAnimation(rotateClose);
+            contentBinding.editFab.startAnimation(toBottom);
+            contentBinding.deleteFab.startAnimation(toBottom);
+            contentBinding.primaryFab.setAnimation(rotateClose);
         }
     }
 
     private void showAddMode() {
-        //Visibilidad
-        cancelAddLayout.setVisibility(View.VISIBLE);
-        saveChanguesLayout.setVisibility(View.GONE);
-        fabContainer.setVisibility(View.GONE);
-        buttonCloseDetails.setVisibility(View.GONE);
+        // Visibility
+        contentBinding.cancelAddLayout.setVisibility(View.VISIBLE);
+        contentBinding.saveChanguesLayout.setVisibility(View.GONE);
+        contentBinding.fabContainer.setVisibility(View.GONE);
+        contentBinding.btCloseDetails.setVisibility(View.GONE);
     }
 
     private void showDetailsMode(Transaction transaction) {
-        //Visibilidad
-        cancelAddLayout.setVisibility(View.GONE);
-        saveChanguesLayout.setVisibility(View.GONE);
-        fabContainer.setVisibility(View.VISIBLE);
-        buttonCloseDetails.setVisibility(View.VISIBLE);
+        // Visibility
+        contentBinding.cancelAddLayout.setVisibility(View.GONE);
+        contentBinding.saveChanguesLayout.setVisibility(View.GONE);
+        contentBinding.fabContainer.setVisibility(View.VISIBLE);
+        contentBinding.btCloseDetails.setVisibility(View.VISIBLE);
 
-        //Añadir datos
-        etTitle.setText(transaction.getName());
-        etValue.setText(String.valueOf(transaction.getValue()));
+        // Add data
+        contentBinding.etExpenseTitle.setText(transaction.getName());
+        contentBinding.etExpenseQuantity.setText(String.valueOf(transaction.getValue()));
         if (transaction.isExpense()) {
-            rbExpense.setChecked(true);
-            rbIncome.setChecked(false);
+            contentBinding.rbGasto.setChecked(true);
+            contentBinding.rbIngreso.setChecked(false);
         } else {
-            rbExpense.setChecked(false);
-            rbIncome.setChecked(true);
+            contentBinding.rbGasto.setChecked(false);
+            contentBinding.rbIngreso.setChecked(true);
         }
-        autocompleteCategory.setText(categoryAdapter.getItem(Category.getIndex(transaction.getCategory())));
-        etDate.setText(sdf.format(transaction.getDate()));
-        etDescription.setText(transaction.getDescription());
+        contentBinding.autocompleteCategory.setText(categoryAdapter.getItem(Category.getIndex(transaction.getCategory())));
+        contentBinding.etExpenseDate.setText(sdf.format(transaction.getDate()));
+        contentBinding.etDescription.setText(transaction.getDescription());
 
-        //Que no se puedan modificar
-        etTitle.setEnabled(false);
-        etValue.setEnabled(false);
-        rbExpense.setEnabled(false);
-        rbIncome.setEnabled(false);
-        rbExpense.setEnabled(false);
-        autocompleteCategory.setEnabled(false);
-        autocompleteCategory.setFocusableInTouchMode(false);
-        etDate.setEnabled(false);
-        etDescription.setEnabled(false);
+        // Disable modification
+        disableEditFields();
+    }
+
+    private void disableEditFields() {
+        contentBinding.etExpenseTitle.setEnabled(false);
+        contentBinding.etExpenseQuantity.setEnabled(false);
+        contentBinding.rbGasto.setEnabled(false);
+        contentBinding.rbIngreso.setEnabled(false);
+        contentBinding.autocompleteCategory.setEnabled(false);
+        contentBinding.autocompleteCategory.setFocusableInTouchMode(false);
+        contentBinding.etExpenseDate.setEnabled(false);
+        contentBinding.etDescription.setEnabled(false);
     }
 
     private void initializeVariables() {
-        //Layouts
-        cancelAddLayout = findViewById(R.id.cancelAddLayout);
-        saveChanguesLayout = findViewById(R.id.saveChanguesLayout);
-        fabContainer = findViewById(R.id.fabContainer);
-
-        //Animaciones FAB
+        // FAB Animations
         rotateOpen = AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim);
         rotateClose = AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim);
         fromBottom = AnimationUtils.loadAnimation(this, R.anim.from_bottom_anim);
         toBottom = AnimationUtils.loadAnimation(this, R.anim.to_bottom_anim);
 
-        //Botones
-        buttonCancel = findViewById(R.id.btCancel);
-        buttonClose = findViewById(R.id.btClose);
-        buttonAdd = findViewById(R.id.btAdd);
-        buttonSaveChangues = findViewById(R.id.btSaveChangues);
-        fabEdit = findViewById(R.id.primary_fab);
-        buttonEdit = findViewById(R.id.edit_fab);
-        buttonDelete = findViewById(R.id.delete_fab);
-        buttonCloseDetails = findViewById(R.id.btClose_details);
-
-        //EditText
-        etTitle = findViewById(R.id.etExpenseTitle);
-        etTitleLayout = findViewById(R.id.outlinedTextFieldTitle);
-        etValue = findViewById(R.id.etExpenseQuantity);
-        etValueLayout = findViewById(R.id.outlinedTextFieldQuantity);
-        etDate = findViewById(R.id.etExpenseDate);
-        etDateLayout = findViewById(R.id.datePickerLayout);
-        etDescription = findViewById(R.id.etDescription);
-
-        //Radio buttons
-        rbExpense = findViewById(R.id.rb_gasto);
-        rbIncome = findViewById(R.id.rb_ingreso);
-
-        //Date
+        // Date
         sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        etDate.setText(sdf.format(new Date()));
-        etDate.addTextChangedListener(new ValidationTextWatcher(etDateLayout));
-        etDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                validateFocusField(etDateLayout, hasFocus);
-            }
-        });
+        contentBinding.etExpenseDate.setText(sdf.format(new Date()));
+        contentBinding.etExpenseDate.addTextChangedListener(new ValidationTextWatcher(contentBinding.datePickerLayout));
+        contentBinding.etExpenseDate.setOnFocusChangeListener((view, hasFocus) ->
+                validateFocusField(contentBinding.datePickerLayout, hasFocus));
 
-        //Titulo
-        etTitle.addTextChangedListener(new ValidationTextWatcher(etTitleLayout));
-        etTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                validateFocusField(etTitleLayout, hasFocus);
-            }
-        });
+        // Title
+        contentBinding.etExpenseTitle.addTextChangedListener(new ValidationTextWatcher(contentBinding.outlinedTextFieldTitle));
+        contentBinding.etExpenseTitle.setOnFocusChangeListener((view, hasFocus) ->
+                validateFocusField(contentBinding.outlinedTextFieldTitle, hasFocus));
 
-        //Cantidad
-        etValue.addTextChangedListener(new ValidationTextWatcher(etValueLayout));
-        etValue.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                validateFocusField(etValueLayout, hasFocus);
-            }
-        });
+        // Quantity
+        contentBinding.etExpenseQuantity.addTextChangedListener(new ValidationTextWatcher(contentBinding.outlinedTextFieldQuantity));
+        contentBinding.etExpenseQuantity.setOnFocusChangeListener((view, hasFocus) ->
+                validateFocusField(contentBinding.outlinedTextFieldQuantity, hasFocus));
 
-        //Categorías
+        // Categories
         loadCategories();
-
-//        // Experimento fallido, lo dejo por aqui para acordarnos de volver a intentar implementarlo en un futuro
-//        MaterialDatePicker datePicker =
-//                MaterialDatePicker.Builder.datePicker()
-//                        .setTitleText("Select transaction date")
-//                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-//                        .setInputMode(MaterialDatePicker.INPUT_MODE_TEXT)
-//                        .build();
-//        datePicker.show(supportFragmentManager, "tag");
     }
 
     private void loadCategories() {
         categories = Category.enumToStringArray();
         categoryAdapter = new ArrayAdapter<>(this, R.layout.list_item, categories);
-        autocompleteCategory = findViewById(R.id.autocompleteCategory);
-        autocompleteCategory.setAdapter(categoryAdapter);
-        autocompleteCategoryLayout = findViewById(R.id.menuCategory);
+        contentBinding.autocompleteCategory.setAdapter(categoryAdapter);
 
-        autocompleteCategory.addTextChangedListener(new ValidationTextWatcher(autocompleteCategoryLayout));
-        autocompleteCategory.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                validateFocusField(autocompleteCategoryLayout, hasFocus);
-            }
-        });
+        contentBinding.autocompleteCategory.addTextChangedListener(new ValidationTextWatcher(contentBinding.menuCategory));
+        contentBinding.autocompleteCategory.setOnFocusChangeListener((view, hasFocus) ->
+                validateFocusField(contentBinding.menuCategory, hasFocus));
     }
 
     private boolean validateFocusField(TextInputLayout component, boolean hasFocus) {
@@ -342,24 +274,24 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     private Transaction validateTransactionData() {
-        String name = validateTextField(etTitleLayout);
+        String name = validateTextField(contentBinding.outlinedTextFieldTitle);
         if (name == null) return null;
 
-        String txValue = validateTextField(etValueLayout);
+        String txValue = validateTextField(contentBinding.outlinedTextFieldQuantity);
         if (txValue == null) return null;
         double value = Double.parseDouble(txValue);
         value = Math.round(value * 100.0) / 100.0; // Redondeo a 2 decimales
 
-        boolean isExpense = rbExpense.isChecked();
+        boolean isExpense = contentBinding.rbGasto.isChecked();
 
-        String txCategory = validateTextField(autocompleteCategoryLayout);
+        String txCategory = validateTextField(contentBinding.menuCategory);
         if (txCategory == null) return null;
         Category cat = Category.valueOf(txCategory);
 
         Date date = validateDate();
         if (date == null) return null;
 
-        String description = etDescription.getText().toString();
+        String description = contentBinding.etDescription.getText().toString();
 
         Transaction transaction = new Transaction(isExpense, name, value, cat, date, description);
         return transaction;
@@ -380,10 +312,10 @@ public class AddTransaction extends AppCompatActivity {
         sdf.setLenient(false);
         Date date;
         try {
-            date = sdf.parse(etDate.getText().toString());
+            date = sdf.parse(contentBinding.etExpenseDate.getText().toString());
         } catch (ParseException e) {
-            etDateLayout.setError(getResources().getString(R.string.errFechaInvalida));
-            etDate.requestFocus();
+            contentBinding.datePickerLayout.setError(getResources().getString(R.string.errFechaInvalida));
+            contentBinding.etExpenseDate.requestFocus();
             return null;
         }
         return date;
