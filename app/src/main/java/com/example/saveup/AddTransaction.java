@@ -27,7 +27,7 @@ import java.util.Locale;
 public class AddTransaction extends AppCompatActivity {
 
     // Constants
-    public static final String CREATED_EXPENSE = "created_expense";
+    public static final String CREATED_TRANSACTION = "created_transaction";
     public static final String DETAILS_TRANSACTION = "details_transaction";
     public static final String OLD_MODIFIED_TRANSACTION = "old_modified_transaction";
     public static final String NEW_MODIFIED_TRANSACTION = "new_modified_transaction";
@@ -90,7 +90,7 @@ public class AddTransaction extends AppCompatActivity {
             Transaction transaction = validateTransactionData();
             if (transaction != null) {
                 Intent data = new Intent();
-                data.putExtra(CREATED_EXPENSE, transaction);
+                data.putExtra(CREATED_TRANSACTION, transaction);
                 data.putExtra(MODE, MODE_ADD);
                 setResult(Activity.RESULT_OK, data);
                 finish();
@@ -143,16 +143,16 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     private void enableEditFields() {
-        contentBinding.etExpenseTitle.setEnabled(true);
-        contentBinding.etExpenseQuantity.setEnabled(true);
-        contentBinding.rbGasto.setEnabled(true);
-        contentBinding.rbIngreso.setEnabled(true);
+        contentBinding.etTransactionTitle.setEnabled(true);
+        contentBinding.etTransactionQuantity.setEnabled(true);
+        contentBinding.rbExpense.setEnabled(true);
+        contentBinding.rbIncome.setEnabled(true);
         contentBinding.autocompleteCategory.setEnabled(true);
         contentBinding.autocompleteCategory.setFocusableInTouchMode(true);
-        contentBinding.etExpenseDate.setEnabled(true);
+        contentBinding.etTransactionDate.setEnabled(true);
         contentBinding.etDescription.setEnabled(true);
         loadCategories();
-        contentBinding.etExpenseTitle.requestFocus();
+        contentBinding.etTransactionTitle.requestFocus();
 
         // Visibility
         contentBinding.cancelAddLayout.setVisibility(View.GONE);
@@ -195,17 +195,17 @@ public class AddTransaction extends AppCompatActivity {
         contentBinding.btCloseDetails.setVisibility(View.VISIBLE);
 
         // Add data
-        contentBinding.etExpenseTitle.setText(transaction.getName());
-        contentBinding.etExpenseQuantity.setText(String.valueOf(transaction.getValue()));
+        contentBinding.etTransactionTitle.setText(transaction.getName());
+        contentBinding.etTransactionQuantity.setText(String.valueOf(transaction.getValue()));
         if (transaction.isExpense()) {
-            contentBinding.rbGasto.setChecked(true);
-            contentBinding.rbIngreso.setChecked(false);
+            contentBinding.rbExpense.setChecked(true);
+            contentBinding.rbIncome.setChecked(false);
         } else {
-            contentBinding.rbGasto.setChecked(false);
-            contentBinding.rbIngreso.setChecked(true);
+            contentBinding.rbExpense.setChecked(false);
+            contentBinding.rbIncome.setChecked(true);
         }
         contentBinding.autocompleteCategory.setText(categoryAdapter.getItem(Category.getIndex(transaction.getCategory())));
-        contentBinding.etExpenseDate.setText(sdf.format(transaction.getDate()));
+        contentBinding.etTransactionDate.setText(sdf.format(transaction.getDate()));
         contentBinding.etDescription.setText(transaction.getDescription());
 
         // Disable modification
@@ -213,13 +213,13 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     private void disableEditFields() {
-        contentBinding.etExpenseTitle.setEnabled(false);
-        contentBinding.etExpenseQuantity.setEnabled(false);
-        contentBinding.rbGasto.setEnabled(false);
-        contentBinding.rbIngreso.setEnabled(false);
+        contentBinding.etTransactionTitle.setEnabled(false);
+        contentBinding.etTransactionQuantity.setEnabled(false);
+        contentBinding.rbExpense.setEnabled(false);
+        contentBinding.rbIncome.setEnabled(false);
         contentBinding.autocompleteCategory.setEnabled(false);
         contentBinding.autocompleteCategory.setFocusableInTouchMode(false);
-        contentBinding.etExpenseDate.setEnabled(false);
+        contentBinding.etTransactionDate.setEnabled(false);
         contentBinding.etDescription.setEnabled(false);
     }
 
@@ -232,19 +232,19 @@ public class AddTransaction extends AppCompatActivity {
 
         // Date
         sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        contentBinding.etExpenseDate.setText(sdf.format(new Date()));
-        contentBinding.etExpenseDate.addTextChangedListener(new ValidationTextWatcher(contentBinding.datePickerLayout));
-        contentBinding.etExpenseDate.setOnFocusChangeListener((view, hasFocus) ->
+        contentBinding.etTransactionDate.setText(sdf.format(new Date()));
+        contentBinding.etTransactionDate.addTextChangedListener(new ValidationTextWatcher(contentBinding.datePickerLayout));
+        contentBinding.etTransactionDate.setOnFocusChangeListener((view, hasFocus) ->
                 validateFocusField(contentBinding.datePickerLayout, hasFocus));
 
         // Title
-        contentBinding.etExpenseTitle.addTextChangedListener(new ValidationTextWatcher(contentBinding.outlinedTextFieldTitle));
-        contentBinding.etExpenseTitle.setOnFocusChangeListener((view, hasFocus) ->
+        contentBinding.etTransactionTitle.addTextChangedListener(new ValidationTextWatcher(contentBinding.outlinedTextFieldTitle));
+        contentBinding.etTransactionTitle.setOnFocusChangeListener((view, hasFocus) ->
                 validateFocusField(contentBinding.outlinedTextFieldTitle, hasFocus));
 
         // Quantity
-        contentBinding.etExpenseQuantity.addTextChangedListener(new ValidationTextWatcher(contentBinding.outlinedTextFieldQuantity));
-        contentBinding.etExpenseQuantity.setOnFocusChangeListener((view, hasFocus) ->
+        contentBinding.etTransactionQuantity.addTextChangedListener(new ValidationTextWatcher(contentBinding.outlinedTextFieldQuantity));
+        contentBinding.etTransactionQuantity.setOnFocusChangeListener((view, hasFocus) ->
                 validateFocusField(contentBinding.outlinedTextFieldQuantity, hasFocus));
 
         // Categories
@@ -282,7 +282,7 @@ public class AddTransaction extends AppCompatActivity {
         double value = Double.parseDouble(txValue);
         value = Math.round(value * 100.0) / 100.0; // Redondeo a 2 decimales
 
-        boolean isExpense = contentBinding.rbGasto.isChecked();
+        boolean isExpense = contentBinding.rbExpense.isChecked();
 
         String txCategory = validateTextField(contentBinding.menuCategory);
         if (txCategory == null) return null;
@@ -312,10 +312,10 @@ public class AddTransaction extends AppCompatActivity {
         sdf.setLenient(false);
         Date date;
         try {
-            date = sdf.parse(contentBinding.etExpenseDate.getText().toString());
+            date = sdf.parse(contentBinding.etTransactionDate.getText().toString());
         } catch (ParseException e) {
             contentBinding.datePickerLayout.setError(getResources().getString(R.string.errFechaInvalida));
-            contentBinding.etExpenseDate.requestFocus();
+            contentBinding.etTransactionDate.requestFocus();
             return null;
         }
         return date;

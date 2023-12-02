@@ -25,10 +25,10 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/labelExpenseTitle">
+                android:hint="@string/labelTransactionTitle">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etExpenseTitle"
+                    android:id="@+id/etTransactionTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true" />
@@ -40,11 +40,11 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/labelExpenseQuantity"
+                android:hint="@string/labelTransactionQuantity"
                 app:suffixText="@string/euroSymbol">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etExpenseQuantity"
+                    android:id="@+id/etTransactionQuantity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal" />
@@ -54,18 +54,18 @@
                 android:id="@+id/radioGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checkedButton="@+id/rb_gasto"
+                android:checkedButton="@+id/rbExpense"
                 android:orientation="horizontal">
 
                 <RadioButton
-                    android:id="@+id/rb_gasto"
+                    android:id="@+id/rbExpense"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="@string/expense" />
 
                 <RadioButton
-                    android:id="@+id/rb_ingreso"
+                    android:id="@+id/rbIncome"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -77,7 +77,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/labelExpenseCategory">
+                android:hint="@string/labelTransactionCategory">
 
                 <AutoCompleteTextView
                     android:id="@+id/autocompleteCategory"
@@ -92,10 +92,10 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/labelExpenseDate">
+                android:hint="@string/labelTransactionDate">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etExpenseDate"
+                    android:id="@+id/etTransactionDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@android:drawable/ic_menu_my_calendar"
@@ -109,7 +109,7 @@
                 tools:showIn="@layout/activity_add_transaction">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tfExpenseDescription"
+                android:id="@+id/tfTransactionDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -118,7 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="245dp"
                     android:gravity="start"
-                    android:hint="@string/labelExpenseDescription" />
+                    android:hint="@string/labelTransactionDescription" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -135,12 +135,12 @@
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/tfExpenseDescription"
-                    app:layout_constraintTop_toBottomOf="@+id/tfExpenseDescription">
+                    app:layout_constraintEnd_toEndOf="@+id/tfTransactionDescription"
+                    app:layout_constraintTop_toBottomOf="@+id/tfTransactionDescription">
 
                     <!-- FAB 1 -->
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/primary_fab"
+                        android:id="@+id/primaryFab"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
@@ -153,7 +153,7 @@
 
                     <!-- FAB 2 -->
                     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                        android:id="@+id/edit_fab"
+                        android:id="@+id/editFab"
                         android:layout_width="124dp"
                         android:layout_height="52dp"
                         android:layout_marginBottom="16dp"
@@ -162,12 +162,12 @@
                         android:visibility="gone"
                         app:icon="@android:drawable/ic_menu_edit"
                         app:iconSize="24dp"
-                        app:layout_constraintBottom_toTopOf="@+id/primary_fab"
-                        app:layout_constraintEnd_toEndOf="@+id/primary_fab" />
+                        app:layout_constraintBottom_toTopOf="@+id/primaryFab"
+                        app:layout_constraintEnd_toEndOf="@+id/primaryFab" />
 
                     <!-- FAB 3 -->
                     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                        android:id="@+id/delete_fab"
+                        android:id="@+id/deleteFab"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
@@ -176,8 +176,8 @@
                         android:visibility="gone"
                         app:icon="@android:drawable/ic_menu_delete"
                         app:iconSize="24dp"
-                        app:layout_constraintBottom_toTopOf="@+id/edit_fab"
-                        app:layout_constraintEnd_toEndOf="@+id/edit_fab" />
+                        app:layout_constraintBottom_toTopOf="@+id/editFab"
+                        app:layout_constraintEnd_toEndOf="@+id/editFab" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
