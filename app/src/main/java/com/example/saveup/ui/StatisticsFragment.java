@@ -1,5 +1,6 @@
 package com.example.saveup.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -16,8 +17,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ToggleButton;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.saveup.AddTransaction;
+import com.example.saveup.MonthlyLimit;
 import com.example.saveup.R;
 import com.example.saveup.model.Account;
 import com.example.saveup.model.Category;
@@ -68,6 +72,10 @@ import java.util.stream.IntStream;
  */
 public class StatisticsFragment extends Fragment {
 
+    public static final String ACTIVITY_MODE = "activity_mode";
+    public static final int INTENT_LIMITS = 1;
+    public static final int MODE_LIMIT = 1;
+    public static final int MODE_GOAL = 2;
     private static final String ACCOUNT = "Account";
     private Account account;
     private View root;
@@ -77,6 +85,8 @@ public class StatisticsFragment extends Fragment {
     private int yearToShow;
     private FloatingActionButton shareFab;
 
+    private FloatingActionButton configurationFab;
+
     private LineChart lineChart;
     private PieChart pieChart;
 
@@ -85,8 +95,6 @@ public class StatisticsFragment extends Fragment {
     private ArrayAdapter<Integer> yearsAdapter;
 
     private AutoCompleteTextView autocompleteYear;
-
-    private TextInputLayout autocompleteYearLayout;
 
     private double totalBalance;
 
@@ -107,10 +115,14 @@ public class StatisticsFragment extends Fragment {
     }
 
     private void initializeVariables() {
+        // Gráficos
+        lineChart = root.findViewById(R.id.lineChart);
+        pieChart = root.findViewById(R.id.pieChart);
+
+        // Botones de filtros
         buttonFilterExpense = root.findViewById(R.id.selectExpense);
         buttonFilterIncome = root.findViewById(R.id.selectIncome);
 
-        System.out.println(buttonFilterExpense);
         buttonFilterExpense.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,10 +138,7 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
-
-        lineChart = root.findViewById(R.id.lineChart);
-        pieChart = root.findViewById(R.id.pieChart);
-
+        // Botones FAB
         shareFab = root.findViewById(R.id.shareFab);
         shareFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,19 +147,24 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
+        configurationFab = root.findViewById(R.id.primary_fab_conf);
+        configurationFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pasarALimitesMensuales();
+            }
+        });
+
+        // Filtro de años
         years = IntStream.range(1899, new Date().getYear() + 1900 + 1).boxed().sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
 
         yearToShow = years.get(0);
 
-        createLineChart();
-        createPieChart();
-
         yearsAdapter = new ArrayAdapter<>(this.getContext(), R.layout.list_item, years);
         autocompleteYear = root.findViewById(R.id.autocompleteYear);
         autocompleteYear.setAdapter(yearsAdapter);
         autocompleteYear.setText(yearsAdapter.getItem(0).toString(), false);
-        autocompleteYearLayout = root.findViewById(R.id.menuCategory);
 
         autocompleteYear.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -160,6 +174,10 @@ public class StatisticsFragment extends Fragment {
                 createPieChart();
             }
         });
+
+        // Creación de los gráficos
+        createLineChart();
+        createPieChart();
     }
 
     private void createLineChart() {
@@ -339,6 +357,41 @@ public class StatisticsFragment extends Fragment {
 
         startActivity(shareIntent);
     }
+
+    private void pasarALimitesMensuales() {
+        Intent intentMonthlyLimits = new Intent(getActivity(), MonthlyLimit.class);
+        intentMonthlyLimits.putExtra(ACTIVITY_MODE, MODE_LIMIT);
+        startActivityForResult(intentMonthlyLimits, INTENT_LIMITS);
+    }
+
+    /*
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(resultCode, resultCode, data);
+        if (requestCode == INTENT_ADD_TRANSACTION) {
+            if (resultCode == Activity.RESULT_OK) {
+                int mode = data.getIntExtra(AddTransaction.MODE, 0);
+                if (mode == AddTransaction.MODE_ADD) {
+                    Transaction transactionAdd = data.getParcelableExtra(AddTransaction.CREATED_EXPENSE);
+                    account.addTransaction(transactionAdd);
+                } else if (mode == AddTransaction.MODE_DELETE) {
+                    Transaction transactionRemove = data.getParcelableExtra(AddTransaction.DETAILS_TRANSACTION);
+                    account.removeTransaction(transactionRemove);
+                } else if (mode == AddTransaction.MODE_MODIFY) {
+                    Transaction transactionOld = data.getParcelableExtra(AddTransaction.OLD_MODIFIED_TRANSACTION);
+                    Transaction transactionNew = data.getParcelableExtra(AddTransaction.NEW_MODIFIED_TRANSACTION);
+                    account.modifyTransaction(transactionOld, transactionNew);
+                }
+
+
+                etBalance.setText(account.getStrBalance());
+//                ((TransactionsListAdapter) transactionsListView.getAdapter()).updateData(TransactionsListAdapter.APPEND);
+                ltAdapter.setTransactionsList(
+                        account.getFilteredTransactionsList(appliedFilter));
+                updateColor();
+            }
+        }
+    }*/
 
     private Bitmap getBitmapGraph() {
 

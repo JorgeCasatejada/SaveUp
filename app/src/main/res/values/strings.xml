@@ -37,6 +37,8 @@
     <string name="txDelete">Eliminar</string>
     <string name="txSave">Guardar</string>
     <string name="txClose">Cerrar</string>
+    <string name="txLimits">Límites</string>
+    <string name="txGoal">Metas</string>
     <string name="fab_cd">Editar o eliminar transacción</string>
     <string name="welcomeTo">Bienvenido a</string>
     <string name="login">Login</string>
