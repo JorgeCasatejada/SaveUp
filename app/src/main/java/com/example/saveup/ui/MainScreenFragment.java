@@ -25,9 +25,9 @@ public class MainScreenFragment extends Fragment {
     // Constants for intent extras
     public static final String TRANSACTION_DETAILS = "transaction_details";
     public static final String ACTIVITY_MODE = "activity_mode";
+    public static final int INTENT_ADD_TRANSACTION = 1;
     private static final int MODE_ADD = 1;
     private static final int MODE_DETAILS = 2;
-    public static final int INTENT_ADD_TRANSACTION = 1;
     private static final String ACCOUNT = "Account";
 
     // View binding
@@ -66,14 +66,13 @@ public class MainScreenFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the fragment layout using View Binding
         binding = FragmentMainScreenBinding.inflate(inflater, container, false);
-        View view = binding.getRoot();
 
         initializeUI();
         setUpRecyclerView();
         setClickListeners();
         updateColor();
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override

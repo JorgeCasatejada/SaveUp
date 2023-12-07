@@ -66,8 +66,7 @@ public class AddTransaction extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityAddTransactionBinding.inflate(getLayoutInflater());
         contentBinding = binding.contentScrolling;
-        View view = binding.getRoot();
-        setContentView(view);
+        setContentView(binding.getRoot());
 
         initializeVariables();
 
@@ -143,14 +142,8 @@ public class AddTransaction extends AppCompatActivity {
     }
 
     private void enableEditFields() {
-        contentBinding.etTransactionTitle.setEnabled(true);
-        contentBinding.etTransactionQuantity.setEnabled(true);
-        contentBinding.rbExpense.setEnabled(true);
-        contentBinding.rbIncome.setEnabled(true);
-        contentBinding.autocompleteCategory.setEnabled(true);
-        contentBinding.autocompleteCategory.setFocusableInTouchMode(true);
-        contentBinding.etTransactionDate.setEnabled(true);
-        contentBinding.etDescription.setEnabled(true);
+        // Enable modification
+        setEnabledEditFields(true);
         loadCategories();
         contentBinding.etTransactionTitle.requestFocus();
 
@@ -197,30 +190,27 @@ public class AddTransaction extends AppCompatActivity {
         // Add data
         contentBinding.etTransactionTitle.setText(transaction.getName());
         contentBinding.etTransactionQuantity.setText(String.valueOf(transaction.getValue()));
-        if (transaction.isExpense()) {
-            contentBinding.rbExpense.setChecked(true);
-            contentBinding.rbIncome.setChecked(false);
-        } else {
-            contentBinding.rbExpense.setChecked(false);
-            contentBinding.rbIncome.setChecked(true);
-        }
+
+        contentBinding.rbExpense.setChecked(transaction.isExpense());
+        contentBinding.rbIncome.setChecked(!transaction.isExpense());
+
         contentBinding.autocompleteCategory.setText(categoryAdapter.getItem(Category.getIndex(transaction.getCategory())));
         contentBinding.etTransactionDate.setText(sdf.format(transaction.getDate()));
         contentBinding.etDescription.setText(transaction.getDescription());
 
         // Disable modification
-        disableEditFields();
+        setEnabledEditFields(false);
     }
 
-    private void disableEditFields() {
-        contentBinding.etTransactionTitle.setEnabled(false);
-        contentBinding.etTransactionQuantity.setEnabled(false);
-        contentBinding.rbExpense.setEnabled(false);
-        contentBinding.rbIncome.setEnabled(false);
-        contentBinding.autocompleteCategory.setEnabled(false);
-        contentBinding.autocompleteCategory.setFocusableInTouchMode(false);
-        contentBinding.etTransactionDate.setEnabled(false);
-        contentBinding.etDescription.setEnabled(false);
+    private void setEnabledEditFields(boolean state) {
+        contentBinding.etTransactionTitle.setEnabled(state);
+        contentBinding.etTransactionQuantity.setEnabled(state);
+        contentBinding.rbExpense.setEnabled(state);
+        contentBinding.rbIncome.setEnabled(state);
+        contentBinding.autocompleteCategory.setEnabled(state);
+        contentBinding.autocompleteCategory.setFocusableInTouchMode(state);
+        contentBinding.etTransactionDate.setEnabled(state);
+        contentBinding.etDescription.setEnabled(state);
     }
 
     private void initializeVariables() {
