@@ -5,11 +5,15 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Account implements Parcelable {
 
@@ -30,6 +34,10 @@ public class Account implements Parcelable {
     private String email;
     private String password;
     private double balance;
+    private final CollectionReference bd = FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+            .collection("transactions");
 
     public Account(String ID, String userName, String email, String password) {
         this.ID = ID;
@@ -106,19 +114,26 @@ public class Account implements Parcelable {
     }
 
     public void addTransaction(Transaction transaction) {
+        DocumentReference docRef = bd.document();
+        transaction.setTransactionID(docRef.getId());
         transactionManager.addTransaction(transaction);
         setBalance(transactionManager.getBalance());
+        docRef.set(transaction.toFirestore());
     }
 
     public void removeTransaction(Transaction transaction) {
         transactionManager.removeTransaction(transaction);
         setBalance(transactionManager.getBalance());
+        bd.document(transaction.getTransactionID()).delete();
     }
 
     public void modifyTransaction(Transaction transactionOld, Transaction transactionNew) {
-        removeTransaction(transactionOld);
-        addTransaction(transactionNew);
+        transactionNew.setTransactionID(transactionOld.getTransactionID());
+        transactionManager.removeTransaction(transactionOld);
+        transactionManager.addTransaction(transactionNew);
         setBalance(transactionManager.getBalance());
+        bd.document(transactionNew.getTransactionID())
+                .set(transactionNew.toFirestore());
     }
 
     public String getStrBalance() {

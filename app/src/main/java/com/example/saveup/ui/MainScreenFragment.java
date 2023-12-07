@@ -29,9 +29,9 @@ public class MainScreenFragment extends Fragment {
 
     public static final String TRANSACTION_DETAILS = "transaction_details";
     public static final String ACTIVITY_MODE = "activity_mode";
+    public static final int INTENT_ADD_TRANSACTION = 1;
     private static final int MODE_ADD = 1;
     private static final int MODE_DETAILS = 2;
-    public static final int INTENT_ADD_TRANSACTION = 1;
     private static final String ACCOUNT = "Account";
     private Account account;
     private View root;
@@ -76,7 +76,7 @@ public class MainScreenFragment extends Fragment {
 
     private void updateColor() {
         int color;
-        if (account.getBalance() > 0)
+        if (account.getBalance() >= 0)
             color = getResources().getColor(R.color.greenBalance);
         else
             color = getResources().getColor(R.color.redBalance);
@@ -155,7 +155,6 @@ public class MainScreenFragment extends Fragment {
 
 
                 etBalance.setText(account.getStrBalance());
-//                ((TransactionsListAdapter) transactionsListView.getAdapter()).updateData(TransactionsListAdapter.APPEND);
                 ltAdapter.setTransactionsList(
                         account.getFilteredTransactionsList(appliedFilter));
                 updateColor();
@@ -164,7 +163,7 @@ public class MainScreenFragment extends Fragment {
     }
 
     private void clickOnItem(Transaction transaction) {
-        //Mostar activity_add_transaction con 3 botones (cancelar, modificar, eliminar)
+        // Mostar activity_add_transaction con 3 botones (cancelar, modificar, eliminar)
         Intent intentAddTransaction = new Intent(getActivity(), AddTransaction.class);
         intentAddTransaction.putExtra(ACTIVITY_MODE, MODE_DETAILS);
         intentAddTransaction.putExtra(TRANSACTION_DETAILS, transaction);

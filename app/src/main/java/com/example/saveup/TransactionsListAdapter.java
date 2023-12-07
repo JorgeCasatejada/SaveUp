@@ -1,7 +1,6 @@
 package com.example.saveup;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +21,9 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
 
     public static final int APPEND = 0;
     public static final int CHANGE_TRANSACTION_LIST = 1;
-
-    private List<Transaction> transactionsList;
     private final OnItemClickListener listener;
-    private Context context;
+    private List<Transaction> transactionsList;
+    private final Context context;
 
     public TransactionsListAdapter(Context context, List<Transaction> transactionsList, OnItemClickListener listener) {
         this.transactionsList = transactionsList;
@@ -102,11 +100,7 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
             title.setText(cutString(transaction.getName(), 10));
             description.setText(cutString(transaction.getDescription(), 32));
             value.setText(String.format(Locale.getDefault(), "%.2f €", transaction.getSignedValue()));
-            if (transaction.getValue() < 0) {
-                recyclerLineLayout.setBackground(Drawable.createFromPath("@android:color/holo_red_light"));
-            } else {
-                recyclerLineLayout.setBackground(Drawable.createFromPath("@android:color/holo_green_light"));
-            }
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -119,7 +113,7 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
         private void updateColor(Context context, Transaction transaction) {
             int isExpense = context.getColor(R.color.redExpense);
             int isIncome = context.getColor(R.color.greenIncome);
-            if (transaction.isExpense()){
+            if (transaction.isExpense()) {
                 cardView.setCardBackgroundColor(isExpense);
             } else {
                 cardView.setCardBackgroundColor(isIncome);
