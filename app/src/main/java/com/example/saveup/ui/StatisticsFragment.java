@@ -239,15 +239,7 @@ public class StatisticsFragment extends Fragment {
             totalBalance += map.getOrDefault(key, 0.0);
         }
 
-        int[] colors = {
-                Color.parseColor("#488f31"),
-                Color.parseColor("#88a037"),
-                Color.parseColor("#c0af4a"),
-                Color.parseColor("#f4bd6a"),
-                Color.parseColor("#ef9556"),
-                Color.parseColor("#e56b4e"),
-                Color.parseColor("#de425b"),
-        };
+        int[] colors = getResources().getIntArray(R.array.pieChartColorsHexCode);
 
         PieDataSet pieDataSet = new PieDataSet(categories, getResources().getString(R.string.labelExpenseCategory));
         pieDataSet.setColors(colors);
