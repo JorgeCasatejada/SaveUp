@@ -91,48 +91,6 @@
         app:layout_constraintTop_toBottomOf="@+id/configItemsLayout"
         app:layout_constraintVertical_bias="0.0" />
 
-    <!-- FAB 1 -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/primary_fab_conf"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:contentDescription="configuración"
-        android:src="@drawable/baseline_settings_24"
-        app:elevation="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/shareFab"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.951"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.984" />
-
-    <!-- FAB 2 -->
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/limit_fab"
-        android:layout_width="124dp"
-        android:layout_height="52dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/txLimits"
-        android:visibility="gone"
-        app:icon="@drawable/baseline_calendar_month_24"
-        app:iconSize="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/primary_fab_conf"
-        app:layout_constraintEnd_toEndOf="@+id/primary_fab_conf" />
-
-    <!-- FAB 3 -->
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/goal_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/txGoal"
-        android:visibility="gone"
-        app:icon="@drawable/baseline_outlined_flag_24"
-        app:iconSize="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/limit_fab"
-        app:layout_constraintEnd_toEndOf="@+id/limit_fab" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/shareFab"
         android:layout_width="wrap_content"

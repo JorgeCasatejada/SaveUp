@@ -1,13 +1,10 @@
 package com.example.saveup.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Range;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +12,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ToggleButton;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.saveup.AddTransaction;
 import com.example.saveup.MonthlyLimit;
 import com.example.saveup.R;
 import com.example.saveup.model.Account;
@@ -42,26 +36,18 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.Year;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.IntUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -147,29 +133,24 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
-        configurationFab = root.findViewById(R.id.primary_fab_conf);
-        configurationFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pasarALimitesMensuales();
-            }
-        });
-
         // Filtro de años
         years = IntStream.range(1899, new Date().getYear() + 1900 + 1).boxed().sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
 
         yearToShow = years.get(0);
 
-        yearsAdapter = new ArrayAdapter<>(this.getContext(), R.layout.list_item, years);
+        yearsAdapter = new ArrayAdapter<>(this.requireContext(), R.layout.list_item, years);
         autocompleteYear = root.findViewById(R.id.autocompleteYear);
         autocompleteYear.setAdapter(yearsAdapter);
-        autocompleteYear.setText(yearsAdapter.getItem(0).toString(), false);
+        autocompleteYear.setText(String.format(Locale.getDefault(), "%04d", yearsAdapter.getItem(0)), false);
 
         autocompleteYear.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                yearToShow = yearsAdapter.getItem(position);
+                Object item = yearsAdapter.getItem(position);
+                if (item != null) {
+                    yearToShow = (int) item;
+                }
                 createLineChart();
                 createPieChart();
             }
@@ -181,8 +162,8 @@ public class StatisticsFragment extends Fragment {
     }
 
     private void createLineChart() {
-        String[] values = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                "Julio", "Agosto", "Septiempre", "Octubre", "Noviembre", "Diciembre"};
+
+        String[] values = getResources().getStringArray(R.array.months);
 
         Map<Integer, List<Transaction>> map = account.getGroupedTransactions(yearToShow);
 
@@ -193,7 +174,7 @@ public class StatisticsFragment extends Fragment {
         zeroLine.setLineWidth(2f);
 
         Description description = new Description();
-        description.setText("Ingresos / Gastos");
+        description.setText(getResources().getString(R.string.incomeExpense));
         description.setTextSize(15f);
         description.setPosition(550f, 100f);
         lineChart.setDescription(description);
@@ -218,6 +199,7 @@ public class StatisticsFragment extends Fragment {
         float minBalance = 0;
         for (int month = 0; month < 12; month++) {
             List<Transaction> transactions = map.getOrDefault(month, new ArrayList<>());
+            if (transactions == null) return;
             for (Transaction transaction : transactions) {
                 balance += transaction.getSignedValue();
                 if (balance < minBalance) minBalance = balance;
@@ -247,10 +229,7 @@ public class StatisticsFragment extends Fragment {
         ArrayList<PieEntry> categories = new ArrayList<>();
 
         Map<Category, Double> map = account.getCategories(yearToShow, showExpenses);
-        ArrayList<Category> categoriesToShow = new ArrayList<>();
-        for (Category category : map.keySet()) {
-            categoriesToShow.add(category);
-        }
+        ArrayList<Category> categoriesToShow = new ArrayList<>(map.keySet());
         map.keySet().forEach(category -> categories.add(
                 new PieEntry(Float.parseFloat(Objects.requireNonNull(map.get(category)).toString()),
                         category.toString())));
@@ -270,7 +249,7 @@ public class StatisticsFragment extends Fragment {
                 Color.parseColor("#de425b"),
         };
 
-        PieDataSet pieDataSet = new PieDataSet(categories, "Categorias");
+        PieDataSet pieDataSet = new PieDataSet(categories, getResources().getString(R.string.labelExpenseCategory));
         pieDataSet.setColors(colors);
         pieDataSet.setValueTextColor(Color.BLACK);
         pieDataSet.setValueTextSize(15f);
@@ -291,19 +270,29 @@ public class StatisticsFragment extends Fragment {
         pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-                pieChart.setCenterText(round(e.getY(), 2) + " €" + "\n" + categoriesToShow.get(pieDataSet.getEntryIndex(e)));
+                pieChart.setCenterText(
+                        getResources().getString(R.string.centerText,
+                                String.format(Locale.getDefault(), "%.2f", e.getY()),
+                                categoriesToShow.get(pieDataSet.getEntryIndex(e))));
+
             }
 
             @Override
             public void onNothingSelected() {
-                pieChart.setCenterText(round(totalBalance, 2) + " €" + "\n" + "TOTAL");
+                pieChart.setCenterText(
+                        getResources().getString(R.string.centerText,
+                        String.format(Locale.getDefault(), "%.2f", totalBalance),
+                        getResources().getString(R.string.total)));
             }
         });
 
         pieChart.setData(pieData);
         pieChart.getDescription().setEnabled(false);
-        pieChart.setCenterText(round(totalBalance, 2) + " €" + "\n" + "TOTAL");
-        pieChart.setCenterTextSize(15f);
+        pieChart.setCenterText(
+                getResources().getString(R.string.centerText,
+                        String.format(Locale.getDefault(), "%.2f", totalBalance),
+                        getResources().getString(R.string.total)));
+        pieChart.setCenterTextSize(14f);
         pieChart.setEntryLabelTextSize(0f);
         pieChart.setEntryLabelColor(Color.BLACK);
         pieChart.setHoleRadius(40f);
@@ -340,8 +329,7 @@ public class StatisticsFragment extends Fragment {
             }
 
             double value = transaction.getValue();
-            value = round(value, 2);
-            stringBuilder.append(value).append("€").append(" ").append("|").append(" ");
+            stringBuilder.append(String.format(Locale.getDefault(), "%.2f", value)).append("€").append(" ").append("|").append(" ");
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy",
                     Locale.getDefault());
@@ -421,12 +409,5 @@ public class StatisticsFragment extends Fragment {
         initializeVariables();
 
         return root;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-//        createLineChart(2023);
-//        createPieChart(2023, false);
     }
 }

@@ -54,4 +54,10 @@
     <string name="errMinLengthPassword">Tiene que tener al menos %1$d carácteres</string>
     <string name="infoLoggedOut">Se ha cerrado la sesión</string>
     <string name="infoLoggedIn">Se ha iniciado sesión</string>
+
+    <!-- estadísticas -->
+    <string name="incomeExpense">Ingresos / Gastos</string>
+    <string name="total">TOTAL</string>
+    <string name="centerText">%1$s € \n %2$s</string>
+
 </resources>
