@@ -1,64 +1,46 @@
-package com.example.saveup.ui
+package com.example.saveup.ui.statistics
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
-import androidx.fragment.app.Fragment
-import com.example.saveup.MonthlyLimit
 import com.example.saveup.R
-import com.example.saveup.databinding.FragmentStatisticsBinding
+import com.example.saveup.databinding.FragmentGraphsBinding
 import com.example.saveup.model.Account
-import com.example.saveup.model.Category
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Description
-import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.Objects
 import java.util.function.Consumer
 import java.util.stream.Collectors
 import java.util.stream.IntStream
+import com.example.saveup.model.Category
+import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.Objects
 
-/**
- * A simple [Fragment] subclass.
- * Use the [StatisticsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class StatisticsFragment : Fragment() {
-    private var _binding: FragmentStatisticsBinding? = null
+class GraphsFragment : Fragment() {
+    private var _binding: FragmentGraphsBinding? = null
     private val binding get() = _binding!!
 
     private var account: Account? = null
 
-    val ACTIVITY_MODE = "activity_mode"
-    val INTENT_LIMITS = 1
-    val MODE_LIMIT = 1
-    val MODE_GOAL = 2
     private val ACCOUNT = "Account"
 
     private var showExpenses = true
@@ -72,6 +54,17 @@ class StatisticsFragment : Fragment() {
         if (arguments != null) {
             account = requireArguments().getParcelable(ACCOUNT)
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentGraphsBinding.inflate(inflater, container, false)
+
+        initializeVariables()
+
+        return binding.root
     }
 
     private fun initializeVariables() {
@@ -217,7 +210,8 @@ class StatisticsFragment : Fragment() {
         legend.yEntrySpace = 5f
         legend.yOffset = 100f
         legend.isWordWrapEnabled = false
-        binding.graphs.pieChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+        binding.graphs.pieChart.setOnChartValueSelectedListener(object :
+            OnChartValueSelectedListener {
             override fun onValueSelected(e: Entry, h: Highlight) {
                 binding.graphs.pieChart.centerText = resources.getString(
                     R.string.centerText, String.format(
@@ -295,21 +289,6 @@ class StatisticsFragment : Fragment() {
         startActivity(shareIntent)
     }
 
-    private fun pasarALimitesMensuales() {
-        val intentMonthlyLimits = Intent(activity, MonthlyLimit::class.java)
-        intentMonthlyLimits.putExtra(ACTIVITY_MODE, MODE_LIMIT)
-        startActivityForResult(intentMonthlyLimits, INTENT_LIMITS)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
-        initializeVariables()
-        return binding.root
-    }
     private fun round(value: Double, places: Int): Double {
         require(places >= 0)
         var bd = BigDecimal.valueOf(value)
@@ -321,8 +300,8 @@ class StatisticsFragment : Fragment() {
         private const val ACCOUNT = "Account"
 
         @JvmStatic
-        fun newInstance(account: Account?): StatisticsFragment {
-            val fragment = StatisticsFragment()
+        fun newInstance(account: Account?): GraphsFragment {
+            val fragment = GraphsFragment()
             val args = Bundle()
             args.putParcelable(ACCOUNT, account)
             fragment.arguments = args

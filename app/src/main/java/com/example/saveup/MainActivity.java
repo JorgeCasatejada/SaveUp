@@ -14,7 +14,7 @@ import com.example.saveup.model.Transaction;
 import com.example.saveup.ui.GroupsFragment;
 import com.example.saveup.ui.MainScreenFragment;
 import com.example.saveup.ui.ProfileFragment;
-import com.example.saveup.ui.StatisticsFragment;
+import com.example.saveup.ui.statistics.StatisticsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;

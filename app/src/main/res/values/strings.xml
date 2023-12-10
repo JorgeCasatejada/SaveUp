@@ -19,11 +19,6 @@
     <string name="filterIncome">Ingresos</string>
     <string name="filterAll">Todo</string>
     <string name="filterExpense">Gastos</string>
-    <string name="mnItmProfile">Perfil</string>
-    <string name="mnItmStatistics">Estadísticas</string>
-    <string name="labelYear">Año</string>
-    <string name="mnItmBalance">Balance</string>
-    <string name="mnItmGroups">Grupos</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="user">Usuario</string>
@@ -54,6 +49,16 @@
     <string name="errMinLengthPassword">Tiene que tener al menos %1$d carácteres</string>
     <string name="infoLoggedOut">Se ha cerrado la sesión</string>
     <string name="infoLoggedIn">Se ha iniciado sesión</string>
+
+    <!-- menús -->
+    <string name="mnItmProfile">Perfil</string>
+    <string name="mnItmStatistics">Estadísticas</string>
+    <string name="labelYear">Año</string>
+    <string name="mnItmBalance">Balance</string>
+    <string name="mnItmGroups">Grupos</string>
+
+    <string name="mnItmGraphs">Gráficos</string>
+    <string name="mnItmLimits">Límites</string>
 
     <!-- estadísticas -->
     <string name="incomeExpense">Ingresos / Gastos</string>
