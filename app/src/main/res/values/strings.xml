@@ -59,4 +59,12 @@
     <string name="bt_create_group">Crear grupo</string>
     <string name="id_participant">Id del participante</string>
     <string name="add_participant">Añadir</string>
+    <string name="actual_budget">Presupuesto actual:</string>
+    <string name="initial_budget">Presupuesto inicial:</string>
+    <string name="add_expense">Añadir gasto</string>
+    <string name="participants">Participantes</string>
+    <string name="leave_group">Abandonar grupo</string>
+    <string name="delete_group">Eliminar grupo</string>
+    <string name="title_activity_add_group">AddGroup</string>
+    <string name="group_expenses">Gastos del grupo:</string>
 </resources>
