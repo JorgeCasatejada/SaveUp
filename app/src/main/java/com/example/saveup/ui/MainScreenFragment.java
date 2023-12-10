@@ -7,17 +7,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.saveup.AddTransaction;
+import com.example.saveup.MainViewModel;
 import com.example.saveup.R;
 import com.example.saveup.TransactionsListAdapter;
 import com.example.saveup.databinding.FragmentMainScreenBinding;
 import com.example.saveup.model.Account;
 import com.example.saveup.model.Transaction;
 import com.example.saveup.model.TransactionManager;
+
+import java.util.List;
+import java.util.Locale;
 
 // Fragmento para la pantalla principal
 public class MainScreenFragment extends Fragment {
@@ -32,6 +39,8 @@ public class MainScreenFragment extends Fragment {
 
     // View binding
     private FragmentMainScreenBinding binding;
+
+    private MainViewModel viewModel;
 
     // User account
     private Account account;
@@ -66,13 +75,42 @@ public class MainScreenFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the fragment layout using View Binding
         binding = FragmentMainScreenBinding.inflate(inflater, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
-        initializeUI();
+        if (!viewModel.getShowedMainTransactions().isInitialized()) {
+            viewModel.getUserTransactions();
+            binding.recyclerTransactions.setVisibility(View.INVISIBLE);
+            binding.progressBar.setVisibility(View.VISIBLE);
+        } else {
+            viewModel.filterTransactions(appliedFilter);
+        }
+
         setUpRecyclerView();
+        initializeUI();
         setClickListeners();
-        updateColor();
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewModel.getShowedMainTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
+            @Override
+            public void onChanged(List<Transaction> transactions) {
+                binding.progressBar.setVisibility(View.GONE);
+                binding.recyclerTransactions.setVisibility(View.VISIBLE);
+                ltAdapter.setTransactionsList(transactions);
+            }
+        });
+        viewModel.getBalance().observe(getViewLifecycleOwner(), new Observer<Double>() {
+            @Override
+            public void onChanged(Double aDouble) {
+                String balance = String.format(Locale.getDefault(), "%.2f", aDouble);
+                binding.etBalance.setText(balance);
+                updateColor(aDouble);
+            }
+        });
     }
 
     @Override
@@ -94,15 +132,17 @@ public class MainScreenFragment extends Fragment {
         binding.recyclerTransactions.setHasFixedSize(true);
 
         // Balance
-        binding.etBalance.setText(account.getStrBalance());
+        binding.etBalance.setText(viewModel.getStrBalance());
+        updateColor(viewModel.getBalance().getValue());
 
         // Expense/Income filter
-        appliedFilter = 0;
+        appliedFilter = TransactionManager.FILTER_ALL;
+        viewModel.setFilter(appliedFilter);
     }
 
     private void setUpRecyclerView() {
         binding.recyclerTransactions.setLayoutManager(new LinearLayoutManager(getContext()));
-        ltAdapter = new TransactionsListAdapter(requireContext(), account.getTransactionsList(), this::clickOnItem);
+        ltAdapter = new TransactionsListAdapter(requireContext(), this::clickOnItem);
         binding.recyclerTransactions.setAdapter(ltAdapter);
     }
 
@@ -128,33 +168,37 @@ public class MainScreenFragment extends Fragment {
         } else if (checkedId == R.id.filterAll) {
             appliedFilter = TransactionManager.FILTER_ALL;
         }
-        ltAdapter.setTransactionsList(account.getFilteredTransactionsList(appliedFilter));
+        viewModel.setFilter(appliedFilter);
+        viewModel.filterTransactions(appliedFilter);
     }
 
     private void handleTransactionResult(Intent data) {
         int mode = data.getIntExtra(AddTransaction.MODE, 0);
         switch (mode) {
             case AddTransaction.MODE_ADD:
-                account.addTransaction(data.getParcelableExtra(AddTransaction.CREATED_TRANSACTION));
+                viewModel.addTransaction(data.getParcelableExtra(AddTransaction.CREATED_TRANSACTION));
+//                account.addTransaction(data.getParcelableExtra(AddTransaction.CREATED_TRANSACTION));
                 break;
             case AddTransaction.MODE_DELETE:
-                account.removeTransaction(data.getParcelableExtra(AddTransaction.DETAILS_TRANSACTION));
+                viewModel.removeTransaction(data.getParcelableExtra(AddTransaction.DETAILS_TRANSACTION));
+//                account.removeTransaction(data.getParcelableExtra(AddTransaction.DETAILS_TRANSACTION));
                 break;
             case AddTransaction.MODE_MODIFY:
                 Transaction transactionOld = data.getParcelableExtra(AddTransaction.OLD_MODIFIED_TRANSACTION);
                 Transaction transactionNew = data.getParcelableExtra(AddTransaction.NEW_MODIFIED_TRANSACTION);
-                account.modifyTransaction(transactionOld, transactionNew);
+                viewModel.modifyTransaction(transactionOld, transactionNew);
                 break;
         }
 
-        binding.etBalance.setText(account.getStrBalance());
-        ltAdapter.setTransactionsList(account.getFilteredTransactionsList(appliedFilter));
-        updateColor();
+//        viewModel.filterTransactions(appliedFilter);
+//        binding.etBalance.setText(account.getStrBalance());
+//        ltAdapter.setTransactionsList(account.getFilteredTransactionsList(appliedFilter));
+//        updateColor();
     }
 
-    private void updateColor() {
+    private void updateColor(Double balance) {
         int color;
-        if (account.getBalance() > 0)
+        if (balance > 0)
             color = getResources().getColor(R.color.greenBalance);
         else
             color = getResources().getColor(R.color.redBalance);

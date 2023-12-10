@@ -30,9 +30,12 @@ public class TransactionManager implements Parcelable {
         }
     };
     private double balance;
-    private ArrayList<Transaction> transactionsList;
+    private List<Transaction> transactionsList = null;
 
-    public TransactionManager(ArrayList<Transaction> transactionsList) {
+    public TransactionManager() {
+    }
+
+    public TransactionManager(List<Transaction> transactionsList) {
         setTransactionsList(transactionsList);
     }
 
@@ -41,18 +44,18 @@ public class TransactionManager implements Parcelable {
         transactionsList = in.createTypedArrayList(Transaction.CREATOR);
     }
 
-    public ArrayList<Transaction> getTransactionsList() {
+    public List<Transaction> getTransactionsList() {
         return transactionsList;
     }
 
-    public TransactionManager setTransactionsList(ArrayList<Transaction> transactionsList) {
+    public TransactionManager setTransactionsList(List<Transaction> transactionsList) {
         this.transactionsList = transactionsList;
         this.transactionsList.sort(Collections.reverseOrder(Comparator.comparing(Transaction::getDate)));
         this.balance = reCalculateBalance();
         return this;
     }
 
-    public ArrayList<Transaction> getFilteredTransactionsList(int filter) {
+    public List<Transaction> getFilteredTransactionsList(int filter) {
         switch (filter) {
             case FILTER_EXPENSES:
                 return transactionsList.stream().filter(Transaction::isExpense).collect(Collectors.toCollection(ArrayList::new));
@@ -88,13 +91,14 @@ public class TransactionManager implements Parcelable {
 
     public void removeTransaction(Transaction transaction) {
         transactionsList.remove(transaction);
-        transactionsList.sort(Collections.reverseOrder(Comparator.comparing(Transaction::getDate)));
+//        transactionsList.sort(Collections.reverseOrder(Comparator.comparing(Transaction::getDate)));
         balance -= transaction.getSignedValue();
     }
 
     /**
      * Crea un mapa con clave Category y valor Double que contiene el total para la categoría
-     * @param year año
+     *
+     * @param year        año
      * @param areExpenses indica si se obtiene el total para ingreso (false) o gasto (true)
      * @return un mapa conteniendo el total
      */
@@ -109,6 +113,7 @@ public class TransactionManager implements Parcelable {
     /**
      * Crea un mapa con clave Integer que es el mes del año y valor lista de Transaction que son las
      * transacciones de dicho mes
+     *
      * @param year año
      * @return un mapa conteniendo las transacciones de un año agrupadas por mes
      */

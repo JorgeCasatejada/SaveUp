@@ -29,22 +29,22 @@ public class Account implements Parcelable {
         }
     };
     private final TransactionManager transactionManager;
+    private final CollectionReference bd = FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+            .collection("transactions");
     private String ID;
     private String userName;
     private String email;
     private String password;
     private double balance;
-    private final CollectionReference bd = FirebaseFirestore.getInstance()
-            .collection("users")
-            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-            .collection("transactions");
 
     public Account(String ID, String userName, String email, String password) {
         this.ID = ID;
         this.userName = userName;
         this.email = email;
         this.password = password;
-        this.transactionManager = new TransactionManager(new ArrayList<>());
+        this.transactionManager = new TransactionManager();
         this.balance = 0;
     }
 
@@ -90,17 +90,17 @@ public class Account implements Parcelable {
         this.password = password;
     }
 
-    public ArrayList<Transaction> getTransactionsList() {
+    public List<Transaction> getTransactionsList() {
         return transactionManager.getTransactionsList();
     }
 
-    public Account setTransactionsList(ArrayList<Transaction> transactionsList) {
+    public Account setTransactionsList(List<Transaction> transactionsList) {
         transactionManager.setTransactionsList(transactionsList);
         setBalance(transactionManager.getBalance());
         return this;
     }
 
-    public ArrayList<Transaction> getFilteredTransactionsList(int filter) {
+    public List<Transaction> getFilteredTransactionsList(int filter) {
         return transactionManager.getFilteredTransactionsList(filter);
     }
 
