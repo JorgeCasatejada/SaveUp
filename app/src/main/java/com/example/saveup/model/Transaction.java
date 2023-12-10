@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.example.saveup.model.firestore.FireTransaction;
+
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -27,8 +29,10 @@ public class Transaction implements Parcelable {
     private final Category category;
     private final Date date;
     private final String description;
+    private String transactionID;
 
     protected Transaction(Parcel in) {
+        transactionID = in.readString();
         isExpense = in.readByte() != 0;
         name = in.readString();
         value = in.readDouble();
@@ -46,13 +50,26 @@ public class Transaction implements Parcelable {
         this.description = description;
     }
 
-    public Transaction(boolean isExpense, String name, double value, String description) {
-        this.name = name;
-        this.value = value;
-        this.description = description;
-        this.isExpense = isExpense;
-        this.category = Category.OTROS;
-        this.date = new Date(1);
+    public Transaction(FireTransaction fireTransaction) {
+        this.transactionID = fireTransaction.getTransactionID();
+        this.isExpense = fireTransaction.isExpense;
+        this.name = fireTransaction.getName();
+        this.value = fireTransaction.getValue();
+        this.category = fireTransaction.getCategory();
+        this.date = fireTransaction.getDate();
+        this.description = fireTransaction.getDescription();
+    }
+
+    public FireTransaction toFirestore() {
+        return new FireTransaction(
+                this.transactionID,
+                this.isExpense,
+                this.name,
+                this.value,
+                this.category,
+                this.date,
+                this.description
+        );
     }
 
     @Override
@@ -62,12 +79,21 @@ public class Transaction implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(transactionID);
         parcel.writeByte((byte) (isExpense ? 1 : 0));
         parcel.writeString(name);
         parcel.writeDouble(value);
         parcel.writeString(category.name());
         parcel.writeLong(date.getTime());
         parcel.writeString(description);
+    }
+
+    public String getTransactionID() {
+        return transactionID;
+    }
+
+    public void setTransactionID(String transactionID) {
+        this.transactionID = transactionID;
     }
 
     public boolean isExpense() {
@@ -119,7 +145,8 @@ public class Transaction implements Parcelable {
     @Override
     public String toString() {
         return "Transaction{" +
-                "isExpense=" + isExpense +
+                "transactionID='" + transactionID + '\'' +
+                ", isExpense=" + isExpense +
                 ", name='" + name + '\'' +
                 ", value=" + value +
                 ", category=" + category +

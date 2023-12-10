@@ -39,7 +39,7 @@
         <activity
             android:name=".AddTransaction"
             android:exported="false"
-            android:label="@string/title_activity_add_expense"
+            android:label="@string/title_activity_add_transaction"
             android:theme="@style/Theme.SaveUp.NoActionBar" />
     </application>
 
