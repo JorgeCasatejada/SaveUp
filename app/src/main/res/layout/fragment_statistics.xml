@@ -79,7 +79,7 @@
     </LinearLayout>
 
     <include
-        android:id="@+id/include"
+        android:id="@+id/graphs"
         layout="@layout/content_scrolling_graphs"
         android:layout_width="367dp"
         android:layout_height="605dp"
