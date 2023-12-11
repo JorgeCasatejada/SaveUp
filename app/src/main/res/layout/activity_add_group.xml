@@ -24,7 +24,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="223dp"
             android:layout_height="wrap_content"
-            android:hint="@string/labelTitle">
+            android:hint="@string/labelTransactionTitle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etGroupTitle"

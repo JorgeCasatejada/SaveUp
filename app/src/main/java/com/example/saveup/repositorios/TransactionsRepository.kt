@@ -1,6 +1,7 @@
 package com.example.saveup.repositorios
 
 import android.util.Log
+import com.example.saveup.model.Group
 import com.example.saveup.model.Transaction
 import com.example.saveup.model.firestore.FireTransaction
 import com.google.firebase.auth.FirebaseAuth
@@ -115,6 +116,39 @@ class TransactionsRepository {
                     }
                 }.await()
             return@withContext completed
+        }
+    }
+
+    suspend fun getUserGroups(userId: String): List<Group> {
+        return withContext(Dispatchers.IO) {
+            val groups = ArrayList<Group>()
+            val participants = ArrayList<String>()
+            participants.add("Alice")
+            participants.add("Bob")
+
+            val transactionList = ArrayList<Transaction>()
+
+            val group1 = Group(
+                "Vacation Group",
+                1000.0,
+                "Summer Vacation",
+                participants,
+                transactionList,
+                ""
+            )
+            val group2 = Group(
+                "Vacation Group",
+                1000.0,
+                "Summer Vacation",
+                participants,
+                transactionList,
+                "https://via.placeholder.com/20"
+            )
+
+            groups.add(group2)
+            groups.add(group1)
+
+            return@withContext groups
         }
     }
 
