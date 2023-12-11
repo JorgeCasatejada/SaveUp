@@ -5,29 +5,27 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
+import com.example.saveup.MainViewModel
 import com.example.saveup.R
+import com.example.saveup.databinding.FragmentGraphsBinding
+import com.example.saveup.databinding.FragmentLimitsBinding
 import com.example.saveup.model.Account
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [LimitsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class LimitsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentLimitsBinding? = null
+    private val binding get() = _binding!!
+
+    private var account: Account? = null
+
+    private var viewModel: MainViewModel? = null
+
+    private val ACCOUNT = "Account"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+        if (arguments != null) {
+            account = requireArguments().getParcelable(ACCOUNT)
         }
     }
 
@@ -35,8 +33,23 @@ class LimitsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_limits, container, false)
+        _binding = FragmentLimitsBinding.inflate(inflater, container, false)
+
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+
+        //if (!viewModel)
+        initializeVariables()
+
+        return binding.root
+    }
+
+    private fun initializeVariables() {
+        // TODO: obtener el texto de el monthlylimit actual
+        binding.etLimit.setText("0.0")
+
+        binding.saveFab.setOnClickListener {
+            // TODO: guardar o actualizar el monthlylimit
+        }
     }
 
     companion object {

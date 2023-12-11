@@ -66,4 +66,8 @@
     <string name="total">TOTAL</string>
     <string name="centerText">%1$s € \n %2$s</string>
 
+    <!-- límites -->
+    <string name="monthlyLimits">Límites Mensuales</string>
+    <string name="currentLimit">Límite Actual</string>
+
 </resources>

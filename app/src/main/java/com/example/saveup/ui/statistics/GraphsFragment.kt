@@ -141,7 +141,7 @@ class GraphsFragment : Fragment() {
         yAxis.addLimitLine(zeroLine)
         yAxis.setDrawLimitLinesBehindData(true)
 
-        // Adición de datos
+        // Cálculo de datos
         val entries: MutableList<Entry> = ArrayList()
         var balance = 0f
         var maxBalance = 0f
@@ -189,9 +189,12 @@ class GraphsFragment : Fragment() {
     }
 
     private fun createPieChart() {
+        // Datos
         val categories = ArrayList<PieEntry>()
         val map = viewModel?.groupedCategories(yearToShow, showExpenses)!!
         val categoriesToShow = ArrayList(map.keys)
+
+        // Cálculo de datos
         map.keys.forEach(Consumer { category: Category ->
             categories.add(
                 PieEntry(
@@ -200,16 +203,33 @@ class GraphsFragment : Fragment() {
                 )
             )
         })
+
         totalBalance = 0.0
         for (key in map.keys) {
             totalBalance += map.getOrDefault(key, 0.0)
         }
+
+        // Configuración
+        // Colores
         val colors = resources.getIntArray(R.array.pieChartColorsHexCode)
         val pieDataSet = PieDataSet(categories, resources.getString(R.string.labelTransactionCategory))
         pieDataSet.setColors(*colors)
         pieDataSet.valueTextColor = Color.BLACK
         pieDataSet.valueTextSize = 15f
-        val pieData = PieData(pieDataSet)
+
+        // Diseño del gráfico
+        binding.graphs.pieChart.description.isEnabled = false
+        binding.graphs.pieChart.centerText = resources.getString(
+            R.string.centerText, String.format(Locale.getDefault(), "%.2f", totalBalance),
+            resources.getString(R.string.total)
+        )
+        binding.graphs.pieChart.setCenterTextSize(14f)
+        binding.graphs.pieChart.setEntryLabelTextSize(0f)
+        binding.graphs.pieChart.setEntryLabelColor(Color.BLACK)
+        binding.graphs.pieChart.holeRadius = 40f
+        binding.graphs.pieChart.transparentCircleRadius = 45f
+
+        // Leyenda
         val legend = binding.graphs.pieChart.legend
         legend.verticalAlignment = Legend.LegendVerticalAlignment.CENTER
         legend.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
@@ -220,6 +240,8 @@ class GraphsFragment : Fragment() {
         legend.yEntrySpace = 5f
         legend.yOffset = 100f
         legend.isWordWrapEnabled = false
+
+        // Listeners
         binding.graphs.pieChart.setOnChartValueSelectedListener(object :
             OnChartValueSelectedListener {
             override fun onValueSelected(e: Entry, h: Highlight) {
@@ -240,17 +262,12 @@ class GraphsFragment : Fragment() {
                 )
             }
         })
+
+        // Adición de datos
+        val pieData = PieData(pieDataSet)
         binding.graphs.pieChart.data = pieData
-        binding.graphs.pieChart.description.isEnabled = false
-        binding.graphs.pieChart.centerText = resources.getString(
-            R.string.centerText, String.format(Locale.getDefault(), "%.2f", totalBalance),
-            resources.getString(R.string.total)
-        )
-        binding.graphs.pieChart.setCenterTextSize(14f)
-        binding.graphs.pieChart.setEntryLabelTextSize(0f)
-        binding.graphs.pieChart.setEntryLabelColor(Color.BLACK)
-        binding.graphs.pieChart.holeRadius = 40f
-        binding.graphs.pieChart.transparentCircleRadius = 45f
+
+        // Animación
         binding.graphs.pieChart.animateXY(1000, 1000)
     }
 
