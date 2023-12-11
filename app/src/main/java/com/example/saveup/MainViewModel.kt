@@ -28,6 +28,7 @@ class MainViewModel(
         Log.d("MainViewModel", "Se inicializa el viewModel")
     }
 
+    // ------------------ MainScreenFragment ------------------
     fun getUserTransactions() {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intentan obtener las transacciones del usuario")
@@ -94,6 +95,20 @@ class MainViewModel(
             balance.postValue(transactionManager.balance)
             filterTransactions(appliedTransactionFilter.value!!)
         }
+    }
+
+    // ------------------ ProfileFragment ------------------
+    fun getUserName(): String {
+        return auth.currentUser?.displayName ?: ""
+    }
+
+    fun getUserEmail(): String {
+        return auth.currentUser?.email ?: ""
+    }
+
+    fun logOutFromCurrentUser() {
+        Log.d("MainViewModel", "Se intentan cerrar la sesión del usuario")
+        auth.signOut()
     }
 
 }

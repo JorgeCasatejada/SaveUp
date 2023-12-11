@@ -10,12 +10,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.saveup.LoginActivity;
+import com.example.saveup.MainViewModel;
 import com.example.saveup.R;
 import com.example.saveup.databinding.FragmentProfileBinding;
 import com.example.saveup.model.Account;
-import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -28,6 +29,7 @@ public class ProfileFragment extends Fragment {
     private static final String ACCOUNT = "Account";
     private Account account;
     private FragmentProfileBinding binding;
+    private MainViewModel viewModel;
 
     public static ProfileFragment newInstance(Account account) {
         ProfileFragment fragment = new ProfileFragment();
@@ -46,8 +48,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void initializeVariables() {
-        binding.etUser.setText(account.getUserName());
-        binding.etEmail.setText(account.getEmail());
+        binding.etUser.setText(viewModel.getUserName());
+        binding.etEmail.setText(viewModel.getUserEmail());
         Picasso.get().load(R.drawable.user_image).fit().into(binding.imgProfile);
     }
 
@@ -56,6 +58,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(inflater, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         initializeVariables();
 
@@ -69,7 +72,7 @@ public class ProfileFragment extends Fragment {
         binding.btCloseSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
+                viewModel.logOutFromCurrentUser();
                 startActivity(new Intent(getContext(), LoginActivity.class));
                 getActivity().finish();
                 Toast.makeText(getContext(), getResources().getString(R.string.infoLoggedOut), Toast.LENGTH_LONG).show();
