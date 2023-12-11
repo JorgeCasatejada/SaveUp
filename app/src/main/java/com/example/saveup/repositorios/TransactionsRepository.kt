@@ -3,7 +3,6 @@ package com.example.saveup.repositorios
 import android.util.Log
 import com.example.saveup.model.Transaction
 import com.example.saveup.model.firestore.FireTransaction
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -20,23 +19,24 @@ class TransactionsRepository {
             val respuesta = db.collection("users")
                 .document(userId)
                 .collection("transactions")
-                .get().await().map { document ->
+                .get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al recuperar las transacciones del usuario"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al recuperar las transacciones del usuario"
+                        )
+                    }
+                }
+                .await().map { document ->
                     Log.d("Firestore", "Transaction: " + document.id + " => " + document.data)
                     Transaction(document.toObject(FireTransaction::class.java))
                 }
             return@withContext respuesta
-
-//            if (respuesta.isSuccessful) {
-//                Log.d("Repository", "Respuesta exitosa de firebase al recuperar las transacciones del usuario")
-//                respuesta.result
-//                    .map { document ->
-//                        Log.d("Firestore", "Transaction: " + document.id + " => " + document.data)
-//                        Transaction(document.toObject(FireTransaction::class.java))
-//                 }
-//            } else {
-//                Log.d("Repository", "Respuesta fallida de firebase al recuperar las transacciones del usuario")
-//                emptyList()
-//            }
         }
     }
 
@@ -101,49 +101,21 @@ class TransactionsRepository {
         }
     }
 
-    suspend fun createUser(userId: String?, userData: HashMap<String, String?>): Int {
-        Log.d("Repository", "Intentando crear el usuario")
+    suspend fun createUser(userId: String?, userData: HashMap<String, String?>): Boolean {
         return withContext(Dispatchers.IO) {
+            var completed = false
             db.collection("users")
                 .document(userId.orEmpty())
                 .set(userData).addOnCompleteListener {
+                    completed = true
                     if (it.isSuccessful) {
                         Log.d("Repository", "Respuesta exitosa de firebase al crear el usuario")
                     } else {
                         Log.d("Repository", "Respuesta fallida de firebase al crear el usuario")
                     }
-                }
-            return@withContext 5
+                }.await()
+            return@withContext completed
         }
-    }
-
-    // AHORA (usando el repositorio)
-    fun prueba(userId: String): Task<List<Transaction>> {
-        return db.collection("users")
-            .document(userId)
-            .collection("transactions")
-            .get().continueWith {
-                if (it.isSuccessful) {
-                    Log.d(
-                        "Repository",
-                        "Respuesta exitosa de firebase al recuperar las transacciones del usuario"
-                    )
-                    return@continueWith it.result
-                        .map { document ->
-                            Log.d(
-                                "Firestore",
-                                "Transaction: " + document.id + " => " + document.data
-                            )
-                            Transaction(document.toObject(FireTransaction::class.java))
-                        }
-                } else {
-                    Log.d(
-                        "Repository",
-                        "Respuesta fallida de firebase al recuperar las transacciones del usuario"
-                    )
-                    return@continueWith emptyList()
-                }
-            }
     }
 
 }

@@ -7,24 +7,25 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.databinding.ActivitySignupBinding
+import com.example.saveup.repositorios.TransactionsRepository
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
-    private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseFirestore
+    private lateinit var viewModel: SignUpViewModel
+    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance()
-        db = FirebaseFirestore.getInstance()
+        val repo = TransactionsRepository()
+        val viewModelFactory = SignUpViewModelProviderFactory(repo)
+        viewModel = ViewModelProvider(this, viewModelFactory)[SignUpViewModel::class.java]
 
         binding.etEmail.addTextChangedListener(ValidationTextWatcher(binding.outlinedTextFieldEmail))
         binding.etPassword.addTextChangedListener(ValidationTextWatcher(binding.outlinedTextFieldPassword))
@@ -32,6 +33,12 @@ class SignUpActivity : AppCompatActivity() {
 
         binding.btSwitchToLogin.setOnClickListener { finish() }
         binding.btSignUp.setOnClickListener { signUp() }
+
+        viewModel.completedUserCreation.observe(this) {
+            if (it) {
+                finalize()
+            }
+        }
     }
 
     private fun signUp() {
@@ -42,13 +49,7 @@ class SignUpActivity : AppCompatActivity() {
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.d("FirebaseAuth", resources.getString(R.string.infoCreatedUser))
-                    saveUserInFirestore(auth.currentUser)
-                    Toast.makeText(
-                        this,
-                        resources.getString(R.string.infoCreatedUser),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    finish()
+                    viewModel.saveUserInFirestore(it.result.user)
                 } else {
                     enableForm(true)
                     Toast.makeText(this, it.exception.toString(), Toast.LENGTH_LONG).show()
@@ -57,13 +58,15 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveUserInFirestore(currentUser: FirebaseUser?) {
-        if (currentUser == null) return
-        val user = hashMapOf("email" to currentUser.email)
-        db.collection("users").document(currentUser.uid).set(user)
-            .addOnSuccessListener { Log.d("Firestore", "DocumentSnapshot User successfully written!") }
-            .addOnFailureListener { e -> Log.w("Firestore", "Error writing User document", e) }
+    private fun finalize() {
+        Log.d("SignUpActivity", "Se va a cerrar la activity")
+        Toast.makeText(
+            applicationContext,
+            resources.getString(R.string.infoCreatedUser),
+            Toast.LENGTH_SHORT
+        ).show()
         auth.signOut()
+        finish()
     }
 
     private fun validateFormData(): Boolean {
