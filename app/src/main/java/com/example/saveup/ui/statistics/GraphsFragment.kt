@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.example.saveup.MainViewModel
 import com.example.saveup.R
 import com.example.saveup.databinding.FragmentGraphsBinding
 import com.example.saveup.model.Account
@@ -41,6 +43,8 @@ class GraphsFragment : Fragment() {
 
     private var account: Account? = null
 
+    private var viewModel: MainViewModel? = null
+
     private val ACCOUNT = "Account"
 
     private var showExpenses = true
@@ -61,6 +65,12 @@ class GraphsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentGraphsBinding.inflate(inflater, container, false)
+
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+
+        if (!viewModel!!.allUserTransactions.isInitialized) {
+            viewModel!!.getUserTransactions()
+        }
 
         initializeVariables()
 
@@ -112,7 +122,7 @@ class GraphsFragment : Fragment() {
     private fun createLineChart() {
         // Datos (x e y)
         val values = resources.getStringArray(R.array.months)
-        val map = account!!.getGroupedTransactions(yearToShow)
+        val map = viewModel?.groupedTransactionsByYear(yearToShow)!!
 
         // Ejes y líneas
         val zeroLine = LimitLine(0f, "")
@@ -180,7 +190,7 @@ class GraphsFragment : Fragment() {
 
     private fun createPieChart() {
         val categories = ArrayList<PieEntry>()
-        val map = account!!.getCategories(yearToShow, showExpenses)
+        val map = viewModel?.groupedCategories(yearToShow, showExpenses)!!
         val categoriesToShow = ArrayList(map.keys)
         map.keys.forEach(Consumer { category: Category ->
             categories.add(
@@ -195,7 +205,7 @@ class GraphsFragment : Fragment() {
             totalBalance += map.getOrDefault(key, 0.0)
         }
         val colors = resources.getIntArray(R.array.pieChartColorsHexCode)
-        val pieDataSet = PieDataSet(categories, resources.getString(R.string.labelExpenseCategory))
+        val pieDataSet = PieDataSet(categories, resources.getString(R.string.labelTransactionCategory))
         pieDataSet.setColors(*colors)
         pieDataSet.valueTextColor = Color.BLACK
         pieDataSet.valueTextSize = 15f

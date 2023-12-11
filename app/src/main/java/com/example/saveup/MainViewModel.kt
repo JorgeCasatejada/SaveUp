@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.saveup.model.Category
 import com.example.saveup.model.Transaction
 import com.example.saveup.model.TransactionManager
 import com.example.saveup.repositorios.TransactionsRepository
@@ -51,6 +52,14 @@ class MainViewModel(
         val filteredList = transactionManager.getFilteredTransactionsList(filter)
         Log.d("MainViewModel", "Nuevo valor para showedMainTransactions: $filteredList")
         showedMainTransactions.postValue(filteredList)
+    }
+
+    fun groupedTransactionsByYear(year: Int): MutableMap<Int, MutableList<Transaction>>? {
+        return transactionManager.getGroupedTransactions(year)
+    }
+
+    fun groupedCategories(year: Int, showExpenses: Boolean): MutableMap<Category, Double>? {
+        return transactionManager.getCategories(year, showExpenses)
     }
 
     fun getStrBalance(): String {
