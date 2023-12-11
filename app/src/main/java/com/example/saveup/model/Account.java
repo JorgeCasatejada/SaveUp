@@ -5,6 +5,11 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +29,10 @@ public class Account implements Parcelable {
         }
     };
     private final TransactionManager transactionManager;
+    private final CollectionReference bd = FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+            .collection("transactions");
     private String ID;
     private String userName;
     private String email;
@@ -41,7 +50,7 @@ public class Account implements Parcelable {
         this.userName = userName;
         this.email = email;
         this.password = password;
-        this.transactionManager = new TransactionManager(new ArrayList<>());
+        this.transactionManager = new TransactionManager();
         this.balance = 0;
         this.groups = new ArrayList<>();
         crearGrupos();
@@ -103,17 +112,17 @@ public class Account implements Parcelable {
         this.password = password;
     }
 
-    public ArrayList<Transaction> getTransactionsList() {
+    public List<Transaction> getTransactionsList() {
         return transactionManager.getTransactionsList();
     }
 
-    public Account setTransactionsList(ArrayList<Transaction> transactionsList) {
+    public Account setTransactionsList(List<Transaction> transactionsList) {
         transactionManager.setTransactionsList(transactionsList);
         setBalance(transactionManager.getBalance());
         return this;
     }
 
-    public ArrayList<Transaction> getFilteredTransactionsList(int filter) {
+    public List<Transaction> getFilteredTransactionsList(int filter) {
         return transactionManager.getFilteredTransactionsList(filter);
     }
 
@@ -127,19 +136,26 @@ public class Account implements Parcelable {
     }
 
     public void addTransaction(Transaction transaction) {
+        DocumentReference docRef = bd.document();
+        transaction.setTransactionID(docRef.getId());
         transactionManager.addTransaction(transaction);
         setBalance(transactionManager.getBalance());
+        docRef.set(transaction.toFirestore());
     }
 
     public void removeTransaction(Transaction transaction) {
         transactionManager.removeTransaction(transaction);
         setBalance(transactionManager.getBalance());
+        bd.document(transaction.getTransactionID()).delete();
     }
 
     public void modifyTransaction(Transaction transactionOld, Transaction transactionNew) {
-        removeTransaction(transactionOld);
-        addTransaction(transactionNew);
+        transactionNew.setTransactionID(transactionOld.getTransactionID());
+        transactionManager.removeTransaction(transactionOld);
+        transactionManager.addTransaction(transactionNew);
         setBalance(transactionManager.getBalance());
+        bd.document(transactionNew.getTransactionID())
+                .set(transactionNew.toFirestore());
     }
 
     public String getStrBalance() {

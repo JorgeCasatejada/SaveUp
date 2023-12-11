@@ -2,14 +2,14 @@
     <string name="app_name">SaveUp</string>
     <string name="labelBalance">Balance</string>
     <string name="lblFilter">Filtrar:</string>
-    <string name="title_activity_add_expense">AddExpense</string>
+    <string name="title_activity_add_transaction">AddTransaction</string>
     <string name="action_settings">Settings</string>
-    <string name="labelTitle">Título</string>
-    <string name="labelExpenseQuantity">Cantidad</string>
-    <string name="labelExpenseCategory">Categoría</string>
+    <string name="labelTransactionTitle">Título</string>
+    <string name="labelTransactionQuantity">Cantidad</string>
+    <string name="labelTransactionCategory">Categoría</string>
     <string name="euroSymbol">€</string>
-    <string name="labelExpenseDate">Selecciona la fecha</string>
-    <string name="labelExpenseDescription">Descripción del gasto</string>
+    <string name="labelTransactionDate">Selecciona la fecha</string>
+    <string name="labelTransactionDescription">Descripción del gasto</string>
     <string name="txAdd">Añadir</string>
     <string name="txCancel">Cancelar</string>
     <string name="expense">Gasto</string>
@@ -67,4 +67,5 @@
     <string name="delete_group">Eliminar grupo</string>
     <string name="title_activity_add_group">AddGroup</string>
     <string name="group_expenses">Gastos del grupo:</string>
+    <string name="errMessage">Ha ocurrido un error</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.example.saveup;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saveup.model.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,13 +22,12 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
 
     public static final int APPEND = 0;
     public static final int CHANGE_TRANSACTION_LIST = 1;
-
-    private List<Transaction> transactionsList;
     private final OnItemClickListener listener;
-    private Context context;
+    private final Context context;
+    private List<Transaction> transactionsList;
 
-    public TransactionsListAdapter(Context context, List<Transaction> transactionsList, OnItemClickListener listener) {
-        this.transactionsList = transactionsList;
+    public TransactionsListAdapter(Context context, OnItemClickListener listener) {
+        this.transactionsList = new ArrayList<>();
         this.listener = listener;
         this.context = context;
     }
@@ -59,7 +58,7 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
         // Extrae de la lista el elemento indicado por posición
         Transaction transaction = transactionsList.get(position);
-        Log.i("Lista", "Visualiza elemento: " + transaction);
+        Log.i("TransactionListAdapter", "Visualiza elemento: " + transaction);
         // llama al método de nuestro holder para asignar valores a los componentes
         // además, pasamos el listener del evento onClick
         holder.assignComponentsValues(context, transaction, listener);
@@ -102,11 +101,7 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
             title.setText(cutString(transaction.getName(), 10));
             description.setText(cutString(transaction.getDescription(), 32));
             value.setText(String.format(Locale.getDefault(), "%.2f €", transaction.getSignedValue()));
-            if (transaction.getValue() < 0) {
-                recyclerLineLayout.setBackground(Drawable.createFromPath("@android:color/holo_red_light"));
-            } else {
-                recyclerLineLayout.setBackground(Drawable.createFromPath("@android:color/holo_green_light"));
-            }
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -119,7 +114,7 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
         private void updateColor(Context context, Transaction transaction) {
             int isExpense = context.getColor(R.color.redExpense);
             int isIncome = context.getColor(R.color.greenIncome);
-            if (transaction.isExpense()){
+            if (transaction.isExpense()) {
                 cardView.setCardBackgroundColor(isExpense);
             } else {
                 cardView.setCardBackgroundColor(isIncome);

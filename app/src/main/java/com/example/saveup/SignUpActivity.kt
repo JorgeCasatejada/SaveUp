@@ -3,50 +3,70 @@ package com.example.saveup
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.databinding.ActivitySignupBinding
+import com.example.saveup.repositorios.TransactionsRepository
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
-    private lateinit var auth: FirebaseAuth
+    private lateinit var viewModel: SignUpViewModel
+    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance()
+        val repo = TransactionsRepository()
+        val viewModelFactory = SignUpViewModelProviderFactory(repo)
+        viewModel = ViewModelProvider(this, viewModelFactory)[SignUpViewModel::class.java]
 
         binding.etEmail.addTextChangedListener(ValidationTextWatcher(binding.outlinedTextFieldEmail))
         binding.etPassword.addTextChangedListener(ValidationTextWatcher(binding.outlinedTextFieldPassword))
         binding.etPasswordRepeat.addTextChangedListener(ValidationTextWatcher(binding.outlinedTextFieldPasswordRepeat))
 
         binding.btSwitchToLogin.setOnClickListener { finish() }
+        binding.btSignUp.setOnClickListener { signUp() }
 
-        binding.btSignUp.setOnClickListener {
-            if (validateFormData()) {
-                enableForm(false)
-                val email = binding.etEmail.text.toString()
-                val password = binding.etPassword.text.toString()
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Toast.makeText(
-                            this,
-                            resources.getString(R.string.infoCreatedUser),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        finish()
-                    } else {
-                        enableForm(true)
-                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_LONG).show()
-                    }
+        viewModel.completedUserCreation.observe(this) {
+            if (it) {
+                finalize()
+            }
+        }
+    }
+
+    private fun signUp() {
+        if (validateFormData()) {
+            enableForm(false)
+            val email = binding.etEmail.text.toString()
+            val password = binding.etPassword.text.toString()
+            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d("FirebaseAuth", resources.getString(R.string.infoCreatedUser))
+                    viewModel.saveUserInFirestore(it.result.user)
+                } else {
+                    enableForm(true)
+                    Toast.makeText(this, it.exception.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         }
+    }
+
+    private fun finalize() {
+        Log.d("SignUpActivity", "Se va a cerrar la activity")
+        Toast.makeText(
+            applicationContext,
+            resources.getString(R.string.infoCreatedUser),
+            Toast.LENGTH_SHORT
+        ).show()
+        auth.signOut()
+        finish()
     }
 
     private fun validateFormData(): Boolean {

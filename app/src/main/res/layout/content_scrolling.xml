@@ -11,104 +11,104 @@
     tools:showIn="@layout/activity_add_transaction">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@drawable/divider8p"
-        android:layout_margin="16dp"
-        android:orientation="vertical"
-        android:showDividers="middle">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/outlinedTextFieldTitle"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/labelTitle">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etExpenseTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/outlinedTextFieldQuantity"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/labelExpenseQuantity"
-            app:suffixText="@string/euroSymbol">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etExpenseQuantity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <RadioGroup
-            android:id="@+id/radioGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checkedButton="@+id/rb_gasto"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/rb_gasto"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/expense" />
-
-            <RadioButton
-                android:id="@+id/rb_ingreso"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/income" />
-        </RadioGroup>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/menuCategory"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/labelExpenseCategory">
-
-            <AutoCompleteTextView
-                android:id="@+id/autocompleteCategory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/datePickerLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/labelExpenseDate">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etExpenseDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@android:drawable/ic_menu_my_calendar"
-                android:inputType="date" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".AddTransaction"
-            tools:showIn="@layout/activity_add_transaction">
+            android:divider="@drawable/divider8p"
+            android:orientation="vertical"
+            android:showDividers="middle">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tfExpenseDescription"
+                android:id="@+id/outlinedTextFieldTitle"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/labelTransactionTitle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTransactionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlinedTextFieldQuantity"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/labelTransactionQuantity"
+                app:suffixText="@string/euroSymbol">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTransactionQuantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checkedButton="@+id/rbExpense"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbExpense"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/expense" />
+
+                <RadioButton
+                    android:id="@+id/rbIncome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/income" />
+            </RadioGroup>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/menuCategory"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/labelTransactionCategory">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autocompleteCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/datePickerLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/labelTransactionDate">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTransactionDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+                    android:inputType="date" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".AddTransaction"
+                tools:showIn="@layout/activity_add_transaction">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tfTransactionDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -117,150 +117,153 @@
                     android:layout_width="match_parent"
                     android:layout_height="245dp"
                     android:gravity="start"
-                    android:hint="@string/labelExpenseDescription" />
+                    android:hint="@string/labelTransactionDescription" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/fabContainer"
-                android:layout_width="150dp"
-                android:layout_height="228dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="180dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginBottom="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/tfExpenseDescription"
-                app:layout_constraintTop_toBottomOf="@+id/tfExpenseDescription">
-
-                <!-- FAB 1 -->
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/primary_fab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="16dp"
-                    android:contentDescription="@string/fab_cd"
-                    android:src="@android:drawable/ic_input_add"
-                    app:elevation="0dp"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/fabContainer"
+                    android:layout_width="150dp"
+                    android:layout_height="228dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="180dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="@+id/tfTransactionDescription"
+                    app:layout_constraintTop_toBottomOf="@+id/tfTransactionDescription">
 
-                <!-- FAB 2 -->
-                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                    android:id="@+id/edit_fab"
-                    android:layout_width="124dp"
-                    android:layout_height="52dp"
-                    android:layout_marginBottom="16dp"
-                    android:drawableStart="@android:drawable/ic_menu_edit"
-                    android:text="@string/txModify"
-                    android:visibility="gone"
-                    app:icon="@android:drawable/ic_menu_edit"
-                    app:iconSize="24dp"
-                    app:layout_constraintBottom_toTopOf="@+id/primary_fab"
-                    app:layout_constraintEnd_toEndOf="@+id/primary_fab" />
+                    <!-- FAB 1 -->
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/primaryFab"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
+                        android:contentDescription="@string/fab_cd"
+                        android:src="@android:drawable/ic_input_add"
+                        app:elevation="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
-                <!-- FAB 3 -->
-                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                    android:id="@+id/delete_fab"
+                    <!-- FAB 2 -->
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:id="@+id/editFab"
+                        android:layout_width="124dp"
+                        android:layout_height="52dp"
+                        android:layout_marginBottom="16dp"
+                        android:drawableStart="@android:drawable/ic_menu_edit"
+                        android:text="@string/txModify"
+                        android:visibility="gone"
+                        app:icon="@android:drawable/ic_menu_edit"
+                        app:iconSize="24dp"
+                        app:layout_constraintBottom_toTopOf="@+id/primaryFab"
+                        app:layout_constraintEnd_toEndOf="@+id/primaryFab" />
+
+                    <!-- FAB 3 -->
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:id="@+id/deleteFab"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:drawableStart="@android:drawable/ic_menu_delete"
+                        android:text="@string/txDelete"
+                        android:visibility="gone"
+                        app:icon="@android:drawable/ic_menu_delete"
+                        app:iconSize="24dp"
+                        app:layout_constraintBottom_toTopOf="@+id/editFab"
+                        app:layout_constraintEnd_toEndOf="@+id/editFab" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </RelativeLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cancelAddLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btCancel"
+                    style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:drawableStart="@android:drawable/ic_menu_delete"
-                    android:text="@string/txDelete"
-                    android:visibility="gone"
-                    app:icon="@android:drawable/ic_menu_delete"
-                    app:iconSize="24dp"
-                    app:layout_constraintBottom_toTopOf="@+id/edit_fab"
-                    app:layout_constraintEnd_toEndOf="@+id/edit_fab" />
+                    android:text="@string/txCancel"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btAdd"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btAdd"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txAdd"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/btCancel"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-        </RelativeLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cancelAddLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/btCancel"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/saveChanguesLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/txCancel"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btAdd"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:visibility="gone">
 
-            <Button
-                android:id="@+id/btAdd"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/txAdd"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/btCancel"
-                app:layout_constraintTop_toTopOf="parent" />
+                <Button
+                    android:id="@+id/btClose"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txClose"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btSaveChangues"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <Button
+                    android:id="@+id/btSaveChangues"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txSave"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/btClose"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/saveChanguesLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <Button
-                android:id="@+id/btClose"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/txClose"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btSaveChangues"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/btSaveChangues"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/txSave"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/btClose"
-                app:layout_constraintTop_toTopOf="parent" />
+                <Button
+                    android:id="@+id/btClose_details"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="135dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txClose"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/btClose_details"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="135dp"
-                android:layout_height="wrap_content"
-                android:text="@string/txClose"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </LinearLayout>
+        </LinearLayout>
 
 
-</androidx.core.widget.NestedScrollView>
+
+
+
+    </androidx.core.widget.NestedScrollView>
