@@ -24,6 +24,7 @@ class MainViewModel(
     val allUserTransactions: MutableLiveData<List<Transaction>> = MutableLiveData()
     val showedMainTransactions: MutableLiveData<List<Transaction>> = MutableLiveData()
     val appliedTransactionFilter: MutableLiveData<Int> = MutableLiveData(0)
+    val monthlyLimit: MutableLiveData<Double?> = MutableLiveData()
 
     init {
         Log.d("MainViewModel", "Se inicializa el viewModel")
@@ -53,14 +54,6 @@ class MainViewModel(
         val filteredList = transactionManager.getFilteredTransactionsList(filter)
         Log.d("MainViewModel", "Nuevo valor para showedMainTransactions: $filteredList")
         showedMainTransactions.postValue(filteredList)
-    }
-
-    fun groupedTransactionsByYear(year: Int): MutableMap<Int, MutableList<Transaction>>? {
-        return transactionManager.getGroupedTransactions(year)
-    }
-
-    fun groupedCategories(year: Int, showExpenses: Boolean): MutableMap<Category, Double>? {
-        return transactionManager.getCategories(year, showExpenses)
     }
 
     fun getStrBalance(): String {
@@ -118,6 +111,35 @@ class MainViewModel(
     fun logOutFromCurrentUser() {
         Log.d("MainViewModel", "Se intentan cerrar la sesión del usuario")
         auth.signOut()
+    }
+
+
+    // ------------------ GraphsFragment ------------------
+    fun groupedTransactionsByYear(year: Int): MutableMap<Int, MutableList<Transaction>>? {
+        return transactionManager.getGroupedTransactions(year)
+    }
+
+    fun groupedCategories(year: Int, showExpenses: Boolean): MutableMap<Category, Double>? {
+        return transactionManager.getCategories(year, showExpenses)
+    }
+
+    // ------------------ LimitsFragment ------------------
+    fun getLimit() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta obtener el límite del usuario")
+            val limit = repository.getMonthlyLimit()
+            Log.d("MainViewModel", "Nuevo valor para límite mensual: $limit")
+            monthlyLimit.postValue(limit)
+        }
+    }
+
+    fun updateLimit(limit: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta modificar el límite del usuario")
+            repository.updateMonthlyLimit(limit)
+            Log.d("MainViewModel", "Nuevo valor para límite mensual: $limit")
+            monthlyLimit.postValue(limit)
+        }
     }
 
 }

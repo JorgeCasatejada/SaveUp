@@ -3,6 +3,7 @@ package com.example.saveup.repositorios
 import android.util.Log
 import com.example.saveup.model.Transaction
 import com.example.saveup.model.firestore.FireTransaction
+import com.example.saveup.model.firestore.FireUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -115,6 +116,47 @@ class TransactionsRepository {
                     }
                 }.await()
             return@withContext completed
+        }
+    }
+
+    suspend fun updateMonthlyLimit(limit: Double) {
+        withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .update("monthlyLimit", limit).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al modificar el límite mensual"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al modificar el límite mensual"
+                        )
+                    }
+                }
+        }
+    }
+
+    suspend fun getMonthlyLimit(): Double? {
+        return withContext(Dispatchers.IO) {
+            return@withContext db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al modificar el límite mensual"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al modificar el límite mensual"
+                        )
+                    }
+                }
+                .await().toObject(FireUser::class.java)?.monthlyLimit
         }
     }
 
