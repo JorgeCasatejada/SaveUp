@@ -3,6 +3,7 @@ package com.example.saveup.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.example.saveup.R;
 import com.example.saveup.TransactionsListAdapter;
 import com.example.saveup.databinding.FragmentMainScreenBinding;
 import com.example.saveup.model.Account;
+import com.example.saveup.model.Notifications;
 import com.example.saveup.model.Transaction;
 import com.example.saveup.model.TransactionManager;
 
@@ -85,6 +87,10 @@ public class MainScreenFragment extends Fragment {
             viewModel.filterTransactions(appliedFilter);
         }
 
+        if (!viewModel.getMonthlyLimit().isInitialized()) {
+            viewModel.getLimit();
+        }
+
         setUpRecyclerView();
         initializeUI();
         setClickListeners();
@@ -109,6 +115,8 @@ public class MainScreenFragment extends Fragment {
                 String balance = String.format(Locale.getDefault(), "%.2f", aDouble);
                 binding.etBalance.setText(balance);
                 updateColor(aDouble);
+
+                checkLimit();
             }
         });
     }
@@ -211,6 +219,25 @@ public class MainScreenFragment extends Fragment {
         intentAddTransaction.putExtra(ACTIVITY_MODE, MODE_DETAILS);
         intentAddTransaction.putExtra(TRANSACTION_DETAILS, transaction);
         startActivityForResult(intentAddTransaction, INTENT_ADD_TRANSACTION);
+    }
+
+    private void checkLimit() {
+        Double expenses = viewModel.getMonthlyExpenses();
+        Double limit = viewModel.getMonthlyLimit().getValue();
+        if (expenses != null && limit != null) {
+            if (expenses >= limit) {
+                notifyLimitExceeded();
+            }
+        }
+    }
+
+    private void notifyLimitExceeded() {
+        Notifications.simpleNotification(requireActivity(),
+                "¡Atención! Ha Excedido Su Límite Mensual",
+                "El límite mensual que ha creado de " + viewModel.getMonthlyLimit().getValue()
+                        + " € ha sido excedido, ahora mismo sus gastos mensuales son "
+                        + viewModel.getMonthlyExpenses() + "€",
+                com.google.android.material.R.drawable.navigation_empty_icon);
     }
 
 }

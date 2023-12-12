@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -103,6 +104,7 @@ public class TransactionManager implements Parcelable {
      * @return un mapa conteniendo el total
      */
     public Map<Category, Double> getCategories(int year, boolean areExpenses) {
+        if (getTransactionsList().isEmpty()) return new HashMap<>();
         return getTransactionsList().stream()
                 .filter(t -> t.getDate().getYear() + 1900 == year && t.isExpense() == areExpenses)
                 .collect(Collectors.groupingBy(Transaction::getCategory,
@@ -118,6 +120,9 @@ public class TransactionManager implements Parcelable {
      * @return un mapa conteniendo las transacciones de un año agrupadas por mes
      */
     public Map<Integer, List<Transaction>> getGroupedTransactions(int year) {
+        if (getTransactionsList() == null || getTransactionsList().isEmpty()) {
+            return new HashMap<>();
+        }
         return getTransactionsList().stream().filter(t -> t.getDate().getYear() + 1900 == year)
                 .collect(Collectors.groupingBy(t -> t.getDate().getMonth()));
     }

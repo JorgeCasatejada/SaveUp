@@ -11,6 +11,7 @@ import com.example.saveup.repositorios.TransactionsRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
 import java.util.Locale
 
 class MainViewModel(
@@ -140,6 +141,20 @@ class MainViewModel(
             Log.d("MainViewModel", "Nuevo valor para límite mensual: $limit")
             monthlyLimit.postValue(limit)
         }
+    }
+
+    fun getMonthlyExpenses(): Double? {
+        val transactions = transactionManager.getGroupedTransactions(Date().year + 1900)
+        if (!transactions.isNullOrEmpty()) {
+            val transactionsInMonth =  transactions[Date().month]
+            if (!transactionsInMonth.isNullOrEmpty()) {
+                return transactionsInMonth
+                    .filter { it.isExpense }
+                    .map { transaction -> transaction.value }
+                    .reduce { total, expense -> total + expense }
+            }
+        }
+        return null
     }
 
 }
