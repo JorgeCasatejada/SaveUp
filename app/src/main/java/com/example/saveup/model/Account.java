@@ -39,6 +39,12 @@ public class Account implements Parcelable {
     private String password;
     private double balance;
 
+    private List<Group> groups;
+
+    public List<Group> getGroups() {
+        return groups;
+    }
+
     public Account(String ID, String userName, String email, String password) {
         this.ID = ID;
         this.userName = userName;
@@ -46,6 +52,22 @@ public class Account implements Parcelable {
         this.password = password;
         this.transactionManager = new TransactionManager();
         this.balance = 0;
+        this.groups = new ArrayList<>();
+        crearGrupos();
+    }
+
+    private void crearGrupos() {
+        ArrayList<String> participants = new ArrayList<>();
+        participants.add("Alice");
+        participants.add("Bob");
+
+        ArrayList<Transaction> transactionList = new ArrayList<>();
+        // Agregar transacciones si es necesario
+
+        Group group1 = new Group("Vacation Group", 1000.0, "Summer Vacation", participants, transactionList, "");
+        Group group2 = new Group("Vacation Group", 1000.0, "Summer Vacation", participants, transactionList, "https://via.placeholder.com/20");
+        groups.add(group2);
+        groups.add(group1);
     }
 
     protected Account(Parcel in) {

@@ -31,7 +31,7 @@
             android:editable="false"
             android:singleLine="true"
             android:textAlignment="viewEnd"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 

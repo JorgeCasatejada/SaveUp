@@ -42,6 +42,16 @@
             android:exported="false"
             android:label="@string/title_activity_add_transaction"
             android:theme="@style/Theme.SaveUp.NoActionBar" />
+        <activity
+            android:name=".ui.AddGroupActivity"
+            android:exported="false"
+            android:label="@string/title_activity_add_group"
+            android:theme="@style/Theme.SaveUp.NoActionBar" />
+        <activity
+            android:name=".ui.GroupDetailsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_add_group"
+            android:theme="@style/Theme.SaveUp.NoActionBar" />
     </application>
 
 </manifest>

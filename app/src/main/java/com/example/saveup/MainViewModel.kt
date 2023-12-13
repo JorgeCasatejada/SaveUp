@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.saveup.model.Category
+import com.example.saveup.model.Group
 import com.example.saveup.model.Transaction
 import com.example.saveup.model.TransactionManager
 import com.example.saveup.repositorios.TransactionsRepository
@@ -25,6 +26,7 @@ class MainViewModel(
     val allUserTransactions: MutableLiveData<List<Transaction>> = MutableLiveData()
     val showedMainTransactions: MutableLiveData<List<Transaction>> = MutableLiveData()
     val appliedTransactionFilter: MutableLiveData<Int> = MutableLiveData(0)
+    val userGroups: MutableLiveData<List<Group>> = MutableLiveData()
     val monthlyLimit: MutableLiveData<Double?> = MutableLiveData()
 
     init {
@@ -155,6 +157,16 @@ class MainViewModel(
             }
         }
         return null
+    }
+
+    // ------------------ GroupsFragment ------------------
+    fun getUserGroups() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intentan obtener los grupos del usuario")
+            val resp = repository.getUserGroups(auth.currentUser!!.uid)
+            Log.d("MainViewModel", "Nuevo valor para userGroups: $resp")
+            userGroups.postValue(resp)
+        }
     }
 
 }
