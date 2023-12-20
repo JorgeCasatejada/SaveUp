@@ -85,4 +85,11 @@
     <string name="monthlyLimits">Límites Mensuales</string>
     <string name="currentLimit">Límite Actual</string>
 
+    <!-- metas -->
+    <string name="savingGoals">Metas de Ahorro</string>
+    <string name="currentGoal">Meta de Ahorro Actual</string>
+    <string name="currentGoalName">Nombre</string>
+    <string name="currentGoalValue">Importe</string>
+    <string name="endDateGoal">Fecha Límite</string>
+
 </resources>

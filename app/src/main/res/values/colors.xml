@@ -25,4 +25,9 @@
         <item>@color/pieColor6</item>
         <item>@color/pieColor7</item>
     </integer-array>
+
+    <!-- colores para las metas -->
+    <color name="charcoalTint">#222021</color>
+    <color name="emeraldTint">#50C878</color>
+
 </resources>
