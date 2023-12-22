@@ -5,7 +5,7 @@
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MainScreenFragment">
+    tools:context=".view.mainScreen.MainScreenFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlinedTextFieldBalance"

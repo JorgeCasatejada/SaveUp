@@ -14,10 +14,10 @@
         android:theme="@style/Theme.SaveUp"
         tools:targetApi="31">
         <activity
-            android:name=".MonthlyLimit"
+            android:name=".view.statistics.MonthlyLimit"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".view.login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,10 +26,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignUpActivity"
+            android:name=".view.login.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:exported="false">
 
             <!-- <intent-filter> -->
@@ -38,17 +38,17 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".AddTransaction"
+            android:name=".view.mainScreen.AddTransaction"
             android:exported="false"
             android:label="@string/title_activity_add_transaction"
             android:theme="@style/Theme.SaveUp.NoActionBar" />
         <activity
-            android:name=".ui.AddGroupActivity"
+            android:name=".view.group.AddGroupActivity"
             android:exported="false"
             android:label="@string/title_activity_add_group"
             android:theme="@style/Theme.SaveUp.NoActionBar" />
         <activity
-            android:name=".ui.GroupDetailsActivity"
+            android:name=".view.group.GroupDetailsActivity"
             android:exported="false"
             android:label="@string/title_activity_add_group"
             android:theme="@style/Theme.SaveUp.NoActionBar" />

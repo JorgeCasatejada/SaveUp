@@ -1,4 +1,4 @@
-package com.example.saveup
+package com.example.saveup.viewModel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -8,7 +8,7 @@ import com.example.saveup.model.Category
 import com.example.saveup.model.Group
 import com.example.saveup.model.Transaction
 import com.example.saveup.model.TransactionManager
-import com.example.saveup.repositorios.TransactionsRepository
+import com.example.saveup.model.repository.TransactionsRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

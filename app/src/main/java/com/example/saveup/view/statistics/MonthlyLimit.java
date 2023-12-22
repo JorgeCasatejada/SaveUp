@@ -1,8 +1,10 @@
-package com.example.saveup;
+package com.example.saveup.view.statistics;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.saveup.R;
 
 public class MonthlyLimit extends AppCompatActivity {
 

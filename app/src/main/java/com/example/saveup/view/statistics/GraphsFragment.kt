@@ -1,4 +1,4 @@
-package com.example.saveup.ui.statistics
+package com.example.saveup.view.statistics
 
 import android.content.Intent
 import android.graphics.Color
@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.saveup.MainViewModel
+import com.example.saveup.viewModel.MainViewModel
 import com.example.saveup.R
 import com.example.saveup.databinding.FragmentGraphsBinding
 import com.example.saveup.model.Account

@@ -1,4 +1,4 @@
-package com.example.saveup;
+package com.example.saveup.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,12 +10,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.saveup.R;
 import com.example.saveup.model.Account;
-import com.example.saveup.repositorios.TransactionsRepository;
-import com.example.saveup.ui.GroupsFragment;
-import com.example.saveup.ui.MainScreenFragment;
-import com.example.saveup.ui.ProfileFragment;
-import com.example.saveup.ui.statistics.StatisticsFragment;
+import com.example.saveup.model.repository.TransactionsRepository;
+import com.example.saveup.view.group.GroupsFragment;
+import com.example.saveup.view.mainScreen.MainScreenFragment;
+import com.example.saveup.view.profile.ProfileFragment;
+import com.example.saveup.view.login.LoginActivity;
+import com.example.saveup.view.statistics.StatisticsFragment;
+import com.example.saveup.viewModel.MainViewModel;
+import com.example.saveup.viewModel.MainViewModelProviderFactory;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;

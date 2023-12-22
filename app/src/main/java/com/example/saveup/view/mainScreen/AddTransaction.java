@@ -1,4 +1,4 @@
-package com.example.saveup;
+package com.example.saveup.view.mainScreen;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,11 +12,12 @@ import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.saveup.R;
 import com.example.saveup.databinding.ActivityAddTransactionBinding;
 import com.example.saveup.databinding.ContentScrollingBinding;
 import com.example.saveup.model.Category;
 import com.example.saveup.model.Transaction;
-import com.example.saveup.ui.MainScreenFragment;
+import com.example.saveup.view.mainScreen.MainScreenFragment;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.ParseException;

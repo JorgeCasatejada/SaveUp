@@ -1,4 +1,4 @@
-package com.example.saveup.ui
+package com.example.saveup.view.group
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,13 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.saveup.GroupAdapter
-import com.example.saveup.MainViewModel
-import com.example.saveup.R
 import com.example.saveup.databinding.FragmentGroupsBinding
 import com.example.saveup.model.Account
 import com.example.saveup.model.Group
-
+import com.example.saveup.view.adapter.GroupAdapter
+import com.example.saveup.viewModel.MainViewModel
 
 class GroupsFragment : Fragment() {
     private var _binding: FragmentGroupsBinding? = null

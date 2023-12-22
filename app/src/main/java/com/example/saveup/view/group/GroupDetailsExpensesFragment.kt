@@ -1,4 +1,4 @@
-package com.example.saveup.ui
+package com.example.saveup.view.group
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,9 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.saveup.AddTransaction
+import com.example.saveup.view.mainScreen.AddTransaction
 import com.example.saveup.R
-
 
 class GroupDetailsExpensesFragment : Fragment() {
 

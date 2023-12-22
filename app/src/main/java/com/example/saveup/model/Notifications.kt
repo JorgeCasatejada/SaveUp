@@ -4,7 +4,7 @@ import android.app.Activity
 import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationCompat
-import com.example.saveup.ui.statistics.LimitsFragment
+import com.example.saveup.view.statistics.LimitsFragment
 
 object Notifications {
 

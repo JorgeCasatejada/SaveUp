@@ -6,7 +6,7 @@
     android:id="@+id/groupsLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.GroupsFragment">
+    tools:context=".view.group.GroupsFragment">
 
 
     <androidx.cardview.widget.CardView

@@ -1,9 +1,8 @@
-package com.example.saveup.ui;
+package com.example.saveup.view.mainScreen;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +14,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.saveup.AddTransaction;
-import com.example.saveup.MainViewModel;
+import com.example.saveup.viewModel.MainViewModel;
 import com.example.saveup.R;
-import com.example.saveup.TransactionsListAdapter;
+import com.example.saveup.view.adapter.TransactionsListAdapter;
 import com.example.saveup.databinding.FragmentMainScreenBinding;
 import com.example.saveup.model.Account;
 import com.example.saveup.model.Notifications;

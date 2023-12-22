@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddTransaction"
+    tools:context=".view.mainScreen.AddTransaction"
     tools:showIn="@layout/activity_add_transaction">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".AddTransaction"
+        tools:context=".view.mainScreen.AddTransaction"
         tools:showIn="@layout/activity_add_transaction">
 
         <LinearLayout

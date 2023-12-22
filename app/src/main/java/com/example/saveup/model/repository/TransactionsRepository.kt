@@ -1,4 +1,4 @@
-package com.example.saveup.repositorios
+package com.example.saveup.model.repository
 
 import android.util.Log
 import com.example.saveup.model.Group

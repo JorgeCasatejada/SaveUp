@@ -1,10 +1,10 @@
-package com.example.saveup
+package com.example.saveup.viewModel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.saveup.repositorios.TransactionsRepository
+import com.example.saveup.model.repository.TransactionsRepository
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,8 +1,8 @@
-package com.example.saveup
+package com.example.saveup.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.saveup.repositorios.TransactionsRepository
+import com.example.saveup.model.repository.TransactionsRepository
 
 class MainViewModelProviderFactory(
     val repository: TransactionsRepository

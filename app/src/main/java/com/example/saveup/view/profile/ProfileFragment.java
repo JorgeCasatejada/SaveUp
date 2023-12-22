@@ -1,4 +1,4 @@
-package com.example.saveup.ui;
+package com.example.saveup.view.profile;
 
 import static androidx.core.app.ActivityCompat.finishAffinity;
 
@@ -12,8 +12,8 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.saveup.LoginActivity;
-import com.example.saveup.MainViewModel;
+import com.example.saveup.view.login.LoginActivity;
+import com.example.saveup.viewModel.MainViewModel;
 import com.example.saveup.R;
 import com.example.saveup.databinding.FragmentProfileBinding;
 import com.example.saveup.model.Account;

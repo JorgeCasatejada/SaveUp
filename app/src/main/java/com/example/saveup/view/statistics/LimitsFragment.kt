@@ -1,19 +1,16 @@
-package com.example.saveup.ui.statistics
+package com.example.saveup.view.statistics
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.saveup.MainViewModel
+import com.example.saveup.viewModel.MainViewModel
 import com.example.saveup.databinding.FragmentLimitsBinding
 import com.example.saveup.model.Account
 import com.example.saveup.model.Notifications

@@ -1,4 +1,4 @@
-package com.example.saveup
+package com.example.saveup.view.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.saveup.view.MainActivity
+import com.example.saveup.R
 import com.example.saveup.databinding.ActivityLoginBinding
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth

@@ -1,4 +1,4 @@
-package com.example.saveup
+package com.example.saveup.view.login
 
 import android.os.Bundle
 import android.text.Editable
@@ -8,8 +8,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.saveup.R
 import com.example.saveup.databinding.ActivitySignupBinding
-import com.example.saveup.repositorios.TransactionsRepository
+import com.example.saveup.model.repository.TransactionsRepository
+import com.example.saveup.viewModel.SignUpViewModel
+import com.example.saveup.viewModel.SignUpViewModelProviderFactory
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth

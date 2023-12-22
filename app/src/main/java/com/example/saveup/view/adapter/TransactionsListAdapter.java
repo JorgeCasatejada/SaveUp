@@ -1,4 +1,4 @@
-package com.example.saveup;
+package com.example.saveup.view.adapter;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.saveup.R;
 import com.example.saveup.model.Transaction;
 
 import java.util.ArrayList;

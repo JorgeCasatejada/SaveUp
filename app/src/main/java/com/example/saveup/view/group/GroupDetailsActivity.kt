@@ -1,4 +1,4 @@
-package com.example.saveup.ui
+package com.example.saveup.view.group
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

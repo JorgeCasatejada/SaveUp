@@ -1,4 +1,4 @@
-package com.example.saveup
+package com.example.saveup.view.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.saveup.model.Group
 import coil.load
+import com.example.saveup.R
 
 class GroupAdapter(
     private var groupList: List<Group> = emptyList(),

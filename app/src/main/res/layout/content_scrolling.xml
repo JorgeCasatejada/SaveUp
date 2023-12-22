@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".AddTransaction"
+    tools:context=".view.mainScreen.AddTransaction"
     tools:showIn="@layout/activity_add_transaction">
 
 
@@ -104,7 +104,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".AddTransaction"
+                tools:context=".view.mainScreen.AddTransaction"
                 tools:showIn="@layout/activity_add_transaction">
 
             <com.google.android.material.textfield.TextInputLayout
