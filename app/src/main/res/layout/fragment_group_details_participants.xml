@@ -64,10 +64,13 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerTransactions"
+        <ListView
+            android:id="@+id/listParticipants"
             android:layout_width="match_parent"
-            android:layout_height="511dp" />
+            android:layout_height="441dp"
+            android:layout_marginTop="8dp"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="1dp" />
 
     </LinearLayout>
 
@@ -75,6 +78,7 @@
         android:id="@+id/closeDeleteExitLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

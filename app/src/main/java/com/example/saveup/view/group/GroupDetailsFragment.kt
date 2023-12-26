@@ -1,38 +1,45 @@
 package com.example.saveup.view.group
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.example.saveup.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.fragment.app.Fragment
 
-class GroupDetailsActivity : AppCompatActivity() {
+class GroupDetailsFragment : Fragment() {
 
     lateinit var navView: BottomNavigationView
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_group_details, container, false)
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_group_details)
-        navView = findViewById(R.id.nav_view)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        navView = view.findViewById(R.id.nav_view)
         cargarMenu()
         mostrarParticipantes()
     }
 
-
     private fun mostrarParticipantes() {
-        supportFragmentManager.beginTransaction()
+        childFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, GroupDetailsParticipantsFragment())
             .commit()
     }
 
     private fun mostrarTransacciones() {
-        supportFragmentManager.beginTransaction()
+        childFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, GroupDetailsExpensesFragment())
             .commit()
     }
 
     private fun cargarMenu() {
-        //Esto es el listener. Recuerda, el when es similar al switch.
+        // Esto es el listener. Recuerda, el when es similar al switch.
         navView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_transactions -> {
@@ -45,5 +52,4 @@ class GroupDetailsActivity : AppCompatActivity() {
             true
         }
     }
-
 }

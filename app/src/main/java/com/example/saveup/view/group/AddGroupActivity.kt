@@ -1,6 +1,7 @@
 package com.example.saveup.view.group
 
 import android.os.Bundle
+import android.view.MotionEvent
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -24,6 +25,24 @@ class AddGroupActivity : AppCompatActivity() {
         listView = findViewById(R.id.listParticipants)
         adapter = ArrayAdapter(this, R.layout.list_item)
         listView.adapter = adapter
+
+        listView.setOnTouchListener { v, event ->
+            val action = event.action
+            when (action) {
+                MotionEvent.ACTION_DOWN -> {
+                    // Disallow ScrollView to intercept touch events.
+                    v.parent.requestDisallowInterceptTouchEvent(true)
+                }
+                MotionEvent.ACTION_UP -> {
+                    // Allow ScrollView to intercept touch events.
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+
+            // Handle ListView touch events.
+            v.onTouchEvent(event)
+            true
+        }
 
         btAddParticipant = findViewById(R.id.btAddParticipant)
         btAddParticipant.setOnClickListener {

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.saveup.R
 import com.example.saveup.databinding.FragmentGroupsBinding
 import com.example.saveup.model.Account
 import com.example.saveup.model.Group
@@ -44,7 +45,19 @@ class GroupsFragment : Fragment() {
 
         binding.recyclerGroups.layoutManager = LinearLayoutManager(context)
         binding.recyclerGroups.setHasFixedSize(true)
-        groupAdapter = GroupAdapter { showGroup(it) }
+        groupAdapter = GroupAdapter(onItemSelected = { group ->
+            // Asegúrate de que esta función esté implementada correctamente
+            // y que no genere excepciones o errores.
+            // Puedes agregar un log o un punto de interrupción para verificar.
+            // También puedes intentar imprimir un mensaje de log para debug.
+            // Luego, abre el nuevo fragmento aquí.
+            val otroFragmento = GroupDetailsFragment()
+            val fragmentManager = requireActivity().supportFragmentManager
+            fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_container, otroFragmento)
+                .addToBackStack(null)
+                .commit()
+        })
         binding.recyclerGroups.adapter = groupAdapter
 
         if (!viewModel!!.userGroups.isInitialized) {
@@ -88,8 +101,12 @@ class GroupsFragment : Fragment() {
 
 
     private fun showGroup(group: Group) {
-        val intent = Intent(requireContext(), GroupDetailsActivity::class.java)
-        startActivityForResult(intent, INTENT_ADD_Group)
+        val details = GroupDetailsFragment()
+        val fragmentManager = requireActivity().supportFragmentManager
+        fragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, details)
+            .addToBackStack(null)
+            .commit()
     }
 
     companion object {

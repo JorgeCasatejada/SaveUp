@@ -30,6 +30,7 @@
             android:exported="false" />
         <activity
             android:name=".view.MainActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false">
 
             <!-- <intent-filter> -->
@@ -39,16 +40,13 @@
         </activity>
         <activity
             android:name=".view.mainScreen.AddTransaction"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false"
             android:label="@string/title_activity_add_transaction"
             android:theme="@style/Theme.SaveUp.NoActionBar" />
         <activity
             android:name=".view.group.AddGroupActivity"
-            android:exported="false"
-            android:label="@string/title_activity_add_group"
-            android:theme="@style/Theme.SaveUp.NoActionBar" />
-        <activity
-            android:name=".view.group.GroupDetailsActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false"
             android:label="@string/title_activity_add_group"
             android:theme="@style/Theme.SaveUp.NoActionBar" />
