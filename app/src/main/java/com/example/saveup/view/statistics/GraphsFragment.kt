@@ -292,7 +292,7 @@ class GraphsFragment : Fragment() {
         // itSend.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{para});
         itSend.putExtra(Intent.EXTRA_SUBJECT, "Registro de gastos e ingresos")
         val stringBuilder = StringBuilder("Historial de gastos / ingresos\n")
-        for (transaction in account!!.transactionsList) {
+        for (transaction in viewModel?.allUserTransactions?.value!!) {
             if (transaction.isExpense) {
                 stringBuilder.append("-")
             } else {
@@ -310,7 +310,7 @@ class GraphsFragment : Fragment() {
                 .append(date).append("\n\r").append("\n\r")
         }
         stringBuilder.append("------------------------------------\n")
-        stringBuilder.append("Balance Total: ").append(round(account!!.balance, 2)).append("€")
+        stringBuilder.append("Balance Total: ").append(viewModel?.balance?.value?.let { round(it, 2) }).append("€")
         itSend.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString())
         val shareIntent = Intent.createChooser(itSend, null)
         startActivity(shareIntent)

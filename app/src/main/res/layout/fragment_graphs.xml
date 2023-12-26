@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/statisticsLayout"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/statisticsLayout"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".view.statistics.GraphsFragment">
+
+<LinearLayout
+    android:id="@+id/layoutGraphs"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.statistics.GraphsFragment">
+    android:orientation="vertical"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent">
 
     <LinearLayout
         android:id="@+id/configItemsLayout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/layoutGraphs"
+        app:layout_constraintEnd_toEndOf="@id/layoutGraphs"
+        app:layout_constraintStart_toStartOf="@id/layoutGraphs"
+        app:layout_constraintTop_toTopOf="@id/layoutGraphs"
         android:orientation="horizontal"
-        android:paddingTop="10dp"
-        app:layout_constraintVertical_bias="0.0">
+        android:paddingTop="10dp" >
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/toggleButtonStatistics"
@@ -69,6 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number|date" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
@@ -77,29 +85,31 @@
         android:id="@+id/graphs"
         layout="@layout/content_scrolling_graphs"
         android:layout_width="match_parent"
-        android:layout_height="605dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.468"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/configItemsLayout"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/shareFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="false"
-        android:clickable="true"
-        android:contentDescription="shareStatistics"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.929"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.927"
-        app:srcCompat="@android:drawable/ic_menu_share" />
+</LinearLayout>
+
+
+
+<com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:id="@+id/shareFab"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:adjustViewBounds="false"
+    android:clickable="true"
+    android:contentDescription="shareStatistics"
+    android:focusable="true"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.929"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.927"
+    app:srcCompat="@android:drawable/ic_menu_share" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,10 +16,6 @@ class StatisticsFragment : Fragment() {
 
     private var account: Account? = null
 
-    val ACTIVITY_MODE = "activity_mode"
-    val INTENT_LIMITS = 1
-    val MODE_LIMIT = 1
-    val MODE_GOAL = 2
     private val ACCOUNT = "Account"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,19 +25,12 @@ class StatisticsFragment : Fragment() {
         }
     }
 
-    private fun pasarALimitesMensuales() {
-        val intentMonthlyLimits = Intent(activity, MonthlyLimit::class.java)
-        intentMonthlyLimits.putExtra(ACTIVITY_MODE, MODE_LIMIT)
-        startActivityForResult(intentMonthlyLimits, INTENT_LIMITS)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
-        //initializeVariables()
 
         loadMenu()
 

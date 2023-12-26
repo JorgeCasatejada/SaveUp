@@ -61,7 +61,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/datePickerLayoutGoals"
+            android:id="@+id/datePickerLayoutGoal"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -92,6 +92,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <ProgressBar
+            android:id="@+id/progressBarGoal"
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,14 +103,16 @@
             android:indeterminate="false" />
 
         <TextView
+            android:id="@+id/textRemainingBalanceGoal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Te faltan X€ para llegar al límite"/>
+            android:text=""/>
 
         <TextView
+            android:id="@+id/textRemainingDaysGoal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Te quedan X días para llegar a la meta"/>
+            android:text=""/>
 
     </LinearLayout>
 

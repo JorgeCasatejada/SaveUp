@@ -8,10 +8,16 @@ import com.example.saveup.model.Category
 import com.example.saveup.model.Group
 import com.example.saveup.model.Transaction
 import com.example.saveup.model.TransactionManager
+import com.example.saveup.model.firestore.FireGoal
 import com.example.saveup.model.repository.TransactionsRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.type.DateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -28,6 +34,7 @@ class MainViewModel(
     val appliedTransactionFilter: MutableLiveData<Int> = MutableLiveData(0)
     val userGroups: MutableLiveData<List<Group>> = MutableLiveData()
     val monthlyLimit: MutableLiveData<Double?> = MutableLiveData()
+    val goal: MutableLiveData<FireGoal> = MutableLiveData()
 
     init {
         Log.d("MainViewModel", "Se inicializa el viewModel")
@@ -132,7 +139,11 @@ class MainViewModel(
             Log.d("MainViewModel", "Se intenta obtener el límite del usuario")
             val limit = repository.getMonthlyLimit()
             Log.d("MainViewModel", "Nuevo valor para límite mensual: $limit")
-            monthlyLimit.postValue(limit)
+            if (limit!! >= 1_000_000_000) {
+                monthlyLimit.postValue(null)
+            } else {
+                monthlyLimit.postValue(limit)
+            }
         }
     }
 
@@ -141,7 +152,11 @@ class MainViewModel(
             Log.d("MainViewModel", "Se intenta modificar el límite del usuario")
             repository.updateMonthlyLimit(limit)
             Log.d("MainViewModel", "Nuevo valor para límite mensual: $limit")
-            monthlyLimit.postValue(limit)
+            if (limit >= 1_000_000_000) {
+                monthlyLimit.postValue(null)
+            } else {
+                monthlyLimit.postValue(limit)
+            }
         }
     }
 
@@ -157,6 +172,25 @@ class MainViewModel(
             }
         }
         return null
+    }
+
+    fun getGoal() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta obtener la meta del usuario")
+            val newGoal = repository.getGoal()
+            Log.d("MainViewModel", "Nuevo valor para la meta: $newGoal")
+            goal.postValue(newGoal)
+        }
+    }
+
+    fun updateGoal(name: String, date: Date?, value: Double?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val newGoal = FireGoal(name, Date(), date, balance.value!!, value)
+            Log.d("MainViewModel", "Se intenta modificar la meta del usuario")
+            repository.updateGoal(newGoal)
+            Log.d("MainViewModel", "Nuevo valor para la meta: $newGoal")
+            goal.postValue(newGoal)
+        }
     }
 
     // ------------------ GroupsFragment ------------------

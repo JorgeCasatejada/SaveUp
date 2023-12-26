@@ -3,6 +3,7 @@ package com.example.saveup.model.repository
 import android.util.Log
 import com.example.saveup.model.Group
 import com.example.saveup.model.Transaction
+import com.example.saveup.model.firestore.FireGoal
 import com.example.saveup.model.firestore.FireTransaction
 import com.example.saveup.model.firestore.FireUser
 import com.google.firebase.auth.FirebaseAuth
@@ -10,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.Date
 
 class TransactionsRepository {
 
@@ -192,6 +194,15 @@ class TransactionsRepository {
 
             return@withContext groups
         }
+    }
+
+    suspend fun updateGoal(goal: FireGoal) {
+        Log.d("TransactionsRepository", "Se guarda la meta " + goal.toString())
+        return
+    }
+
+    suspend fun getGoal(): FireGoal {
+        return FireGoal("Casa", Date(), Date(2024, 10, 5), 1000.0, 100000.0)
     }
 
 }
