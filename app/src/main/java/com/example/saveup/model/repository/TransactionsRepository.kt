@@ -3,8 +3,11 @@ package com.example.saveup.model.repository
 import android.util.Log
 import com.example.saveup.model.Group
 import com.example.saveup.model.Transaction
+import com.example.saveup.model.firestore.FireGroup
+import com.example.saveup.model.firestore.FireParticipant
 import com.example.saveup.model.firestore.FireTransaction
 import com.example.saveup.model.firestore.FireUser
+import com.example.saveup.model.firestore.FireUserGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -161,36 +164,267 @@ class TransactionsRepository {
         }
     }
 
-    suspend fun getUserGroups(userId: String): List<Group> {
+    suspend fun getUserGroups(userId: String): MutableList<Group> {
         return withContext(Dispatchers.IO) {
-            val groups = ArrayList<Group>()
-            val participants = ArrayList<String>()
-            participants.add("Alice")
-            participants.add("Bob")
-
-            val transactionList = ArrayList<Transaction>()
-
-            val group1 = Group(
-                "Vacation Group",
-                1000.0,
-                "Summer Vacation",
-                participants,
-                transactionList,
-                ""
-            )
-            val group2 = Group(
-                "Vacation Group",
-                1000.0,
-                "Summer Vacation",
-                participants,
-                transactionList,
-                "https://via.placeholder.com/20"
-            )
-
-            groups.add(group2)
-            groups.add(group1)
-
+            val groups = db.collection("users")
+                .document(userId)
+                .collection("myGroups")
+                .get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al recuperar los grupos del usuario"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al recuperar los grupos del usuario"
+                        )
+                    }
+                }
+                .await().map { document ->
+                    Log.d("Firestore", "Group: " + document.id + " => " + document.data)
+                    Group(document.toObject(FireUserGroup::class.java))
+                }.toMutableList()
             return@withContext groups
+        }
+    }
+
+    suspend fun getGroup(group: Group): FireGroup? {
+        return withContext(Dispatchers.IO) {
+            val newGroupData = db.collection("groups")
+                .document(group.id)
+                .get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d("Repository", "Respuesta exitosa de firebase al crear el grupo")
+                    } else {
+                        Log.d("Repository", "Respuesta fallida de firebase al crear el grupo")
+                    }
+                }
+                .await()
+                .toObject(FireGroup::class.java)
+            return@withContext newGroupData
+        }
+    }
+
+    suspend fun createGroup(group: Group): String {
+        return withContext(Dispatchers.IO) {
+            val docRef = db.collection("groups")
+                .document()
+            group.id = docRef.id
+            docRef.set(group).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d("Repository", "Respuesta exitosa de firebase al crear el grupo")
+                } else {
+                    Log.d("Repository", "Respuesta fallida de firebase al crear el grupo")
+                }
+            }
+            return@withContext docRef.id
+        }
+    }
+
+    suspend fun getGroupParticipants(group: Group): List<FireParticipant> {
+        return withContext(Dispatchers.IO) {
+            val groupParticipants = db.collection("groups")
+                .document(group.id)
+                .collection("participants")
+                .get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al recuperar los participantea del grupo"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al recuperar los participantea del grupo"
+                        )
+                    }
+                }.await().map { document ->
+                    Log.d("Firestore", "Participante: " + document.id + " => " + document.data)
+                    document.toObject(FireParticipant::class.java)
+                }
+            return@withContext groupParticipants
+        }
+    }
+
+    suspend fun getParticipant(participant: String): FireParticipant {
+        return withContext(Dispatchers.IO) {
+            val p = db.collection("users")
+                .whereEqualTo("email", participant)
+                .limit(1)
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al recuperar el participante"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al recuperar el participante"
+                        )
+                    }
+                }
+                .await().map { document ->
+                    Log.d("Firestore", "Participante: " + document.id + " => " + document.data)
+                    document.toObject(FireUser::class.java).toFireParticipant()
+                }[0]
+            return@withContext p
+        }
+    }
+
+    suspend fun addParticipantToGroup(group: Group, groupParticipant: FireParticipant) {
+        withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(groupParticipant.email)
+                .collection("myGroups")
+                .document(group.id)
+                .set(group.toFireUserGroup()).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al añadir el grupo al usuario"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al añadir el grupo al usuario"
+                        )
+                    }
+                }
+            db.collection("groups")
+                .document(group.id)
+                .collection("participants")
+                .document(groupParticipant.email)
+                .set(groupParticipant).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al añadir el participante al grupo"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al añadir el participante al grupo"
+                        )
+                    }
+                }
+        }
+    }
+
+    suspend fun deleteParticipantFromGroup(group: Group, participant: String) {
+        withContext(Dispatchers.IO) {
+            db.collection("groups")
+                .document(group.id)
+                .collection("participants")
+                .document(participant)
+                .delete().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al eliminar el participante del grupo"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al eliminar el participante del grupo"
+                        )
+                    }
+                }
+        }
+    }
+
+    suspend fun getGroupTransactions(group: Group): List<Transaction> {
+        return withContext(Dispatchers.IO) {
+            val groupTransactions = db.collection("groups")
+                .document(group.id)
+                .collection("transactions")
+                .get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al recuperar las transacciones del grupo"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al recuperar las transacciones del grupo"
+                        )
+                    }
+                }.await().map { document ->
+                    Log.d("Firestore", "Transacción: " + document.id + " => " + document.data)
+                    Transaction(document.toObject(FireTransaction::class.java))
+                }
+            return@withContext groupTransactions
+        }
+    }
+
+    suspend fun addTransactionToGroup(transaction: Transaction, group: Group): String {
+        return withContext(Dispatchers.IO) {
+            val docRef = db.collection("groups")
+                .document(group.id)
+                .collection("transactions").document()
+            transaction.transactionID = docRef.id
+            docRef.set(transaction.toFirestore()).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d(
+                        "Repository",
+                        "Respuesta exitosa de firebase al añadir la transacción al grupo"
+                    )
+                } else {
+                    Log.d(
+                        "Repository",
+                        "Respuesta fallida de firebase al añadir la transacción al grupo"
+                    )
+                }
+            }
+            return@withContext docRef.id
+        }
+    }
+
+    suspend fun deleteTransactionFromGroup(transactionId: String, group: Group) {
+        withContext(Dispatchers.IO) {
+            db.collection("groups")
+                .document(group.id)
+                .collection("transactions")
+                .document(transactionId)
+                .delete().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al eliminar la transacción del grupo"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al eliminar la transacción del grupo"
+                        )
+                    }
+                }
+        }
+    }
+
+    suspend fun modifyTransactionFromGroup(transaction: Transaction, group: Group) {
+        withContext(Dispatchers.IO) {
+            db.collection("groups")
+                .document(group.id)
+                .collection("transactions")
+                .document(transaction.transactionID)
+                .set(transaction.toFirestore()).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al modificar la transacción del grupo"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al modificar la transacción del grupo"
+                        )
+                    }
+                }
         }
     }
 
