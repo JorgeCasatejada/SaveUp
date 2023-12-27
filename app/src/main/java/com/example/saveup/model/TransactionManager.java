@@ -36,10 +36,6 @@ public class TransactionManager implements Parcelable {
     public TransactionManager() {
     }
 
-    public TransactionManager(List<Transaction> transactionsList) {
-        setTransactionsList(transactionsList);
-    }
-
     protected TransactionManager(Parcel in) {
         balance = in.readDouble();
         transactionsList = in.createTypedArrayList(Transaction.CREATOR);
@@ -49,11 +45,10 @@ public class TransactionManager implements Parcelable {
         return transactionsList;
     }
 
-    public TransactionManager setTransactionsList(List<Transaction> transactionsList) {
+    public void setTransactionsList(List<Transaction> transactionsList) {
         this.transactionsList = transactionsList;
         this.transactionsList.sort(Collections.reverseOrder(Comparator.comparing(Transaction::getDate)));
         this.balance = reCalculateBalance();
-        return this;
     }
 
     public List<Transaction> getFilteredTransactionsList(int filter) {
@@ -92,7 +87,6 @@ public class TransactionManager implements Parcelable {
 
     public void removeTransaction(Transaction transaction) {
         transactionsList.remove(transaction);
-//        transactionsList.sort(Collections.reverseOrder(Comparator.comparing(Transaction::getDate)));
         balance -= transaction.getSignedValue();
     }
 
