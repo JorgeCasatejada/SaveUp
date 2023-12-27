@@ -24,7 +24,10 @@ class SignUpViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("SignUpViewModel", "Se intenta guardar el usuario en Firestore")
             val id = currentUser.uid
-            val user = hashMapOf("email" to currentUser.email)
+            val user = hashMapOf(
+                "id" to id,
+                "email" to currentUser.email
+            )
             val completed = repository.createUser(id, user)
             Log.d("SignUpViewModel", "Nuevo valor para el usuarioCreado: $completed")
             completedUserCreation.postValue(completed)

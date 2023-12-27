@@ -245,7 +245,7 @@ class MainViewModel(
     suspend fun deleteParticipantFromGroup(group: Group, participant: FireParticipant) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intentan eliminar un participante del grupo")
-            repository.deleteParticipantFromGroup(group, participant.email)
+            repository.deleteParticipantFromGroup(group, participant.id)
             groupManager.removeParticipantFromGroup(participant, group)
             currentGroupParticipants.postValue(group.participants)
         }

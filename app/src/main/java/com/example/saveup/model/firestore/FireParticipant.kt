@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class FireParticipant(
+    val id: String,
     val email: String,
     val username: String,
     val imagePath: String,
@@ -14,10 +15,12 @@ data class FireParticipant(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readByte() != 0.toByte()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
         parcel.writeString(email)
         parcel.writeString(username)
         parcel.writeString(imagePath)

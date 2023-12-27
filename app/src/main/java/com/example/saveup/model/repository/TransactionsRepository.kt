@@ -212,7 +212,7 @@ class TransactionsRepository {
             val docRef = db.collection("groups")
                 .document()
             group.id = docRef.id
-            docRef.set(group).addOnCompleteListener {
+            docRef.set(group.toFireGroup()).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.d("Repository", "Respuesta exitosa de firebase al crear el grupo")
                 } else {
@@ -298,7 +298,7 @@ class TransactionsRepository {
     suspend fun addParticipantToGroup(group: Group, groupParticipant: FireParticipant) {
         withContext(Dispatchers.IO) {
             db.collection("users")
-                .document(groupParticipant.email)
+                .document(groupParticipant.id)
                 .collection("myGroups")
                 .document(group.id)
                 .set(group.toFireUserGroup()).addOnCompleteListener {
@@ -317,7 +317,7 @@ class TransactionsRepository {
             db.collection("groups")
                 .document(group.id)
                 .collection("participants")
-                .document(groupParticipant.email)
+                .document(groupParticipant.id)
                 .set(groupParticipant).addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.d(
