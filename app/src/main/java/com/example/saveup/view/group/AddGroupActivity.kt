@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.saveup.R
+import com.google.android.material.textfield.TextInputLayout
 
 class AddGroupActivity : AppCompatActivity() {
 
@@ -17,6 +18,8 @@ class AddGroupActivity : AppCompatActivity() {
     private lateinit var listView: ListView
     private lateinit var etIdParticipant: EditText
     private lateinit var adapter: ArrayAdapter<String>
+    private lateinit var title: TextInputLayout
+    private lateinit var budget: TextInputLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +50,14 @@ class AddGroupActivity : AppCompatActivity() {
         btAddParticipant = findViewById(R.id.btAddParticipant)
         btAddParticipant.setOnClickListener {
             etIdParticipant = findViewById(R.id.etIdParticipant)
-            adapter.add(etIdParticipant.text.toString())
-            etIdParticipant.setText("")
-            // TODO: añadir a la lista de participantes del grupo
+            if (etIdParticipant.text.toString().isNotEmpty()) {
+                adapter.add(etIdParticipant.text.toString())
+                etIdParticipant.setText("")
+            }
         }
+
+        title = findViewById(R.id.outlinedTextFieldTitle)
+        budget = findViewById(R.id.outlinedTextFieldBudget)
 
         btCancel = findViewById(R.id.btCancel)
         btCancel.setOnClickListener {
@@ -59,7 +66,23 @@ class AddGroupActivity : AppCompatActivity() {
 
         btAdd = findViewById(R.id.btAdd)
         btAdd.setOnClickListener {
-            // TODO: crear grupo y añadirlo
+            val group = validateGroup()
         }
+    }
+
+    private fun validateGroup(): com.example.saveup.model.Group? {
+        val title = validateTextField(title) ?: return null
+        val budget = validateTextField(budget) ?: return null
+        return com.example.saveup.model.Group(title, budget.toDouble(), )
+    }
+
+    private fun validateTextField(etLayout: TextInputLayout): String? {
+        val str = etLayout.editText!!.text.toString().trim { it <= ' ' }
+        if (str.isEmpty()) {
+            etLayout.error = resources.getString(R.string.errCampoVacio)
+            etLayout.editText!!.requestFocus()
+            return null
+        }
+        return str
     }
 }

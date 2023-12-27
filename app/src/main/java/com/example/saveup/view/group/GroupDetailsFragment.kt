@@ -1,5 +1,6 @@
 package com.example.saveup.view.group
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,10 @@ class GroupDetailsFragment : Fragment() {
         navView = view.findViewById(R.id.nav_view)
         cargarMenu()
         mostrarParticipantes()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun mostrarParticipantes() {
