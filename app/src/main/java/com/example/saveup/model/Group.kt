@@ -1,5 +1,7 @@
 package com.example.saveup.model
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.example.saveup.model.firestore.FireGroup
 import com.example.saveup.model.firestore.FireParticipant
 import com.example.saveup.model.firestore.FireUserGroup
@@ -14,7 +16,19 @@ data class Group(
     var urlGroupImage: String = "",
     var participants: MutableList<FireParticipant> = mutableListOf(),
     var transactionList: MutableList<Transaction> = mutableListOf()
-) {
+): Parcelable {
+
+    constructor(parcel: Parcel) : this(
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readDouble(),
+        parcel.readDouble(),
+        parcel.readString() ?: "",
+        parcel.readString() ?: ""
+    ) {
+        parcel.readTypedList(participants, FireParticipant.CREATOR)
+        parcel.readTypedList(transactionList, Transaction.CREATOR)
+    }
 
     constructor(group: FireUserGroup) : this(
         group.id,
@@ -105,5 +119,30 @@ data class Group(
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeString(title)
+        parcel.writeDouble(initialBudget)
+        parcel.writeDouble(currentBudget)
+        parcel.writeString(description)
+        parcel.writeString(urlGroupImage)
+        parcel.writeTypedList(participants)
+        parcel.writeTypedList(transactionList)
+    }
+
+    companion object CREATOR : Parcelable.Creator<Group> {
+        override fun createFromParcel(parcel: Parcel): Group {
+            return Group(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Group?> {
+            return arrayOfNulls(size)
+        }
     }
 }
