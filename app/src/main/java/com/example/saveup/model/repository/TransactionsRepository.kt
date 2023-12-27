@@ -223,6 +223,26 @@ class TransactionsRepository {
         }
     }
 
+    suspend fun deleteGroup(group: Group) {
+        withContext(Dispatchers.IO) {
+            db.collection("groups")
+                .document(group.id)
+                .collection("participants")
+                .get().await().documents.forEach {
+                    it.reference.delete()
+                }
+            db.collection("groups")
+                .document(group.id)
+                .collection("transactions")
+                .get().await().documents.forEach {
+                    it.reference.delete()
+                }
+            db.collection("groups")
+                .document(group.id)
+                .delete()
+        }
+    }
+
     suspend fun getGroupParticipants(group: Group): List<FireParticipant> {
         return withContext(Dispatchers.IO) {
             val groupParticipants = db.collection("groups")

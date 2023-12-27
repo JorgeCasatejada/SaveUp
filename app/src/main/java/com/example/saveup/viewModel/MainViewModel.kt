@@ -37,7 +37,9 @@ class MainViewModel(
 
     // ------------------ GroupsFragment ------------------
     val userGroups: MutableLiveData<List<Group>> = MutableLiveData()
-    val currentGroup: MutableLiveData<Group> = MutableLiveData()
+    val currentGroup: MutableLiveData<Group?> = MutableLiveData()
+    val currentGroupTransactions: MutableLiveData<List<Transaction>> = MutableLiveData()
+    val currentGroupParticipants: MutableLiveData<List<FireParticipant>> = MutableLiveData()
 
     init {
         Log.d("MainViewModel", "Se inicializa el viewModel")
@@ -190,6 +192,7 @@ class MainViewModel(
             } else {
                 Log.d("MainViewModel", "Nueva información para el grupo: $newGroupData")
                 groupManager.addDataToGroup(newGroupData)
+                currentGroup.postValue(groupManager.getGroup(newGroupData.id))
             }
         }
         // TODO: usar y probar esta función
@@ -206,7 +209,13 @@ class MainViewModel(
         // TODO: usar y probar esta función
     }
 
-    fun deleteGroup() {
+    fun deleteGroup(group: Group) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intentan eliminar un grupo por el usuario")
+            val groupId = repository.deleteGroup(group)
+            groupManager.removeGroup(group)
+            userGroups.postValue(groupManager.groupList)
+        }
         // TODO: usar y probar esta función
     }
 
@@ -216,6 +225,7 @@ class MainViewModel(
             val groupParticipants = repository.getGroupParticipants(group)
             Log.d("MainViewModel", "Nuevos participantes para el grupo: $groupParticipants")
             groupManager.addParticipantsToGroup(groupParticipants, group)
+            currentGroupParticipants.postValue(groupParticipants)
         }
         // TODO: usar y probar esta función
     }
@@ -225,16 +235,20 @@ class MainViewModel(
             Log.d("MainViewModel", "Se intentan añadir un participante al grupo")
             val groupParticipant = repository.getParticipant(participant)
             Log.d("MainViewModel", "Nuevo participante para el grupo: $groupParticipant")
-            groupManager.addParticipantToGroup(groupParticipant, group)
             repository.addParticipantToGroup(group, groupParticipant)
+            groupManager.addParticipantToGroup(groupParticipant, group)
+            currentGroupParticipants.postValue(group.participants)
         }
         // TODO: usar y probar esta función
     }
 
     suspend fun deleteParticipantFromGroup(group: Group, participant: FireParticipant) {
-        Log.d("MainViewModel", "Se intentan eliminar un participante del grupo")
-        repository.deleteParticipantFromGroup(group, participant.email)
-        groupManager.removeParticipantFromGroup(participant, group)
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intentan eliminar un participante del grupo")
+            repository.deleteParticipantFromGroup(group, participant.email)
+            groupManager.removeParticipantFromGroup(participant, group)
+            currentGroupParticipants.postValue(group.participants)
+        }
         // TODO: usar y probar esta función
     }
 
@@ -244,6 +258,7 @@ class MainViewModel(
             val groupTransactions = repository.getGroupTransactions(group)
             Log.d("MainViewModel", "Nuevas transacciones para el grupo: $groupTransactions")
             groupManager.addTransactionsToGroup(groupTransactions, group)
+            currentGroupTransactions.postValue(groupTransactions)
         }
         // TODO: usar y probar esta función
     }
@@ -254,7 +269,7 @@ class MainViewModel(
             val transactionId = repository.addTransactionToGroup(transaction, group)
             Log.d("MainViewModel", "Nuevo id para la transacción: $transactionId")
             groupManager.addTransactionToGroup(transaction, group)
-
+            currentGroupTransactions.postValue(group.transactionList)
         }
         // TODO usar y probar esta función
     }
@@ -264,9 +279,9 @@ class MainViewModel(
             Log.d("MainViewModel", "Se intentan eliminar una transacción del grupo")
             repository.deleteTransactionFromGroup(transaction.transactionID, group)
             groupManager.removeTransactionFromGroup(transaction, group)
-
+            currentGroupTransactions.postValue(group.transactionList)
         }
-        // TODO
+        // TODO usar y probar esta función
     }
 
     fun modifyTransactionFromGroup(
@@ -279,9 +294,9 @@ class MainViewModel(
             transactionNew.transactionID = transactionOld.transactionID
             repository.modifyTransactionFromGroup(transactionNew, group)
             groupManager.modifyTransactionFromGroup(transactionOld, transactionNew, group)
-
+            currentGroupTransactions.postValue(group.transactionList)
         }
-        // TODO
+        // TODO usar y probar esta función
     }
 
 

@@ -15,6 +15,10 @@ class GroupManager {
         groupList?.remove(group)
     }
 
+    fun getGroup(groupId: String): Group? {
+        return groupList?.find { it.id == groupId }
+    }
+
     fun addDataToGroup(newGroupData: FireGroup) {
         val group = groupList?.find { it.id == newGroupData.id }
         if (group == null) addGroup(Group(newGroupData))
