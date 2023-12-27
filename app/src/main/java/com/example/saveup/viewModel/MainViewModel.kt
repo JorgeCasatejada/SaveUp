@@ -242,6 +242,19 @@ class MainViewModel(
         // TODO: usar y probar esta función
     }
 
+    fun addAdminToGroup(group: Group, participant: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intentan añadir un participante al grupo")
+            val groupParticipant = repository.getParticipant(participant)
+            groupParticipant.isAdmin = true
+            Log.d("MainViewModel", "Nuevo participante para el grupo: $groupParticipant")
+            repository.addParticipantToGroup(group, groupParticipant)
+            groupManager.addParticipantToGroup(groupParticipant, group)
+            currentGroupParticipants.postValue(group.participants)
+        }
+        // TODO: usar y probar esta función
+    }
+
     suspend fun deleteParticipantFromGroup(group: Group, participant: FireParticipant) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intentan eliminar un participante del grupo")

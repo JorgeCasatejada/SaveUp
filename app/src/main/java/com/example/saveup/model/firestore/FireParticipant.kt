@@ -8,7 +8,7 @@ data class FireParticipant(
     val email: String,
     val username: String,
     val imagePath: String,
-    @field:JvmField val isAdmin: Boolean
+    @field:JvmField var isAdmin: Boolean
 ): Parcelable {
 
     constructor(parcel: Parcel) : this(

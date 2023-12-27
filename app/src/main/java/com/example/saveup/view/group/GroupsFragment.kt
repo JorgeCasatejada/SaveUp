@@ -104,7 +104,7 @@ class GroupsFragment : Fragment() {
                     viewModel?.createGroup(group)
                 }
                 if (group != null) {
-                    viewModel?.addParticipantToGroup(group, viewModel?.getUserEmail().toString())
+                    viewModel?.addAdminToGroup(group, viewModel?.getUserEmail().toString())
                 }
                 participants?.forEach { participant ->
                     if (group != null) {
