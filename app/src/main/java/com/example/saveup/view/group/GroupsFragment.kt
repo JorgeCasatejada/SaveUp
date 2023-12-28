@@ -48,15 +48,15 @@ class GroupsFragment : Fragment() {
         binding.recyclerGroups.layoutManager = LinearLayoutManager(context)
         binding.recyclerGroups.setHasFixedSize(true)
         groupAdapter = GroupAdapter(onItemSelected = { group ->
-            // Asegúrate de que esta función esté implementada correctamente
-            // y que no genere excepciones o errores.
-            // Puedes agregar un log o un punto de interrupción para verificar.
-            // También puedes intentar imprimir un mensaje de log para debug.
-            // Luego, abre el nuevo fragmento aquí.
-            val otroFragmento = GroupDetailsFragment()
+            val detailsFragment = GroupDetailsFragment()
+
+            viewModel!!.loadInfoFromGroup(group)
+            viewModel!!.loadParticipantsFromGroup(group)
+            viewModel!!.loadTransactionsFromGroup(group)
+
             val fragmentManager = requireActivity().supportFragmentManager
             fragmentManager.beginTransaction()
-                .replace(R.id.main_fragment_container, otroFragmento)
+                .replace(R.id.main_fragment_container, detailsFragment)
                 .addToBackStack(null)
                 .commit()
         })
@@ -137,5 +137,6 @@ class GroupsFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
+
     }
 }

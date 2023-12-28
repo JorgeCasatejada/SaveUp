@@ -6,6 +6,8 @@
     <color name="redBalance">#FF5252</color>
     <color name="greenIncome">#8BC34A</color>
     <color name="redExpense">#FF8A80</color>
+    <color name="blueParticipant">#31FFF6</color>
+    <color name="group">#FFE062</color>
 
     <!-- colores para las estadísticas -->
     <color name="pieColor1">#488f31</color>

@@ -28,7 +28,6 @@
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="3"
-            android:text="Vacation Group"
             android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -60,8 +59,8 @@
                 android:id="@+id/tvInitialBudgetGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:gravity="center"
-                android:text="  10.000€"
                 android:textSize="20sp" />
 
         </LinearLayout>
@@ -89,16 +88,17 @@
             <TextView
                 android:id="@+id/tvActualBudgetGroup"
                 android:layout_width="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="  8.000€"
                 android:textSize="20sp" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="356dp"
-            android:layout_height="426dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/closeAddLayout"
             app:layout_constraintEnd_toEndOf="parent"
@@ -114,8 +114,8 @@
                 android:textSize="18sp" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerTransactions"
-                android:layout_width="337dp"
+                android:id="@+id/recyclerTransactionsGroup"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -127,7 +127,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/closeAddLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"

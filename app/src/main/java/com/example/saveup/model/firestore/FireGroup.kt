@@ -7,4 +7,6 @@ data class FireGroup(
     val currentBudget: Double,
     val description: String,
     val urlGroupImage: String
-)
+) {
+    constructor() : this("", "", 0.0, 0.0, "", "")
+}

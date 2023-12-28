@@ -196,9 +196,9 @@ class TransactionsRepository {
                 .document(group.id)
                 .get().addOnCompleteListener {
                     if (it.isSuccessful) {
-                        Log.d("Repository", "Respuesta exitosa de firebase al crear el grupo")
+                        Log.d("Repository", "Respuesta exitosa de firebase al obtener el grupo")
                     } else {
-                        Log.d("Repository", "Respuesta fallida de firebase al crear el grupo")
+                        Log.d("Repository", "Respuesta fallida de firebase al obtener el grupo")
                     }
                 }
                 .await()

@@ -172,6 +172,11 @@ class MainViewModel(
     }
 
     // ------------------ GroupsFragment ------------------
+    fun getCurrentGroup(): Group? {
+        return currentGroup.value
+    }
+
+
     fun getUserGroups() {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intentan obtener los grupos del usuario")
@@ -255,11 +260,14 @@ class MainViewModel(
         // TODO: usar y probar esta función
     }
 
-    suspend fun deleteParticipantFromGroup(group: Group, participant: FireParticipant) {
+     //Quité suspend porque sin no puedo usarlo
+    fun deleteParticipantFromGroup(group: Group, participant: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intentan obtener el FireParticipant")
+            val groupParticipant = repository.getParticipant(participant)
             Log.d("MainViewModel", "Se intentan eliminar un participante del grupo")
-            repository.deleteParticipantFromGroup(group, participant.id)
-            groupManager.removeParticipantFromGroup(participant, group)
+            repository.deleteParticipantFromGroup(group, groupParticipant.id)
+            groupManager.removeParticipantFromGroup(groupParticipant, group)
             currentGroupParticipants.postValue(group.participants)
         }
         // TODO: usar y probar esta función

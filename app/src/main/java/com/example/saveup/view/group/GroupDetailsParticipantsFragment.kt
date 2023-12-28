@@ -5,49 +5,85 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.saveup.R
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.saveup.databinding.FragmentGroupDetailsParticipantsBinding
+import com.example.saveup.view.adapter.ParticipantAdapter
+import com.example.saveup.viewModel.MainViewModel
 
-/**
- * A simple [Fragment] subclass.
- * Use the [GroupDetailsParticipantsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class GroupDetailsParticipantsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
+    private var _binding: FragmentGroupDetailsParticipantsBinding? = null
+    private val binding get() = _binding!!
+    private var viewModel: MainViewModel? = null
 
-        }
+    private lateinit var participantAdapter: ParticipantAdapter
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_group_details_participants, container, false)
+    ): View {
+        _binding = FragmentGroupDetailsParticipantsBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+
+        binding.recyclerParticipants.layoutManager = LinearLayoutManager(context)
+        binding.recyclerParticipants.setHasFixedSize(true)
+        participantAdapter = ParticipantAdapter()
+        binding.recyclerParticipants.adapter = participantAdapter
+
+        viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner,  Observer {
+            participantAdapter.update(it)
+        })
+
+        binding.btDeleteGroup.setOnClickListener {
+            //TODO: Falta borrar de la lista de grupos del usuario
+            viewModel!!.deleteGroup(viewModel!!.getCurrentGroup()!!)
+        }
+
+        binding.btClose.setOnClickListener {
+            closeGroup()
+        }
+
+        binding.btExitGroup.setOnClickListener {
+            viewModel!!.deleteParticipantFromGroup(viewModel!!.getCurrentGroup()!!,
+                viewModel!!.getUserEmail())
+            closeGroup()
+        }
+
+        binding.btAddParticipant.setOnClickListener {
+            viewModel!!.addParticipantToGroup(viewModel!!.getCurrentGroup()!!,
+                binding.etIdParticipant.text.toString())
+            closeGroup()
+        }
+
+        showMode()
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment GroupDetailsParticipantsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            GroupDetailsParticipantsFragment().apply {
-                arguments = Bundle().apply {
-
-                }
-            }
+    private fun closeGroup() {
+        requireActivity().supportFragmentManager.popBackStack(
+            null,
+            FragmentManager.POP_BACK_STACK_INCLUSIVE
+        )
     }
+
+    private fun showMode() {
+        //TODO: función para saber si es admin
+        updateVisibility(false)
+    }
+
+    private fun updateVisibility(isAdmin: Boolean) {
+        binding.addParticipant.visibility = if (isAdmin) View.VISIBLE else View.GONE
+        binding.btExitGroup.visibility = if (!isAdmin) View.VISIBLE else View.GONE
+        binding.btDeleteGroup.visibility = if (isAdmin) View.VISIBLE else View.GONE
+    }
+
 }

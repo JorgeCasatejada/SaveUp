@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saveup.R;
 import com.example.saveup.model.Transaction;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -68,6 +67,11 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
     @Override
     public int getItemCount() {
         return transactionsList.size();
+    }
+
+    public void update(List<Transaction> transactions) {
+        this.transactionsList = transactions;
+        notifyDataSetChanged();
     }
 
     public interface OnItemClickListener {

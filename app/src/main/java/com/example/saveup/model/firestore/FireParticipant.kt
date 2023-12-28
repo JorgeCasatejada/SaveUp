@@ -11,6 +11,8 @@ data class FireParticipant(
     @field:JvmField var isAdmin: Boolean
 ): Parcelable {
 
+    constructor() : this("", "", "", "", false)
+
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
