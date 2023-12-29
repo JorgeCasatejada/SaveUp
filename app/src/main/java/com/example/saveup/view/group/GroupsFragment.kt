@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -28,11 +29,26 @@ class GroupsFragment : Fragment() {
 
     private lateinit var groupAdapter: GroupAdapter
 
+    private var showMessage = false
+    private var isFragmentVisible = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             account = requireArguments().getParcelable(ACCOUNT)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isFragmentVisible = true
+        // Ahora que el fragmento está visible, se puede mostrar el Toast si es necesario
+        showMessage = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isFragmentVisible = false
     }
 
     override fun onCreateView(
@@ -76,6 +92,18 @@ class GroupsFragment : Fragment() {
             groupAdapter.update(it)
         })
 
+        showMessage = false
+
+        viewModel!!.participantsNotAddedResult.observe(this, Observer { result ->
+            if (showMessage){
+                var message = ""
+                for (p in result)
+                    message += "$p, "
+                message = message.dropLast(2)
+                Toast.makeText(context, "No se ha podido añadir a los usuarios: $message", Toast.LENGTH_LONG).show()
+            }
+        })
+
         return binding.root
     }
 
@@ -106,10 +134,8 @@ class GroupsFragment : Fragment() {
                 if (group != null) {
                     viewModel?.addAdminToGroup(group, viewModel?.getUserEmail().toString())
                 }
-                participants?.forEach { participant ->
-                    if (group != null) {
-                        viewModel?.addParticipantToGroup(group, participant)
-                    }
+                if (participants != null && group != null) {
+                        viewModel?.addParticipantsToGroup(group, participants)
                 }
             }
 

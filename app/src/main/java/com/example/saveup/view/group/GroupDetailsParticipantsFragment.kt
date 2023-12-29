@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
@@ -18,11 +19,25 @@ class GroupDetailsParticipantsFragment : Fragment() {
     private var _binding: FragmentGroupDetailsParticipantsBinding? = null
     private val binding get() = _binding!!
     private var viewModel: MainViewModel? = null
+    private var showMessage = false
+    private var isFragmentVisible = false
 
     private lateinit var participantAdapter: ParticipantAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isFragmentVisible = true
+        // Ahora que el fragmento está visible, se puede mostrar el Toast si es necesario
+        showMessage = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isFragmentVisible = false
     }
 
     override fun onCreateView(
@@ -62,6 +77,17 @@ class GroupDetailsParticipantsFragment : Fragment() {
                 binding.etIdParticipant.text.toString())
             binding.etIdParticipant.text = null
         }
+
+        showMessage = false
+
+        viewModel!!.participantAddedResult.observe(this, Observer { result ->
+            val (success, message) = result
+            if (success && showMessage) {
+                Toast.makeText(context, "Se ha añadido al usuario: " + message, Toast.LENGTH_SHORT).show()
+            } else if (!success && showMessage) {
+                Toast.makeText(context, "No se ha podido añadir al usuario: " + message, Toast.LENGTH_SHORT).show()
+            }
+        })
 
         showMode()
 

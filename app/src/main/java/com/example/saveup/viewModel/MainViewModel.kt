@@ -36,6 +36,8 @@ class MainViewModel(
     val monthlyLimit: MutableLiveData<Double?> = MutableLiveData()
 
     // ------------------ GroupsFragment ------------------
+    val participantAddedResult = MutableLiveData<Pair<Boolean, String>>()
+    val participantsNotAddedResult = MutableLiveData<List<String>>()
     val userGroups: MutableLiveData<List<Group>> = MutableLiveData()
     val currentGroup: MutableLiveData<Group?> = MutableLiveData()
     val currentGroupTransactions: MutableLiveData<List<Transaction>> = MutableLiveData()
@@ -244,7 +246,30 @@ class MainViewModel(
                 repository.addParticipantToGroup(group, groupParticipant)
                 groupManager.addParticipantToGroup(groupParticipant, group)
                 currentGroupParticipants.postValue(group.participants)
+                participantAddedResult.postValue(Pair(true, participant))
+            } else {
+                participantAddedResult.postValue(Pair(false, participant))
             }
+        }
+        // TODO: usar y probar esta función
+    }
+
+    fun addParticipantsToGroup(group: Group, participants: List<String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intentan añadir participantes al grupo")
+            val participantsNotAdded: MutableList<String> = mutableListOf()
+            for (p in participants) {
+                val groupParticipant = repository.getParticipant(p)
+                Log.d("MainViewModel", "Nuevos participantes para el grupo: $group")
+                if (groupParticipant.email.isNotEmpty()) {
+                    repository.addParticipantToGroup(group, groupParticipant)
+                    groupManager.addParticipantToGroup(groupParticipant, group)
+                    currentGroupParticipants.postValue(group.participants)
+                } else {
+                    participantsNotAdded.add(p)
+                }
+            }
+            participantsNotAddedResult.postValue(participantsNotAdded)
         }
         // TODO: usar y probar esta función
     }
