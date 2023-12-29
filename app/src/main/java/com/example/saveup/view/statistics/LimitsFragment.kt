@@ -17,10 +17,8 @@ import com.example.saveup.databinding.FragmentLimitsBinding
 import com.example.saveup.model.Account
 import com.example.saveup.model.Notifications
 import com.example.saveup.model.firestore.FireGoal
-import com.google.android.material.textfield.TextInputLayout
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Date
 import java.util.Locale
 
@@ -86,7 +84,9 @@ class LimitsFragment : Fragment() {
         }
 
         viewModel?.goal?.observe(viewLifecycleOwner) {
-            setGoal(it)
+            if (it != null) {
+                setGoal(it)
+            }
         }
     }
 
@@ -157,7 +157,7 @@ class LimitsFragment : Fragment() {
             if (value != null && value < 0.01) {
                 binding.outlinedTextFieldGoalName.error = resources.getString(R.string.errLowGoal)
             } else {
-                viewModel?.updateGoal(newGoalName, date, value)
+                viewModel?.updateGoal(FireGoal(newGoalName, Date(), date, viewModel?.balance?.value!!, value))
 
                 notifyNewGoal(newGoalName, date, value)
             }

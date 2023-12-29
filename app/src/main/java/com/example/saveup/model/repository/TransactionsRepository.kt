@@ -197,12 +197,76 @@ class TransactionsRepository {
     }
 
     suspend fun updateGoal(goal: FireGoal) {
-        Log.d("TransactionsRepository", "Se guarda la meta " + goal.toString())
-        return
+        withContext(Dispatchers.IO) {
+            val currentGoal = getGoal(auth.currentUser!!.uid)
+            if (currentGoal == null) { // Crear por primera vez la meta (id = "")
+                val docRef = db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("goal")
+                    .document()
+                goal.goalID = docRef.id
+                docRef.set(goal).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al modificar la meta"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al modificar la meta"
+                        )
+                    }
+                }
+            } else { // Modificar meta (id != "")
+                goal.goalID = currentGoal.goalID
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("goal")
+                    .document(currentGoal.goalID)
+                    .set(goal).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Log.d(
+                                "Repository",
+                                "Respuesta exitosa de firebase al modificar la meta"
+                            )
+                        } else {
+                            Log.d(
+                                "Repository",
+                                "Respuesta fallida de firebase al modificar la meta"
+                            )
+                        }
+                    }
+            }
+        }
     }
 
-    suspend fun getGoal(): FireGoal {
-        return FireGoal("Casa", Date(), Date(2024, 10, 5), 1000.0, 100000.0)
+    suspend fun getGoal(userId: String): FireGoal? {
+        return withContext(Dispatchers.IO) {
+            val respuesta = db.collection("users")
+                .document(userId)
+                .collection("goal")
+                .get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al recuperar la meta del usuario"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al recuperar la meta del usuario"
+                        )
+                    }
+                }
+                .await().map { document ->
+                    document.toObject(FireGoal::class.java)
+                }
+            if (respuesta.isEmpty()) {
+                return@withContext null
+            }
+            return@withContext respuesta[0]
+        }
     }
 
 }
