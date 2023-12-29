@@ -287,11 +287,15 @@ class TransactionsRepository {
                         )
                     }
                 }
-                .await().map { document ->
+                .await()
+            if (p.isEmpty) {
+                return@withContext FireParticipant()
+            } else {
+                return@withContext p.map { document ->
                     Log.d("Firestore", "Participante: " + document.id + " => " + document.data)
                     document.toObject(FireUser::class.java).toFireParticipant()
                 }[0]
-            return@withContext p
+            }
         }
     }
 

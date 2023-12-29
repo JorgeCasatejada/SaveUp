@@ -60,7 +60,7 @@ class GroupDetailsParticipantsFragment : Fragment() {
         binding.btAddParticipant.setOnClickListener {
             viewModel!!.addParticipantToGroup(viewModel!!.getCurrentGroup()!!,
                 binding.etIdParticipant.text.toString())
-            closeGroup()
+            binding.etIdParticipant.text = null
         }
 
         showMode()
@@ -77,7 +77,7 @@ class GroupDetailsParticipantsFragment : Fragment() {
 
     private fun showMode() {
         //TODO: función para saber si es admin
-        updateVisibility(false)
+        updateVisibility(true)
     }
 
     private fun updateVisibility(isAdmin: Boolean) {

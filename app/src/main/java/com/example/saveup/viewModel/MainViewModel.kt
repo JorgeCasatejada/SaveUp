@@ -240,9 +240,11 @@ class MainViewModel(
             Log.d("MainViewModel", "Se intentan añadir un participante al grupo")
             val groupParticipant = repository.getParticipant(participant)
             Log.d("MainViewModel", "Nuevo participante para el grupo: $groupParticipant")
-            repository.addParticipantToGroup(group, groupParticipant)
-            groupManager.addParticipantToGroup(groupParticipant, group)
-            currentGroupParticipants.postValue(group.participants)
+            if (groupParticipant.email.isNotEmpty()) {
+                repository.addParticipantToGroup(group, groupParticipant)
+                groupManager.addParticipantToGroup(groupParticipant, group)
+                currentGroupParticipants.postValue(group.participants)
+            }
         }
         // TODO: usar y probar esta función
     }
