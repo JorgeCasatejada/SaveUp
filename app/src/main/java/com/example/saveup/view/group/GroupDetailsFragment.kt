@@ -28,7 +28,7 @@ class GroupDetailsFragment : Fragment() {
         navView = view.findViewById(R.id.nav_view)
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         cargarMenu()
-        mostrarParticipantes()
+        mostrarTransacciones()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -52,7 +52,7 @@ class GroupDetailsFragment : Fragment() {
     }
 
     private fun cargarMenu() {
-        // Esto es el listener. Recuerda, el when es similar al switch.
+        // Esto es el listener.
         navView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_transactions -> {
