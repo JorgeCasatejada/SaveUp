@@ -1,6 +1,7 @@
 package com.example.saveup.view.group
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,7 @@ class GroupDetailsFragment : Fragment() {
             viewModel!!.unregisterGroupTransactionsListener()
             if (it == null) {
                 // TODO: Grupo no existe, borrarlo de los grupos del usuario
+                Log.w("TODO", "Grupo no existe, borrarlo de los grupos del usuario")
             } else {
                 viewModel!!.registerGroupParticipantsListener(it)
                 viewModel!!.registerGroupTransactionsListener(it)
@@ -42,11 +44,13 @@ class GroupDetailsFragment : Fragment() {
         }
         viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {
             // TODO: Comprobar si sigo perteneciendo al grupo o se me ha expulsado
+            Log.w("TODO", "Comprobar si sigo perteneciendo al grupo o se me ha expulsado")
         }
     }
 
     override fun onPause() {
         super.onPause()
+        viewModel!!.unregisterGroupInfoListener()
         viewModel!!.unregisterGroupParticipantsListener()
         viewModel!!.unregisterGroupTransactionsListener()
     }

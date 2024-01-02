@@ -9,6 +9,7 @@ import com.example.saveup.model.firestore.FireTransaction
 import com.example.saveup.model.firestore.FireUser
 import com.example.saveup.model.firestore.FireUserGroup
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -167,6 +168,16 @@ class TransactionsRepository {
         }
     }
 
+    fun getUserGroupsRegistration(
+        userId: String,
+        listener: EventListener<QuerySnapshot>
+    ): ListenerRegistration {
+        return db.collection("users")
+            .document(userId)
+            .collection("myGroups")
+            .addSnapshotListener(listener)
+    }
+
     suspend fun getUserGroups(userId: String): MutableList<Group> {
         return withContext(Dispatchers.IO) {
             val groups = db.collection("users")
@@ -193,13 +204,12 @@ class TransactionsRepository {
         }
     }
 
-    fun getUserGroupsRegistration(
-        userId: String,
-        listener: EventListener<QuerySnapshot>
+    fun getGroupInfoRegistration(
+        group: Group,
+        listener: EventListener<DocumentSnapshot>
     ): ListenerRegistration {
-        return db.collection("users")
-            .document(userId)
-            .collection("myGroups")
+        return db.collection("groups")
+            .document(group.id)
             .addSnapshotListener(listener)
     }
 

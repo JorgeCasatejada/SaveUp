@@ -11,6 +11,7 @@ import com.example.saveup.model.Transaction
 import com.example.saveup.model.TransactionManager
 import com.example.saveup.model.firestore.FireGroup
 import com.example.saveup.model.firestore.FireParticipant
+import com.example.saveup.model.firestore.realTimeListener.GroupInfoListener
 import com.example.saveup.model.firestore.realTimeListener.GroupParticipantsListener
 import com.example.saveup.model.firestore.realTimeListener.GroupTransactionsListener
 import com.example.saveup.model.firestore.realTimeListener.UserGroupsListener
@@ -50,6 +51,7 @@ class MainViewModel(
     val currentGroupParticipants: MutableLiveData<List<FireParticipant>> = MutableLiveData()
 
     private var userGroupsListenerRegistration: ListenerRegistration? = null
+    private var groupsInfoListenerRegistration: ListenerRegistration? = null
     private var groupParticipantsListenerRegistration: ListenerRegistration? = null
     private var groupTransactionsListenerRegistration: ListenerRegistration? = null
 
@@ -224,6 +226,17 @@ class MainViewModel(
             groupManager.addDataToGroup(newGroupData)
             currentGroup.postValue(groupManager.getGroup(newGroupData.id))
         }
+    }
+
+    fun registerGroupInfoListener(group: Group) {
+        Log.d("MainViewModel", "Se empiezan a observar la información del grupo")
+        groupsInfoListenerRegistration =
+            repository.getGroupInfoRegistration(group, GroupInfoListener(this))
+    }
+
+    fun unregisterGroupInfoListener() {
+        Log.d("MainViewModel", "Se dejan de observar la información del grupo")
+        groupsInfoListenerRegistration?.remove()
     }
 
     fun loadInfoFromGroup(group: Group) {

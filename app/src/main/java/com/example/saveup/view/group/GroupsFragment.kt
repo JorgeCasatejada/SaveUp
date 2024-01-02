@@ -65,7 +65,7 @@ class GroupsFragment : Fragment() {
         binding.recyclerGroups.layoutManager = LinearLayoutManager(context)
         binding.recyclerGroups.setHasFixedSize(true)
         groupAdapter = GroupAdapter(onItemSelected = { group ->
-            viewModel!!.loadInfoFromGroup(group)
+            viewModel!!.registerGroupInfoListener(group)
             showGroup()
         })
         binding.recyclerGroups.adapter = groupAdapter
