@@ -41,6 +41,7 @@ class MainViewModel(
     val monthlyLimit: MutableLiveData<Double?> = MutableLiveData()
 
     // ------------------ GroupsFragment ------------------
+    val isGroupAdmin = MutableLiveData<Boolean>()
     val participantAddedResult = MutableLiveData<Pair<Boolean, String>>()
     val participantsNotAddedResult = MutableLiveData<List<String>>()
     val userGroups: MutableLiveData<List<Group>> = MutableLiveData()
@@ -419,6 +420,10 @@ class MainViewModel(
             currentGroupTransactions.postValue(group.transactionList)
         }
         // TODO usar y probar esta función
+    }
+
+    fun isAdmin(participants: List<FireParticipant>) {
+        isGroupAdmin.postValue(groupManager.isAdmin(participants, getUserEmail()))
     }
 
 

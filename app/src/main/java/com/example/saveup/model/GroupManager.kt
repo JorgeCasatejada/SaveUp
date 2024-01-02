@@ -57,4 +57,12 @@ class GroupManager {
         group.removeTransaction(transactionOld)
         group.addTransaction(transactionNew)
     }
+
+    fun isAdmin(group: List<FireParticipant>, userEmail: String): Boolean {
+        for (p in group) {
+            if (p.isAdmin && p.email == userEmail)
+                return true
+        }
+        return false
+    }
 }

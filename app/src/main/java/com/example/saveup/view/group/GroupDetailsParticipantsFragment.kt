@@ -50,6 +50,11 @@ class GroupDetailsParticipantsFragment : Fragment() {
 
         viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {
             participantAdapter.update(it)
+            viewModel!!.isAdmin(it)
+        }
+
+        viewModel!!.isGroupAdmin.observe(viewLifecycleOwner) {
+            updateVisibility(it)
         }
 
         binding.btDeleteGroup.setOnClickListener {
@@ -93,8 +98,6 @@ class GroupDetailsParticipantsFragment : Fragment() {
             }
         }
 
-        showMode()
-
         return binding.root
     }
 
@@ -103,11 +106,6 @@ class GroupDetailsParticipantsFragment : Fragment() {
             null,
             FragmentManager.POP_BACK_STACK_INCLUSIVE
         )
-    }
-
-    private fun showMode() {
-        //TODO: función para saber si es admin
-        updateVisibility(true)
     }
 
     private fun updateVisibility(isAdmin: Boolean) {
