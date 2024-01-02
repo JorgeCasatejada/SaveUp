@@ -15,16 +15,16 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.saveup.model.firestore.FireGoal;
-import com.example.saveup.view.statistics.LimitsGoalsFragment;
-import com.example.saveup.viewModel.MainViewModel;
 import com.example.saveup.R;
-import com.example.saveup.view.adapter.TransactionsListAdapter;
 import com.example.saveup.databinding.FragmentMainScreenBinding;
 import com.example.saveup.model.Account;
 import com.example.saveup.model.Notifications;
 import com.example.saveup.model.Transaction;
 import com.example.saveup.model.TransactionManager;
+import com.example.saveup.model.firestore.FireGoal;
+import com.example.saveup.view.adapter.TransactionsListAdapter;
+import com.example.saveup.view.statistics.LimitsGoalsFragment;
+import com.example.saveup.viewModel.MainViewModel;
 
 import java.util.Date;
 import java.util.List;

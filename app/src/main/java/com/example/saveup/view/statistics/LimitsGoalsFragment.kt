@@ -12,11 +12,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.R
-import com.example.saveup.viewModel.MainViewModel
 import com.example.saveup.databinding.FragmentLimitsGoalsBinding
 import com.example.saveup.model.Account
 import com.example.saveup.model.Notifications
 import com.example.saveup.model.firestore.FireGoal
+import com.example.saveup.viewModel.MainViewModel
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -43,15 +43,15 @@ class LimitsGoalsFragment : Fragment() {
 
     private fun createNotificationChannel() {
         // API 26 o superior.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channelId = SIMPLE_CHANNEL
             val channelName = "Canal de notificaciones de SaveUp"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(channelId, channelName, importance)
 
             // Añadimos el canal al servicio de notificaciones.
-            val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -108,8 +108,7 @@ class LimitsGoalsFragment : Fragment() {
             } else {
                 if (validateDate(binding.datePickerLayoutGoal.editText?.text.toString())) {
                     binding.datePickerLayoutGoal.error = null
-                }
-                else {
+                } else {
                     binding.datePickerLayoutGoal.error = resources.getString(R.string.errDate)
                 }
             }
@@ -152,12 +151,21 @@ class LimitsGoalsFragment : Fragment() {
         try {
             val date = if (newGoalDate.isBlank()) null else sdf.parse(newGoalDate)
 
-            val value = if (newGoalValue.isBlank()) null else newGoalValue.replace(',', '.').toDouble()
+            val value =
+                if (newGoalValue.isBlank()) null else newGoalValue.replace(',', '.').toDouble()
 
             if (value != null && value < 0.01) {
                 binding.outlinedTextFieldGoalName.error = resources.getString(R.string.errLowGoal)
             } else {
-                viewModel?.updateGoal(FireGoal(newGoalName, Date(), date, viewModel?.balance?.value!!, value))
+                viewModel?.updateGoal(
+                    FireGoal(
+                        newGoalName,
+                        Date(),
+                        date,
+                        viewModel?.balance?.value!!,
+                        value
+                    )
+                )
 
                 notifyNewGoal(newGoalName, date, value)
             }
@@ -186,10 +194,13 @@ class LimitsGoalsFragment : Fragment() {
     }
 
     private fun notifyNewLimit(limit: Double) {
-        Notifications.simpleNotification(requireActivity(),
+        Notifications.simpleNotification(
+            requireActivity(),
             "Nuevo Límite Mensual Establecido",
             "Se ha actualizado el límite mensual\nDurante este mes el límite es de $limit €",
-            com.google.android.material.R.drawable.navigation_empty_icon, LIMIT_STABLISHED_NOTIFICATION_ID)
+            com.google.android.material.R.drawable.navigation_empty_icon,
+            LIMIT_STABLISHED_NOTIFICATION_ID
+        )
     }
 
     private fun notifyNewGoal(name: String, date: Date?, value: Double?) {
@@ -201,10 +212,13 @@ class LimitsGoalsFragment : Fragment() {
             val dateFormatted = "${date.date}/${date.month + 1}/${date.year + 1900}"
             builder.append(" y termina el día $dateFormatted")
         }
-        Notifications.simpleNotification(requireActivity(),
+        Notifications.simpleNotification(
+            requireActivity(),
             "Nueva Meta Establecida",
             builder.toString(),
-            com.google.android.material.R.drawable.navigation_empty_icon, GOAL_STABLISHED_NOTIFICATION_ID)
+            com.google.android.material.R.drawable.navigation_empty_icon,
+            GOAL_STABLISHED_NOTIFICATION_ID
+        )
     }
 
     private fun setGoal(goal: FireGoal) {
@@ -212,7 +226,8 @@ class LimitsGoalsFragment : Fragment() {
         if (goal.finalDate == null) {
             binding.etGoalDate.setText("")
         } else {
-            val stringDate = "${goal.finalDate.date}/${goal.finalDate.month + 1}/${goal.finalDate.year + 1900}"
+            val stringDate =
+                "${goal.finalDate.date}/${goal.finalDate.month + 1}/${goal.finalDate.year + 1900}"
             binding.etGoalDate.setText(stringDate)
         }
         if (goal.objectiveBalance == null) {
@@ -229,13 +244,16 @@ class LimitsGoalsFragment : Fragment() {
             val remainingBalance = goal.objectiveBalance - viewModel?.balance?.value!!
 
             binding.textRemainingBalanceGoal.text = resources.getString(
-                R.string.ramainingBalanceGoal, String.format(Locale.getDefault(), "%.2f", remainingBalance))
+                R.string.ramainingBalanceGoal,
+                String.format(Locale.getDefault(), "%.2f", remainingBalance)
+            )
 
             if (goal.finalDate != null) {
                 if (goal.finalDate >= Date()) {
                     val remainingDays = (goal.finalDate.time - Date().time) / 1000 / 60 / 60 / 24
                     binding.textRemainingDaysGoal.text = resources.getString(
-                        R.string.ramainingDaysGoal, remainingDays)
+                        R.string.ramainingDaysGoal, remainingDays
+                    )
                 }
             }
         }
@@ -244,7 +262,7 @@ class LimitsGoalsFragment : Fragment() {
     companion object {
         private const val ACCOUNT = "Account"
 
-        const val  SIMPLE_CHANNEL = "Canal simple"
+        const val SIMPLE_CHANNEL = "Canal simple"
 
         const val GOAL_REACHED_NOTIFICATION_ID = 1
         const val GOAL_NOT_REACHED_NOTIFICATION_ID = 2

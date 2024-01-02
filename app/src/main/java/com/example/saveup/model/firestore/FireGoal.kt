@@ -11,6 +11,10 @@ data class FireGoal(
     var goalID: String = "",
 ) {
     override fun toString(): String {
-        return "Goal [name=$name, initialDate=(${initialDate?.date}/${initialDate?.month?.plus(1)}/${initialDate?.year?.plus(1900)}), finalDate=(${finalDate?.date}/${finalDate?.month?.plus(1)}/${finalDate?.year?.plus(1900)}), initialBalance=$initialBalance, objectiveBalance=$objectiveBalance"
+        return "Goal [name=$name, initialDate=(${initialDate?.date}/${initialDate?.month?.plus(1)}/${
+            initialDate?.year?.plus(
+                1900
+            )
+        }), finalDate=(${finalDate?.date}/${finalDate?.month?.plus(1)}/${finalDate?.year?.plus(1900)}), initialBalance=$initialBalance, objectiveBalance=$objectiveBalance"
     }
 }

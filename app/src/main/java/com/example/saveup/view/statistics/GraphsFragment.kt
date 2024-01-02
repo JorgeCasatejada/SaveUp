@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.saveup.viewModel.MainViewModel
 import com.example.saveup.R
 import com.example.saveup.databinding.FragmentGraphsBinding
 import com.example.saveup.model.Account
 import com.example.saveup.model.Category
+import com.example.saveup.viewModel.MainViewModel
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.LimitLine
@@ -148,7 +148,6 @@ class GraphsFragment : Fragment() {
         var minBalance = 0f
         for (month in 0..11) {
             val transactions = map.getOrDefault(month, ArrayList())
-                ?: return
             for (transaction in transactions) {
                 balance += transaction.signedValue.toFloat()
                 if (balance < minBalance) minBalance =
@@ -212,7 +211,8 @@ class GraphsFragment : Fragment() {
         // Configuración
         // Colores
         val colors = resources.getIntArray(R.array.pieChartColorsHexCode)
-        val pieDataSet = PieDataSet(categories, resources.getString(R.string.labelTransactionCategory))
+        val pieDataSet =
+            PieDataSet(categories, resources.getString(R.string.labelTransactionCategory))
         pieDataSet.setColors(*colors)
         pieDataSet.valueTextColor = Color.BLACK
         pieDataSet.valueTextSize = 15f
@@ -310,7 +310,8 @@ class GraphsFragment : Fragment() {
                 .append(date).append("\n\r").append("\n\r")
         }
         stringBuilder.append("------------------------------------\n")
-        stringBuilder.append("Balance Total: ").append(viewModel?.balance?.value?.let { round(it, 2) }).append("€")
+        stringBuilder.append("Balance Total: ")
+            .append(viewModel?.balance?.value?.let { round(it, 2) }).append("€")
         itSend.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString())
         val shareIntent = Intent.createChooser(itSend, null)
         startActivity(shareIntent)
