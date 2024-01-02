@@ -1,15 +1,14 @@
 package com.example.saveup.view.group
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.saveup.R
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.saveup.R
 import com.example.saveup.viewModel.MainViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class GroupDetailsFragment : Fragment() {
 
@@ -20,19 +19,37 @@ class GroupDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+
         return inflater.inflate(R.layout.fragment_group_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navView = view.findViewById(R.id.nav_view)
-        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         cargarMenu()
         mostrarParticipantes()
+
+        viewModel!!.currentGroup.observe(viewLifecycleOwner) {
+            viewModel!!.unregisterGroupParticipantsListener()
+            viewModel!!.unregisterGroupTransactionsListener()
+            if (it == null) {
+                // TODO: Grupo no existe, borrarlo de los grupos del usuario
+            } else {
+                viewModel!!.registerGroupParticipantsListener(it)
+                viewModel!!.registerGroupTransactionsListener(it)
+            }
+        }
+
+        viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {
+            // TODO: Comprobar si sigo perteneciendo al grupo o se me ha expulsado
+        }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onPause() {
+        super.onPause()
+        viewModel!!.unregisterGroupParticipantsListener()
+        viewModel!!.unregisterGroupTransactionsListener()
     }
 
     private fun mostrarParticipantes() {
@@ -58,6 +75,7 @@ class GroupDetailsFragment : Fragment() {
                 R.id.navigation_transactions -> {
                     mostrarTransacciones()
                 }
+
                 R.id.navigation_participants -> {
                     mostrarParticipantes()
                 }

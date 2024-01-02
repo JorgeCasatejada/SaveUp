@@ -9,7 +9,10 @@ import com.example.saveup.model.firestore.FireTransaction
 import com.example.saveup.model.firestore.FireUser
 import com.example.saveup.model.firestore.FireUserGroup
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -190,6 +193,16 @@ class TransactionsRepository {
         }
     }
 
+    fun getUserGroupsRegistration(
+        userId: String,
+        listener: EventListener<QuerySnapshot>
+    ): ListenerRegistration {
+        return db.collection("users")
+            .document(userId)
+            .collection("myGroups")
+            .addSnapshotListener(listener)
+    }
+
     suspend fun getGroup(group: Group): FireGroup? {
         return withContext(Dispatchers.IO) {
             val newGroupData = db.collection("groups")
@@ -241,6 +254,16 @@ class TransactionsRepository {
                 .document(group.id)
                 .delete()
         }
+    }
+
+    fun getGroupParticipantsRegistration(
+        group: Group,
+        listener: EventListener<QuerySnapshot>
+    ): ListenerRegistration {
+        return db.collection("groups")
+            .document(group.id)
+            .collection("participants")
+            .addSnapshotListener(listener)
     }
 
     suspend fun getGroupParticipants(group: Group): List<FireParticipant> {
@@ -358,6 +381,16 @@ class TransactionsRepository {
                     }
                 }
         }
+    }
+
+    fun getGroupTransactionsRegistration(
+        group: Group,
+        listener: EventListener<QuerySnapshot>
+    ): ListenerRegistration {
+        return db.collection("groups")
+            .document(group.id)
+            .collection("transactions")
+            .addSnapshotListener(listener)
     }
 
     suspend fun getGroupTransactions(group: Group): List<Transaction> {

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.saveup.R
@@ -44,18 +43,20 @@ class GroupsFragment : Fragment() {
         isFragmentVisible = true
         // Ahora que el fragmento está visible, se puede mostrar el Toast si es necesario
         showMessage = true
+        viewModel!!.registerUserGroupsListener()
     }
 
     override fun onPause() {
         super.onPause()
         isFragmentVisible = false
+        viewModel!!.unregisterUserGroupsListener()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentGroupsBinding.inflate(inflater, container, false)
 
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
@@ -64,22 +65,23 @@ class GroupsFragment : Fragment() {
         binding.recyclerGroups.layoutManager = LinearLayoutManager(context)
         binding.recyclerGroups.setHasFixedSize(true)
         groupAdapter = GroupAdapter(onItemSelected = { group ->
-            val detailsFragment = GroupDetailsFragment()
+//            val detailsFragment = GroupDetailsFragment()
 
             viewModel!!.loadInfoFromGroup(group)
-            viewModel!!.loadParticipantsFromGroup(group)
-            viewModel!!.loadTransactionsFromGroup(group)
+//            viewModel!!.loadParticipantsFromGroup(group) // FIXME: Creo que esto sobra
+//            viewModel!!.loadTransactionsFromGroup(group) // FIXME: Creo que esto sobra
 
-            val fragmentManager = requireActivity().supportFragmentManager
-            fragmentManager.beginTransaction()
-                .replace(R.id.main_fragment_container, detailsFragment)
-                .addToBackStack(null)
-                .commit()
+            showGroup() // FIXME: Creo que habías creado el método y no lo llegaste a usar
+//            val fragmentManager = requireActivity().supportFragmentManager
+//            fragmentManager.beginTransaction()
+//                .replace(R.id.main_fragment_container, detailsFragment)
+//                .addToBackStack(null)
+//                .commit()
         })
         binding.recyclerGroups.adapter = groupAdapter
 
         if (!viewModel!!.userGroups.isInitialized) {
-            viewModel!!.getUserGroups()
+//            viewModel!!.getUserGroups() // FIXME: Creo que esto sobra
             binding.recyclerGroups.visibility = View.INVISIBLE
             binding.progressBar.visibility = View.VISIBLE
         }
@@ -88,21 +90,26 @@ class GroupsFragment : Fragment() {
             startAddGroupActivity()
         }
 
-        viewModel!!.userGroups.observe(viewLifecycleOwner,  Observer {
-            groupAdapter.update(it)
-        })
+        // FIXME: Creo que esto sobra, está ya en el onViewCreated
+//        viewModel!!.userGroups.observe(viewLifecycleOwner,  Observer {
+//            groupAdapter.update(it)
+//        })
 
         showMessage = false
 
-        viewModel!!.participantsNotAddedResult.observe(this, Observer { result ->
-            if (showMessage){
+        viewModel!!.participantsNotAddedResult.observe(this) { result ->
+            if (showMessage) {
                 var message = ""
                 for (p in result)
                     message += "$p, "
                 message = message.dropLast(2)
-                Toast.makeText(context, "No se ha podido añadir a los usuarios: $message", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    "No se ha podido añadir a los usuarios: $message",
+                    Toast.LENGTH_LONG
+                ).show()
             }
-        })
+        }
 
         return binding.root
     }
@@ -135,7 +142,7 @@ class GroupsFragment : Fragment() {
                     viewModel?.addAdminToGroup(group, viewModel?.getUserEmail().toString())
                 }
                 if (participants != null && group != null) {
-                        viewModel?.addParticipantsToGroup(group, participants)
+                    viewModel?.addParticipantsToGroup(group, participants)
                 }
             }
 
@@ -143,11 +150,11 @@ class GroupsFragment : Fragment() {
     }
 
 
-    private fun showGroup(group: Group) {
+    private fun showGroup() { // FIXME: Revisar estos cambios
         val details = GroupDetailsFragment()
         val fragmentManager = requireActivity().supportFragmentManager
         fragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, details)
+            .replace(R.id.main_fragment_container, details)
             .addToBackStack(null)
             .commit()
     }
