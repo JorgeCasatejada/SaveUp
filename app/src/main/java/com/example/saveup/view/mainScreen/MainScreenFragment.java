@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.saveup.model.firestore.FireGoal;
-import com.example.saveup.view.statistics.LimitsFragment;
+import com.example.saveup.view.statistics.LimitsGoalsFragment;
 import com.example.saveup.viewModel.MainViewModel;
 import com.example.saveup.R;
 import com.example.saveup.view.adapter.TransactionsListAdapter;
@@ -271,7 +271,7 @@ public class MainScreenFragment extends Fragment {
                         + " € ha sido excedido, ahora mismo sus gastos mensuales son "
                         + viewModel.getMonthlyExpenses() + "€",
                 com.google.android.material.R.drawable.navigation_empty_icon,
-                LimitsFragment.LIMIT_REACHED_NOTIFICATION_ID);
+                LimitsGoalsFragment.LIMIT_REACHED_NOTIFICATION_ID);
     }
 
     private void notifyGoalReached() {
@@ -296,7 +296,7 @@ public class MainScreenFragment extends Fragment {
                 title,
                 builder.toString(),
                 com.google.android.material.R.drawable.navigation_empty_icon,
-                LimitsFragment.GOAL_REACHED_NOTIFICATION_ID);
+                LimitsGoalsFragment.GOAL_REACHED_NOTIFICATION_ID);
     }
 
     private void notifyGoalNotReached() {
@@ -321,7 +321,7 @@ public class MainScreenFragment extends Fragment {
                 title,
                 builder.toString(),
                 com.google.android.material.R.drawable.navigation_empty_icon,
-                LimitsFragment.GOAL_NOT_REACHED_NOTIFICATION_ID);
+                LimitsGoalsFragment.GOAL_NOT_REACHED_NOTIFICATION_ID);
     }
 
 }

@@ -47,7 +47,7 @@ class StatisticsFragment : Fragment() {
                 }
 
                 R.id.mnItmLimits -> {
-                    showLimits()
+                    showLimitsGoals()
                 }
             }
             true
@@ -61,10 +61,10 @@ class StatisticsFragment : Fragment() {
             .commit()
     }
 
-    private fun showLimits() {
-        val limitsFragment = LimitsFragment.newInstance(account)
+    private fun showLimitsGoals() {
+        val limitsGoalsFragment = LimitsGoalsFragment.newInstance(account)
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container_statistics, limitsFragment)
+            .replace(R.id.fragment_container_statistics, limitsGoalsFragment)
             .commit()
     }
 

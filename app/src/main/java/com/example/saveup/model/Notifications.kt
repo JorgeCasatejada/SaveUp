@@ -8,7 +8,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.example.saveup.view.MainActivity
-import com.example.saveup.view.statistics.LimitsFragment
+import com.example.saveup.view.statistics.LimitsGoalsFragment
 import kotlin.random.Random
 
 object Notifications {
@@ -16,7 +16,7 @@ object Notifications {
     @JvmStatic
     fun simpleNotification(activity: Activity, title: String, body: String, icon: Int, id: Int) {
         val noti = NotificationCompat.Builder(activity.applicationContext,
-            LimitsFragment.SIMPLE_CHANNEL
+            LimitsGoalsFragment.SIMPLE_CHANNEL
         )
             .setSmallIcon(icon) //El icono. Es obligatorio. El resto es opcional.
             .setContentTitle(title) // Título

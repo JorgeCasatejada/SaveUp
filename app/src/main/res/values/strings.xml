@@ -74,7 +74,7 @@
     <string name="mnItmGroups">Grupos</string>
 
     <string name="mnItmGraphs">Gráficos</string>
-    <string name="mnItmLimits">Límites</string>
+    <string name="mnItmLimitsGoals">Límites &amp; Metas</string>
 
     <!-- estadísticas -->
     <string name="incomeExpense">Ingresos / Gastos</string>

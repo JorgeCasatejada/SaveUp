@@ -1,6 +1,5 @@
 package com.example.saveup.view.statistics
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -14,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.R
 import com.example.saveup.viewModel.MainViewModel
-import com.example.saveup.databinding.FragmentLimitsBinding
+import com.example.saveup.databinding.FragmentLimitsGoalsBinding
 import com.example.saveup.model.Account
 import com.example.saveup.model.Notifications
 import com.example.saveup.model.firestore.FireGoal
@@ -23,8 +22,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class LimitsFragment : Fragment() {
-    private var _binding: FragmentLimitsBinding? = null
+class LimitsGoalsFragment : Fragment() {
+    private var _binding: FragmentLimitsGoalsBinding? = null
     private val binding get() = _binding!!
 
     private var account: Account? = null
@@ -61,7 +60,7 @@ class LimitsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLimitsBinding.inflate(inflater, container, false)
+        _binding = FragmentLimitsGoalsBinding.inflate(inflater, container, false)
 
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
@@ -254,8 +253,8 @@ class LimitsFragment : Fragment() {
         const val LIMIT_STABLISHED_NOTIFICATION_ID = 5
 
         @JvmStatic
-        fun newInstance(account: Account?): LimitsFragment {
-            val fragment = LimitsFragment()
+        fun newInstance(account: Account?): LimitsGoalsFragment {
+            val fragment = LimitsGoalsFragment()
             val args = Bundle()
             args.putParcelable(ACCOUNT, account)
             fragment.arguments = args
