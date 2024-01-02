@@ -175,7 +175,7 @@ class MainViewModel(
         return null
     }
 
-    fun getGoal() {
+    fun getCurrentGoal() {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intenta obtener la meta del usuario")
             val newGoal = repository.getGoal(auth.currentUser!!.uid)

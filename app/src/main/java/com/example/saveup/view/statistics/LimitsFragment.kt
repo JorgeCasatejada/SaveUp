@@ -1,5 +1,6 @@
 package com.example.saveup.view.statistics
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -42,17 +43,17 @@ class LimitsFragment : Fragment() {
     }
 
     private fun createNotificationChannel() {
-        // Si API 26 o superior.
+        // API 26 o superior.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
-            val idCanal = SIMPLE_CHANNEL
-            val nombreCanal = "El nombre del canal"
-            val importancia = NotificationManager.IMPORTANCE_DEFAULT
-            val canal = NotificationChannel(idCanal,nombreCanal,importancia)
+            val channelId = SIMPLE_CHANNEL
+            val channelName = "Canal de notificaciones de SaveUp"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(channelId, channelName, importance)
 
             // Añadimos el canal al servicio de notificaciones.
             val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(canal)
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
@@ -69,7 +70,7 @@ class LimitsFragment : Fragment() {
         }
 
         if (!viewModel!!.goal.isInitialized) {
-            viewModel!!.getGoal()
+            viewModel!!.getCurrentGoal()
         }
 
         initializeVariables()
@@ -189,11 +190,22 @@ class LimitsFragment : Fragment() {
         Notifications.simpleNotification(requireActivity(),
             "Nuevo Límite Mensual Establecido",
             "Se ha actualizado el límite mensual\nDurante este mes el límite es de $limit €",
-            com.google.android.material.R.drawable.navigation_empty_icon)
+            com.google.android.material.R.drawable.navigation_empty_icon, LIMIT_STABLISHED_NOTIFICATION_ID)
     }
 
     private fun notifyNewGoal(name: String, date: Date?, value: Double?) {
-
+        val builder = StringBuilder("Se ha actualizado la meta $name\n")
+        if (value != null) {
+            builder.append("La meta es de $value €")
+        }
+        if (date != null) {
+            val dateFormatted = "${date.date}/${date.month + 1}/${date.year + 1900}"
+            builder.append(" y termina el día $dateFormatted")
+        }
+        Notifications.simpleNotification(requireActivity(),
+            "Nueva Meta Establecida",
+            builder.toString(),
+            com.google.android.material.R.drawable.navigation_empty_icon, GOAL_STABLISHED_NOTIFICATION_ID)
     }
 
     private fun setGoal(goal: FireGoal) {
@@ -216,13 +228,16 @@ class LimitsFragment : Fragment() {
             }
 
             val remainingBalance = goal.objectiveBalance - viewModel?.balance?.value!!
+
             binding.textRemainingBalanceGoal.text = resources.getString(
-                R.string.ramainingBalanceGoal, remainingBalance)
+                R.string.ramainingBalanceGoal, String.format(Locale.getDefault(), "%.2f", remainingBalance))
 
             if (goal.finalDate != null) {
-                val remainingDays = (goal.finalDate.time - Date().time) / 1000 / 60 / 60 / 24
-                binding.textRemainingDaysGoal.text = resources.getString(
-                    R.string.ramainingDaysGoal, remainingDays)
+                if (goal.finalDate >= Date()) {
+                    val remainingDays = (goal.finalDate.time - Date().time) / 1000 / 60 / 60 / 24
+                    binding.textRemainingDaysGoal.text = resources.getString(
+                        R.string.ramainingDaysGoal, remainingDays)
+                }
             }
         }
     }
@@ -231,7 +246,12 @@ class LimitsFragment : Fragment() {
         private const val ACCOUNT = "Account"
 
         const val  SIMPLE_CHANNEL = "Canal simple"
-        const val SIMPLE_NOTIFICATION_ID = 1
+
+        const val GOAL_REACHED_NOTIFICATION_ID = 1
+        const val GOAL_NOT_REACHED_NOTIFICATION_ID = 2
+        const val GOAL_STABLISHED_NOTIFICATION_ID = 3
+        const val LIMIT_REACHED_NOTIFICATION_ID = 4
+        const val LIMIT_STABLISHED_NOTIFICATION_ID = 5
 
         @JvmStatic
         fun newInstance(account: Account?): LimitsFragment {

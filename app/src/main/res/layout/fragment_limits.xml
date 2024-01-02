@@ -106,12 +106,14 @@
             android:id="@+id/textRemainingBalanceGoal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:text=""/>
 
         <TextView
             android:id="@+id/textRemainingDaysGoal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:text=""/>
 
     </LinearLayout>

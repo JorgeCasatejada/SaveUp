@@ -1,15 +1,20 @@
 package com.example.saveup.model
 
 import android.app.Activity
+import android.app.Notification
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
+import com.example.saveup.view.MainActivity
 import com.example.saveup.view.statistics.LimitsFragment
+import kotlin.random.Random
 
 object Notifications {
 
     @JvmStatic
-    fun simpleNotification(activity: Activity, title: String, body: String, icon: Int) {
+    fun simpleNotification(activity: Activity, title: String, body: String, icon: Int, id: Int) {
         val noti = NotificationCompat.Builder(activity.applicationContext,
             LimitsFragment.SIMPLE_CHANNEL
         )
@@ -24,17 +29,19 @@ object Notifications {
 
         //Descomenta el código siguiente cuando te lo indique.
 
-        /*
-        val intent = Intent(this, MainActivity::class.java).apply {
+
+        val intent = Intent(activity.applicationContext, MainActivity::class.java).apply {
             //Evitamos duplicidad
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            val flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getActivity(
+            activity.applicationContext,
+            0,
+            intent,
+            PendingIntent.FLAG_MUTABLE)
 
-        notificacion.setContentIntent(pendingIntent)
+        noti.setContentIntent(pendingIntent)
             .setAutoCancel(true) // La notificación se cierra al pulsarla.
-
-        */
 
         //Accedemos al servicio de notificaciones
         val manager = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -45,7 +52,7 @@ object Notifications {
 
             ¡Date cuenta que aquí estamos llamando al build() de la notificación!
          */
-        manager.notify(LimitsFragment.SIMPLE_NOTIFICATION_ID, noti.build())
+        manager.notify(id, noti.build()) // TODO: LimitsFragment.SIMPLE_NOTIFICATION_ID solo se muestra 1 noti
     }
 
 }
