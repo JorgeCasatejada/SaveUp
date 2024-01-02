@@ -65,23 +65,12 @@ class GroupsFragment : Fragment() {
         binding.recyclerGroups.layoutManager = LinearLayoutManager(context)
         binding.recyclerGroups.setHasFixedSize(true)
         groupAdapter = GroupAdapter(onItemSelected = { group ->
-//            val detailsFragment = GroupDetailsFragment()
-
             viewModel!!.loadInfoFromGroup(group)
-//            viewModel!!.loadParticipantsFromGroup(group) // FIXME: Creo que esto sobra
-//            viewModel!!.loadTransactionsFromGroup(group) // FIXME: Creo que esto sobra
-
-            showGroup() // FIXME: Creo que habías creado el método y no lo llegaste a usar
-//            val fragmentManager = requireActivity().supportFragmentManager
-//            fragmentManager.beginTransaction()
-//                .replace(R.id.main_fragment_container, detailsFragment)
-//                .addToBackStack(null)
-//                .commit()
+            showGroup()
         })
         binding.recyclerGroups.adapter = groupAdapter
 
         if (!viewModel!!.userGroups.isInitialized) {
-//            viewModel!!.getUserGroups() // FIXME: Creo que esto sobra
             binding.recyclerGroups.visibility = View.INVISIBLE
             binding.progressBar.visibility = View.VISIBLE
         }
@@ -89,11 +78,6 @@ class GroupsFragment : Fragment() {
         binding.fabAddGroup.setOnClickListener {
             startAddGroupActivity()
         }
-
-        // FIXME: Creo que esto sobra, está ya en el onViewCreated
-//        viewModel!!.userGroups.observe(viewLifecycleOwner,  Observer {
-//            groupAdapter.update(it)
-//        })
 
         showMessage = false
 
@@ -141,7 +125,7 @@ class GroupsFragment : Fragment() {
                 if (group != null) {
                     viewModel?.addAdminToGroup(group, viewModel?.getUserEmail().toString())
                 }
-                if (participants != null && group != null) {
+                if (!participants.isNullOrEmpty() && group != null) {
                     viewModel?.addParticipantsToGroup(group, participants)
                 }
             }
@@ -150,7 +134,7 @@ class GroupsFragment : Fragment() {
     }
 
 
-    private fun showGroup() { // FIXME: Revisar estos cambios
+    private fun showGroup() {
         val details = GroupDetailsFragment()
         val fragmentManager = requireActivity().supportFragmentManager
         fragmentManager.beginTransaction()
