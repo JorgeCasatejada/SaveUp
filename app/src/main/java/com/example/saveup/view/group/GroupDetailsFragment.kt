@@ -28,7 +28,7 @@ class GroupDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navView = view.findViewById(R.id.nav_view)
         cargarMenu()
-        mostrarParticipantes()
+        mostrarTransacciones()
 
         viewModel!!.currentGroup.observe(viewLifecycleOwner) {
             viewModel!!.unregisterGroupParticipantsListener()
@@ -40,7 +40,6 @@ class GroupDetailsFragment : Fragment() {
                 viewModel!!.registerGroupTransactionsListener(it)
             }
         }
-
         viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {
             // TODO: Comprobar si sigo perteneciendo al grupo o se me ha expulsado
         }
@@ -69,13 +68,12 @@ class GroupDetailsFragment : Fragment() {
     }
 
     private fun cargarMenu() {
-        // Esto es el listener. Recuerda, el when es similar al switch.
+        // Esto es el listener.
         navView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_transactions -> {
                     mostrarTransacciones()
                 }
-
                 R.id.navigation_participants -> {
                     mostrarParticipantes()
                 }
