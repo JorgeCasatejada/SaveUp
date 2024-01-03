@@ -31,42 +31,31 @@ class GroupDetailsFragment : Fragment() {
         cargarMenu()
         mostrarTransacciones()
 
-        var groupDialogShown = false
 
         viewModel!!.currentGroup.observe(viewLifecycleOwner) {
 //            viewModel!!.unregisterGroupParticipantsListener()
 //            viewModel!!.unregisterGroupTransactionsListener()
             if (it == null) {
-                // TODO: Grupo no existe, borrarlo de los grupos del usuario
-                Log.w("TODO", "Grupo no existe, borrarlo de los grupos del usuario")
-                // Mensaje de eliminación y método
-//                viewModel!!.deleteGroupFromMyGroups()
-                if (!groupDialogShown) {
-                    showGroupDialog(true)
-                    groupDialogShown = true
-                }
+                Log.d("GroupDetailsFragment", "El grupo seleccionado no existe")
+                viewModel!!.deleteGroupFromMyGroups()
+                showGroupDialog(true)
             } else {
                 if (it.id.isNotBlank()) {
                     viewModel!!.registerGroupParticipantsListener(it)
                     viewModel!!.registerGroupTransactionsListener(it)
-                }else {
-                    Log.w("TODO", "Abierto el grupo vacio")
+                } else {
+                    Log.d("GroupDetailsFragment", "Abierto el grupo vacio")
                 }
             }
         }
         viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {
-            // TODO: Comprobar si sigo perteneciendo al grupo o se me ha expulsado
-            Log.w("TODO", "Comprobar si sigo perteneciendo al grupo o se me ha expulsado")
+            Log.d("GroupDetailsFragment", "Comprobar si sigo perteneciendo al grupo o se me ha expulsado")
             if (!viewModel!!.checkUserStillInGroup(it)) {
-                // Mensaje de expulsión y método
-                if (!groupDialogShown) {
-                    showGroupDialog(false)
-                    groupDialogShown = true
-                }
-                Log.w("TODO", "Se me ha expulsado")
-//                viewModel!!.exitFromCurrentGroup()
+                viewModel!!.exitFromCurrentGroup()
+                showGroupDialog(false)
+                Log.d("GroupDetailsFragment", "Se me ha expulsado del grupo")
             } else {
-                Log.w("TODO", "Sigo en el grupo")
+                Log.d("TODO", "Sigo en el grupo")
             }
         }
     }
