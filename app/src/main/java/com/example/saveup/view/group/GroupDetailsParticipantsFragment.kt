@@ -50,7 +50,7 @@ class GroupDetailsParticipantsFragment : Fragment() {
 
         viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {
             participantAdapter.update(it)
-            viewModel!!.isAdmin(it)
+            viewModel!!.checkAdmin(it)
         }
 
         viewModel!!.isGroupAdmin.observe(viewLifecycleOwner) {
@@ -67,10 +67,7 @@ class GroupDetailsParticipantsFragment : Fragment() {
         }
 
         binding.btExitGroup.setOnClickListener {
-            viewModel!!.deleteParticipantFromGroup(
-                viewModel!!.getCurrentGroup()!!,
-                viewModel!!.getUserEmail()
-            )
+            viewModel!!.exitFromCurrentGroup()
             closeGroup()
         }
 

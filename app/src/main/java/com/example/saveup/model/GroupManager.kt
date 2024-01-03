@@ -59,10 +59,12 @@ class GroupManager {
     }
 
     fun isAdmin(group: List<FireParticipant>, userEmail: String): Boolean {
-        for (p in group) {
-            if (p.isAdmin && p.email == userEmail)
-                return true
-        }
-        return false
+        val user = group.find { it.email == userEmail }
+        return user?.isAdmin ?: false
+    }
+
+    fun isParticipantInGroup(group: List<FireParticipant>, userEmail: String): Boolean {
+        val user = group.find { it.email == userEmail }
+        return user != null
     }
 }

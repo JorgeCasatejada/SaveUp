@@ -32,24 +32,38 @@ class GroupDetailsFragment : Fragment() {
         mostrarTransacciones()
 
         viewModel!!.currentGroup.observe(viewLifecycleOwner) {
-            viewModel!!.unregisterGroupParticipantsListener()
-            viewModel!!.unregisterGroupTransactionsListener()
+//            viewModel!!.unregisterGroupParticipantsListener()
+//            viewModel!!.unregisterGroupTransactionsListener()
             if (it == null) {
                 // TODO: Grupo no existe, borrarlo de los grupos del usuario
                 Log.w("TODO", "Grupo no existe, borrarlo de los grupos del usuario")
+                // Mensaje de eliminación y método
+//                viewModel!!.deleteGroupFromMyGroups()
             } else {
-                viewModel!!.registerGroupParticipantsListener(it)
-                viewModel!!.registerGroupTransactionsListener(it)
+                if (it.id.isNotBlank()) {
+                    viewModel!!.registerGroupParticipantsListener(it)
+                    viewModel!!.registerGroupTransactionsListener(it)
+                }else {
+                    Log.w("TODO", "Abierto el grupo vacio")
+                }
             }
         }
         viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {
             // TODO: Comprobar si sigo perteneciendo al grupo o se me ha expulsado
             Log.w("TODO", "Comprobar si sigo perteneciendo al grupo o se me ha expulsado")
+            if (!viewModel!!.checkUserStillInGroup(it)) {
+                // Mensaje de expulsión y método
+                Log.w("TODO", "Se me ha expulsado")
+//                viewModel!!.exitFromCurrentGroup()
+            } else {
+                Log.w("TODO", "Sigo en el grupo")
+            }
         }
     }
 
     override fun onPause() {
         super.onPause()
+        viewModel!!.setDefaultGroupValues()
         viewModel!!.unregisterGroupInfoListener()
         viewModel!!.unregisterGroupParticipantsListener()
         viewModel!!.unregisterGroupTransactionsListener()
@@ -78,6 +92,7 @@ class GroupDetailsFragment : Fragment() {
                 R.id.navigation_transactions -> {
                     mostrarTransacciones()
                 }
+
                 R.id.navigation_participants -> {
                     mostrarParticipantes()
                 }

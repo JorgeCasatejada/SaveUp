@@ -371,12 +371,12 @@ class TransactionsRepository {
         }
     }
 
-    suspend fun deleteParticipantFromGroup(group: Group, participant: String) {
+    suspend fun deleteParticipantFromGroup(group: Group, participantID: String) {
         withContext(Dispatchers.IO) {
             db.collection("groups")
                 .document(group.id)
                 .collection("participants")
-                .document(participant)
+                .document(participantID)
                 .delete().addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.d(
@@ -387,6 +387,28 @@ class TransactionsRepository {
                         Log.d(
                             "Repository",
                             "Respuesta fallida de firebase al eliminar el participante del grupo"
+                        )
+                    }
+                }
+        }
+    }
+
+    suspend fun deleteGroupFromMyGroups(groupID: String, participantID: String) {
+        withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(participantID)
+                .collection("myGroups")
+                .document(groupID)
+                .delete().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al eliminar el grupo de la lista de grupos del usuario"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al eliminar el grupo de la lista de grupos del usuario"
                         )
                     }
                 }

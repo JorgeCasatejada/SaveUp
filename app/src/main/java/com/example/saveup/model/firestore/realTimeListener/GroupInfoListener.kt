@@ -7,7 +7,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestoreException
 
-class GroupInfoListener(private val vm: MainViewModel) :
+class GroupInfoListener(private val vm: MainViewModel, private val searchedGroupID: String) :
     EventListener<DocumentSnapshot> {
     override fun onEvent(documentSnapshot: DocumentSnapshot?, error: FirebaseFirestoreException?) {
         if (error != null) {
@@ -20,7 +20,7 @@ class GroupInfoListener(private val vm: MainViewModel) :
         if (documentSnapshot != null) {
             val newGroupData = documentSnapshot
                 .toObject(FireGroup::class.java)
-            vm.updateGroupInfo(newGroupData)
+            vm.updateGroupInfo(newGroupData, searchedGroupID)
         }
     }
 }

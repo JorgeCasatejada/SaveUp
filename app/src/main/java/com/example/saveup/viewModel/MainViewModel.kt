@@ -50,6 +50,7 @@ class MainViewModel(
     val currentGroupTransactions: MutableLiveData<List<Transaction>> = MutableLiveData()
     val currentGroupParticipants: MutableLiveData<List<FireParticipant>> = MutableLiveData()
 
+    var searchedGroupID: String = ""
     private var userGroupsListenerRegistration: ListenerRegistration? = null
     private var groupsInfoListenerRegistration: ListenerRegistration? = null
     private var groupParticipantsListenerRegistration: ListenerRegistration? = null
@@ -217,7 +218,16 @@ class MainViewModel(
         // TODO: usar y probar esta función
     }
 
-    fun updateGroupInfo(newGroupData: FireGroup?) {
+    // ------------------ GroupDetailsFragment ------------------
+
+    fun setDefaultGroupValues() {
+        currentGroup.postValue(Group())
+        currentGroupParticipants.postValue(listOf(FireParticipant(email=getUserEmail())))
+        currentGroupTransactions.postValue(emptyList())
+    }
+
+    fun updateGroupInfo(newGroupData: FireGroup?, searchedGroupID: String) {
+        this.searchedGroupID = searchedGroupID
         if (newGroupData == null) {
             Log.d("MainViewModel", "El grupo buscado no existe")
             currentGroup.postValue(null)
@@ -231,7 +241,7 @@ class MainViewModel(
     fun registerGroupInfoListener(group: Group) {
         Log.d("MainViewModel", "Se empiezan a observar la información del grupo")
         groupsInfoListenerRegistration =
-            repository.getGroupInfoRegistration(group, GroupInfoListener(this))
+            repository.getGroupInfoRegistration(group, GroupInfoListener(this, group.id))
     }
 
     fun unregisterGroupInfoListener() {
@@ -243,7 +253,7 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intentan obtener la información del grupo")
             val newGroupData = repository.getGroup(group)
-            updateGroupInfo(newGroupData)
+            updateGroupInfo(newGroupData, group.id)
         }
         // TODO: usar y probar esta función
     }
@@ -268,6 +278,8 @@ class MainViewModel(
         }
         // TODO: usar y probar esta función
     }
+
+    // ------------------ GroupDetailsParticipantsFragment ------------------
 
     fun updateGroupParticipantsList(groupParticipants: List<FireParticipant>, group: Group) {
         Log.d("MainViewModel", "Nuevos participantes para el grupo: $groupParticipants")
@@ -295,6 +307,14 @@ class MainViewModel(
             updateGroupParticipantsList(groupParticipants, group)
         }
         // TODO: usar y probar esta función
+    }
+
+    fun checkAdmin(participants: List<FireParticipant>) {
+        isGroupAdmin.postValue(groupManager.isAdmin(participants, getUserEmail()))
+    }
+
+    fun checkUserStillInGroup(participants: List<FireParticipant>): Boolean{
+        return groupManager.isParticipantInGroup(participants, getUserEmail())
     }
 
     fun addParticipantToGroup(group: Group, participant: String) {
@@ -347,29 +367,32 @@ class MainViewModel(
         // TODO: usar y probar esta función
     }
 
-    // Este es para el admin, cuando elimina otros participantes
-    fun deleteParticipantFromGroup(group: Group, participant: FireParticipant) {
+    fun deleteGroupFromMyGroups(groupID: String = searchedGroupID) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("MainViewModel", "Se intentan eliminar un participante del grupo")
-            repository.deleteParticipantFromGroup(group, participant.id)
-            groupManager.removeParticipantFromGroup(participant, group)
-            currentGroupParticipants.postValue(group.participants)
+            Log.d("MainViewModel", "Se intentan eliminar grupo de la lista de grupos del usuario")
+            repository.deleteGroupFromMyGroups(groupID, auth.currentUser!!.uid)
         }
         // TODO: usar y probar esta función
     }
 
-    // Este es pa eliminarse a uno mismo (cuando se sale del grupo)
-    fun deleteParticipantFromGroup(group: Group, participant: String) {
+    fun deleteParticipantFromGroup(group: Group, participantID: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("MainViewModel", "Se intentan obtener el FireParticipant")
-            val groupParticipant = repository.getParticipant(participant)
             Log.d("MainViewModel", "Se intentan eliminar un participante del grupo")
-            repository.deleteParticipantFromGroup(group, groupParticipant.id)
-            groupManager.removeParticipantFromGroup(groupParticipant, group)
-            currentGroupParticipants.postValue(group.participants)
+            repository.deleteParticipantFromGroup(group, participantID)
         }
         // TODO: usar y probar esta función
     }
+
+    fun exitFromCurrentGroup() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta salir del grupo actual")
+            deleteParticipantFromGroup(getCurrentGroup()!!, auth.currentUser!!.uid)
+            deleteGroupFromMyGroups(getCurrentGroup()!!.id)
+        }
+        // TODO: usar y probar esta función
+    }
+
+    // ------------------ GroupDetailsExpensesFragment ------------------
 
     fun updateGroupTransactionsList(groupTransactions: List<Transaction>, group: Group) {
         Log.d("MainViewModel", "Nuevas transacciones para el grupo: $groupTransactions")
@@ -433,10 +456,6 @@ class MainViewModel(
             currentGroupTransactions.postValue(group.transactionList)
         }
         // TODO usar y probar esta función
-    }
-
-    fun isAdmin(participants: List<FireParticipant>) {
-        isGroupAdmin.postValue(groupManager.isAdmin(participants, getUserEmail()))
     }
 
 
