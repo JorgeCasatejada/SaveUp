@@ -31,6 +31,8 @@ class GroupDetailsFragment : Fragment() {
         cargarMenu()
         mostrarTransacciones()
 
+        var groupDialogShown = false
+
         viewModel!!.currentGroup.observe(viewLifecycleOwner) {
 //            viewModel!!.unregisterGroupParticipantsListener()
 //            viewModel!!.unregisterGroupTransactionsListener()
@@ -39,6 +41,10 @@ class GroupDetailsFragment : Fragment() {
                 Log.w("TODO", "Grupo no existe, borrarlo de los grupos del usuario")
                 // Mensaje de eliminación y método
 //                viewModel!!.deleteGroupFromMyGroups()
+                if (!groupDialogShown) {
+                    showGroupDialog(true)
+                    groupDialogShown = true
+                }
             } else {
                 if (it.id.isNotBlank()) {
                     viewModel!!.registerGroupParticipantsListener(it)
@@ -53,12 +59,21 @@ class GroupDetailsFragment : Fragment() {
             Log.w("TODO", "Comprobar si sigo perteneciendo al grupo o se me ha expulsado")
             if (!viewModel!!.checkUserStillInGroup(it)) {
                 // Mensaje de expulsión y método
+                if (!groupDialogShown) {
+                    showGroupDialog(false)
+                    groupDialogShown = true
+                }
                 Log.w("TODO", "Se me ha expulsado")
 //                viewModel!!.exitFromCurrentGroup()
             } else {
                 Log.w("TODO", "Sigo en el grupo")
             }
         }
+    }
+
+    private fun showGroupDialog(case: Boolean) {
+        val dialogFragment = GroupDialog.newInstance(case)
+        dialogFragment.show(requireActivity().supportFragmentManager, "GroupDialog")
     }
 
     override fun onPause() {

@@ -91,5 +91,8 @@
     <string name="currentGoalName">Nombre</string>
     <string name="currentGoalValue">Importe</string>
     <string name="endDateGoal">Fecha Límite</string>
+    <string name="case_group_deleted">El grupo ha sido eliminado</string>
+    <string name="case_deleted_from_group">Ha sido eliminado del grupo</string>
+    <string name="aceptar">Aceptar</string>
 
 </resources>
