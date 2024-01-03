@@ -33,8 +33,6 @@ class GroupDetailsFragment : Fragment() {
 
 
         viewModel!!.currentGroup.observe(viewLifecycleOwner) {
-//            viewModel!!.unregisterGroupParticipantsListener()
-//            viewModel!!.unregisterGroupTransactionsListener()
             if (it == null) {
                 Log.d("GroupDetailsFragment", "El grupo seleccionado no existe")
                 viewModel!!.deleteGroupFromMyGroups()
@@ -55,7 +53,7 @@ class GroupDetailsFragment : Fragment() {
                 showGroupDialog(false)
                 Log.d("GroupDetailsFragment", "Se me ha expulsado del grupo")
             } else {
-                Log.d("TODO", "Sigo en el grupo")
+                Log.d("GroupDetailsFragment", "Sigo en el grupo")
             }
         }
     }
@@ -65,8 +63,8 @@ class GroupDetailsFragment : Fragment() {
         dialogFragment.show(requireActivity().supportFragmentManager, "GroupDialog")
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroyView() {
+        super.onDestroyView()
         viewModel!!.setDefaultGroupValues()
         viewModel!!.unregisterGroupInfoListener()
         viewModel!!.unregisterGroupParticipantsListener()
