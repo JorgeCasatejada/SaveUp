@@ -130,6 +130,14 @@ class MainViewModel(
         auth.signOut()
     }
 
+    fun saveData(userName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta modificar el al usuario")
+            repository.modifyUser(userName)
+            Log.d("MainViewModel", "Nuevo valor para nombre de usuario: $userName")
+        }
+    }
+
 
     // ------------------ GraphsFragment ------------------
     fun groupedTransactionsByYear(year: Int): MutableMap<Int, MutableList<Transaction>>? {

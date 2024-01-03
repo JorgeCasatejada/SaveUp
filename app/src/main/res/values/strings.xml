@@ -91,5 +91,6 @@
     <string name="currentGoalName">Nombre</string>
     <string name="currentGoalValue">Importe</string>
     <string name="endDateGoal">Fecha Límite</string>
+    <string name="save_data">Guardar datos</string>
 
 </resources>

@@ -9,6 +9,7 @@ import com.example.saveup.model.firestore.FireTransaction
 import com.example.saveup.model.firestore.FireUser
 import com.example.saveup.model.firestore.FireUserGroup
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -121,6 +122,44 @@ class TransactionsRepository {
                 }.await()
             return@withContext completed
         }
+    }
+
+    suspend fun modifyUser(userName: String) {
+        withContext(Dispatchers.IO) {
+            auth.currentUser!!.updateProfile(UserProfileChangeRequest.Builder()
+                .setDisplayName(userName).build()).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d(
+                        "Auth",
+                        "Respuesta exitosa de firebase al modificar usuario"
+                    )
+                    modifyUserFireStore(userName)
+                } else {
+                    Log.d(
+                        "Auth",
+                        "Respuesta fallida de firebase al modificar usuario"
+                    )
+                }
+                }
+        }
+    }
+
+    private fun modifyUserFireStore(userName: String) {
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .update("userName", userName).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al modificar usuario"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al modificar usuario"
+                        )
+                    }
+                }
     }
 
     suspend fun updateMonthlyLimit(limit: Double) {

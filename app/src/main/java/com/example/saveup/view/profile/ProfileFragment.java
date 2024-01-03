@@ -79,6 +79,43 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        binding.btEditData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.btEditData.setVisibility(View.GONE);
+                binding.btSaveData.setVisibility(View.VISIBLE);
+                binding.outlinedTextFieldUser.setEnabled(true);
+                binding.imgEditImgProfile.setVisibility(View.VISIBLE);
+                binding.imgProfile.setClickable(true);
+            }
+        });
+
+        binding.btSaveData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.btEditData.setVisibility(View.VISIBLE);
+                binding.btSaveData.setVisibility(View.GONE);
+                binding.outlinedTextFieldUser.setEnabled(false);
+                binding.imgEditImgProfile.setVisibility(View.GONE);
+                binding.imgProfile.setClickable(false);
+                saveData();
+            }
+        });
+
+        binding.imgProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(),"Probando",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.imgProfile.setClickable(false);
+
         return binding.getRoot();
+    }
+
+    private void saveData() {
+        // Guarda nuevos datos
+        viewModel.saveData(binding.etUser.getText().toString());
     }
 }
