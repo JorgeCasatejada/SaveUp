@@ -4,15 +4,12 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class FireParticipant(
-    val id: String,
-    val email: String,
-    val username: String,
-    val imagePath: String,
-    @field:JvmField var isAdmin: Boolean
+    val id: String = "",
+    val email: String = "",
+    val username: String = "",
+    val imagePath: String = "",
+    @field:JvmField var isAdmin: Boolean = false
 ): Parcelable {
-
-    constructor() : this("", "", "", "", false)
-
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
         parcel.readString() ?: "",

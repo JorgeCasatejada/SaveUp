@@ -3,14 +3,18 @@ package com.example.saveup.model.repository
 import android.util.Log
 import com.example.saveup.model.Group
 import com.example.saveup.model.Transaction
-import com.example.saveup.model.firestore.FireGroup
 import com.example.saveup.model.firestore.FireParticipant
 import com.example.saveup.model.firestore.FireTransaction
 import com.example.saveup.model.firestore.FireUser
-import com.example.saveup.model.firestore.FireUserGroup
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.MetadataChanges
+import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -203,47 +207,23 @@ class TransactionsRepository {
         }
     }
 
-    suspend fun getUserGroups(userId: String): MutableList<Group> {
-        return withContext(Dispatchers.IO) {
-            val groups = db.collection("users")
-                .document(userId)
-                .collection("myGroups")
-                .get().addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Log.d(
-                            "Repository",
-                            "Respuesta exitosa de firebase al recuperar los grupos del usuario"
-                        )
-                    } else {
-                        Log.d(
-                            "Repository",
-                            "Respuesta fallida de firebase al recuperar los grupos del usuario"
-                        )
-                    }
-                }
-                .await().map { document ->
-                    Log.d("Firestore", "Group: " + document.id + " => " + document.data)
-                    Group(document.toObject(FireUserGroup::class.java))
-                }.toMutableList()
-            return@withContext groups
-        }
+    fun getUserGroupsRegistration(
+        userId: String,
+        listener: EventListener<QuerySnapshot>
+    ): ListenerRegistration {
+        return db.collection("users")
+            .document(userId)
+            .collection("myGroups")
+            .addSnapshotListener(listener)
     }
 
-    suspend fun getGroup(group: Group): FireGroup? {
-        return withContext(Dispatchers.IO) {
-            val newGroupData = db.collection("groups")
-                .document(group.id)
-                .get().addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Log.d("Repository", "Respuesta exitosa de firebase al obtener el grupo")
-                    } else {
-                        Log.d("Repository", "Respuesta fallida de firebase al obtener el grupo")
-                    }
-                }
-                .await()
-                .toObject(FireGroup::class.java)
-            return@withContext newGroupData
-        }
+    fun getGroupInfoRegistration(
+        group: Group,
+        listener: EventListener<DocumentSnapshot>
+    ): ListenerRegistration {
+        return db.collection("groups")
+            .document(group.id)
+            .addSnapshotListener(listener)
     }
 
     suspend fun createGroup(group: Group): String {
@@ -262,49 +242,34 @@ class TransactionsRepository {
         }
     }
 
-    suspend fun deleteGroup(group: Group) {
+    suspend fun deleteGroup(groupID: String) {
         withContext(Dispatchers.IO) {
             db.collection("groups")
-                .document(group.id)
+                .document(groupID)
                 .collection("participants")
                 .get().await().documents.forEach {
                     it.reference.delete()
                 }
             db.collection("groups")
-                .document(group.id)
+                .document(groupID)
                 .collection("transactions")
                 .get().await().documents.forEach {
                     it.reference.delete()
                 }
             db.collection("groups")
-                .document(group.id)
+                .document(groupID)
                 .delete()
         }
     }
 
-    suspend fun getGroupParticipants(group: Group): List<FireParticipant> {
-        return withContext(Dispatchers.IO) {
-            val groupParticipants = db.collection("groups")
-                .document(group.id)
-                .collection("participants")
-                .get().addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Log.d(
-                            "Repository",
-                            "Respuesta exitosa de firebase al recuperar los participantea del grupo"
-                        )
-                    } else {
-                        Log.d(
-                            "Repository",
-                            "Respuesta fallida de firebase al recuperar los participantea del grupo"
-                        )
-                    }
-                }.await().map { document ->
-                    Log.d("Firestore", "Participante: " + document.id + " => " + document.data)
-                    document.toObject(FireParticipant::class.java)
-                }
-            return@withContext groupParticipants
-        }
+    fun getGroupParticipantsRegistration(
+        group: Group,
+        listener: EventListener<QuerySnapshot>
+    ): ListenerRegistration {
+        return db.collection("groups")
+            .document(group.id)
+            .collection("participants")
+            .addSnapshotListener(MetadataChanges.INCLUDE, listener)
     }
 
     suspend fun getParticipant(participant: String): FireParticipant {
@@ -377,12 +342,12 @@ class TransactionsRepository {
         }
     }
 
-    suspend fun deleteParticipantFromGroup(group: Group, participant: String) {
+    suspend fun deleteParticipantFromGroup(group: Group, participantID: String) {
         withContext(Dispatchers.IO) {
             db.collection("groups")
                 .document(group.id)
                 .collection("participants")
-                .document(participant)
+                .document(participantID)
                 .delete().addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.d(
@@ -399,29 +364,36 @@ class TransactionsRepository {
         }
     }
 
-    suspend fun getGroupTransactions(group: Group): List<Transaction> {
-        return withContext(Dispatchers.IO) {
-            val groupTransactions = db.collection("groups")
-                .document(group.id)
-                .collection("transactions")
-                .get().addOnCompleteListener {
+    suspend fun deleteGroupFromMyGroups(groupID: String, participantID: String) {
+        withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(participantID)
+                .collection("myGroups")
+                .document(groupID)
+                .delete().addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.d(
                             "Repository",
-                            "Respuesta exitosa de firebase al recuperar las transacciones del grupo"
+                            "Respuesta exitosa de firebase al eliminar el grupo de la lista de grupos del usuario"
                         )
                     } else {
                         Log.d(
                             "Repository",
-                            "Respuesta fallida de firebase al recuperar las transacciones del grupo"
+                            "Respuesta fallida de firebase al eliminar el grupo de la lista de grupos del usuario"
                         )
                     }
-                }.await().map { document ->
-                    Log.d("Firestore", "Transacción: " + document.id + " => " + document.data)
-                    Transaction(document.toObject(FireTransaction::class.java))
                 }
-            return@withContext groupTransactions
         }
+    }
+
+    fun getGroupTransactionsRegistration(
+        group: Group,
+        listener: EventListener<QuerySnapshot>
+    ): ListenerRegistration {
+        return db.collection("groups")
+            .document(group.id)
+            .collection("transactions")
+            .addSnapshotListener(listener)
     }
 
     suspend fun addTransactionToGroup(transaction: Transaction, group: Group): String {
@@ -443,16 +415,19 @@ class TransactionsRepository {
                     )
                 }
             }
+            db.collection("groups")
+                .document(group.id)
+                .update("currentBudget", FieldValue.increment(transaction.signedValue))
             return@withContext docRef.id
         }
     }
 
-    suspend fun deleteTransactionFromGroup(transactionId: String, group: Group) {
+    suspend fun deleteTransactionFromGroup(transaction: Transaction, group: Group) {
         withContext(Dispatchers.IO) {
             db.collection("groups")
                 .document(group.id)
                 .collection("transactions")
-                .document(transactionId)
+                .document(transaction.transactionID)
                 .delete().addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.d(
@@ -466,10 +441,17 @@ class TransactionsRepository {
                         )
                     }
                 }
+            db.collection("groups")
+                .document(group.id)
+                .update("currentBudget", FieldValue.increment(-transaction.signedValue))
         }
     }
 
-    suspend fun modifyTransactionFromGroup(transaction: Transaction, group: Group) {
+    suspend fun modifyTransactionFromGroup(
+        transaction: Transaction,
+        group: Group,
+        valueDifference: Double
+    ) {
         withContext(Dispatchers.IO) {
             db.collection("groups")
                 .document(group.id)
@@ -488,6 +470,9 @@ class TransactionsRepository {
                         )
                     }
                 }
+            db.collection("groups")
+                .document(group.id)
+                .update("currentBudget", FieldValue.increment(valueDifference))
         }
     }
 

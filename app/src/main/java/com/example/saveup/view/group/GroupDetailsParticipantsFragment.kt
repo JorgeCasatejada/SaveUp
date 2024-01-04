@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.saveup.databinding.FragmentGroupDetailsParticipantsBinding
@@ -23,10 +22,6 @@ class GroupDetailsParticipantsFragment : Fragment() {
     private var isFragmentVisible = false
 
     private lateinit var participantAdapter: ParticipantAdapter
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
 
     override fun onResume() {
         super.onResume()
@@ -53,9 +48,14 @@ class GroupDetailsParticipantsFragment : Fragment() {
         participantAdapter = ParticipantAdapter()
         binding.recyclerParticipants.adapter = participantAdapter
 
-        viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner,  Observer {
+        viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {
             participantAdapter.update(it)
-        })
+            viewModel!!.checkAdmin(it)
+        }
+
+        viewModel!!.isGroupAdmin.observe(viewLifecycleOwner) {
+            updateVisibility(it)
+        }
 
         binding.btDeleteGroup.setOnClickListener {
             //TODO: Falta borrar de la lista de grupos del usuario
@@ -67,29 +67,33 @@ class GroupDetailsParticipantsFragment : Fragment() {
         }
 
         binding.btExitGroup.setOnClickListener {
-            viewModel!!.deleteParticipantFromGroup(viewModel!!.getCurrentGroup()!!,
-                viewModel!!.getUserEmail())
+            viewModel!!.exitFromCurrentGroup()
             closeGroup()
         }
 
         binding.btAddParticipant.setOnClickListener {
-            viewModel!!.addParticipantToGroup(viewModel!!.getCurrentGroup()!!,
-                binding.etIdParticipant.text.toString())
+            viewModel!!.addParticipantToGroup(
+                viewModel!!.getCurrentGroup()!!,
+                binding.etIdParticipant.text.toString()
+            )
             binding.etIdParticipant.text = null
         }
 
         showMessage = false
 
-        viewModel!!.participantAddedResult.observe(this, Observer { result ->
+        viewModel!!.participantAddedResult.observe(this) { result ->
             val (success, message) = result
             if (success && showMessage) {
-                Toast.makeText(context, "Se ha añadido al usuario: " + message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Se ha añadido al usuario: $message", Toast.LENGTH_SHORT)
+                    .show()
             } else if (!success && showMessage) {
-                Toast.makeText(context, "No se ha podido añadir al usuario: " + message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "No se ha podido añadir al usuario: $message",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        })
-
-        showMode()
+        }
 
         return binding.root
     }
@@ -99,11 +103,6 @@ class GroupDetailsParticipantsFragment : Fragment() {
             null,
             FragmentManager.POP_BACK_STACK_INCLUSIVE
         )
-    }
-
-    private fun showMode() {
-        //TODO: función para saber si es admin
-        updateVisibility(true)
     }
 
     private fun updateVisibility(isAdmin: Boolean) {

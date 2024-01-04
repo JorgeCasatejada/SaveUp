@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.saveup.databinding.FragmentGroupDetailsExpensesBinding
@@ -32,17 +30,10 @@ class GroupDetailsExpensesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentGroupDetailsExpensesBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-
-        binding.tvTitleGroup.text = viewModel!!.currentGroup.value?.title ?: ""
-        updateBalance()
-
-        binding.btAdd.setOnClickListener {
-            startAddGroupTransaction()
-        }
 
         binding.recyclerTransactionsGroup.layoutManager = LinearLayoutManager(context)
         binding.recyclerTransactionsGroup.setHasFixedSize(true)
@@ -51,15 +42,33 @@ class GroupDetailsExpensesFragment : Fragment() {
         }
         binding.recyclerTransactionsGroup.adapter = transactionsListAdapter
 
-        viewModel!!.currentGroupTransactions.observe(viewLifecycleOwner,  Observer {
-            transactionsListAdapter.update(it)
-        })
+        binding.btAdd.setOnClickListener {
+            startAddGroupTransaction()
+        }
 
         binding.btClose.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            requireActivity().supportFragmentManager.popBackStack(
+                null,
+                FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel!!.currentGroup.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.tvTitleGroup.text = it.title
+                binding.tvInitialBudgetGroup.text = "${it.initialBudget} €"
+                binding.tvActualBudgetGroup.text = "${it.currentBudget} €"
+            }
+        }
+        viewModel!!.currentGroupTransactions.observe(viewLifecycleOwner) {
+            transactionsListAdapter.update(it)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -75,38 +84,40 @@ class GroupDetailsExpensesFragment : Fragment() {
         val mode = data.getIntExtra(AddTransaction.MODE, 0)
         when (mode) {
             AddTransaction.MODE_ADD -> {
-                val createdTransaction = data.getParcelableExtra<Transaction>(AddTransaction.CREATED_TRANSACTION)
+                val createdTransaction =
+                    data.getParcelableExtra<Transaction>(AddTransaction.CREATED_TRANSACTION)
                 if (createdTransaction != null) {
-                    viewModel?.addTransactionToGroup(createdTransaction,
+                    viewModel?.addTransactionToGroup(
+                        createdTransaction,
                         viewModel!!.currentGroup.value!!
                     )
                 }
             }
+
             AddTransaction.MODE_DELETE -> {
-                val detailsTransaction = data.getParcelableExtra<Transaction>(AddTransaction.DETAILS_TRANSACTION)
+                val detailsTransaction =
+                    data.getParcelableExtra<Transaction>(AddTransaction.DETAILS_TRANSACTION)
                 if (detailsTransaction != null) {
-                    viewModel?.removeTransactionFromGroup(detailsTransaction,
+                    viewModel?.removeTransactionFromGroup(
+                        detailsTransaction,
                         viewModel!!.currentGroup.value!!
                     )
                 }
             }
+
             AddTransaction.MODE_MODIFY -> {
-                val transactionOld = data.getParcelableExtra<Transaction>(AddTransaction.OLD_MODIFIED_TRANSACTION)
-                val transactionNew = data.getParcelableExtra<Transaction>(AddTransaction.NEW_MODIFIED_TRANSACTION)
+                val transactionOld =
+                    data.getParcelableExtra<Transaction>(AddTransaction.OLD_MODIFIED_TRANSACTION)
+                val transactionNew =
+                    data.getParcelableExtra<Transaction>(AddTransaction.NEW_MODIFIED_TRANSACTION)
                 if (transactionOld != null && transactionNew != null) {
-                    viewModel?.modifyTransactionFromGroup(transactionOld, transactionNew,
+                    viewModel?.modifyTransactionFromGroup(
+                        transactionOld, transactionNew,
                         viewModel!!.currentGroup.value!!
                     )
                 }
             }
         }
-        updateBalance()
-    }
-
-    private fun updateBalance() {
-        // TODO: hacer funcion como en mainscreenfragment que actualiza solo el balance
-        binding.tvInitialBudgetGroup.text = viewModel!!.currentGroup.value?.initialBudget.toString() + "€"
-        binding.tvActualBudgetGroup.text = viewModel!!.currentGroup.value?.currentBudget.toString() + "€"
     }
 
 
