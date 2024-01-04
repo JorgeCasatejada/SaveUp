@@ -94,22 +94,4 @@ tools:context=".view.statistics.GraphsFragment">
 
 </LinearLayout>
 
-
-
-<com.google.android.material.floatingactionbutton.FloatingActionButton
-    android:id="@+id/shareFab"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:adjustViewBounds="false"
-    android:clickable="true"
-    android:contentDescription="shareStatistics"
-    android:focusable="true"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.929"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.927"
-    app:srcCompat="@android:drawable/ic_menu_share" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

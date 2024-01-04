@@ -93,6 +93,7 @@
     <string name="endDateGoal">Fecha Límite</string>
     <string name="ramainingBalanceLimit">Te faltan %1$s € para alcanzar la el límite</string>
     <string name="ramainingBalanceGoal">Te faltan %1$s € para alcanzar la meta</string>
+    <string name="reachedBalanceGoal">Te sobran %1$s € tras haber llegado a la meta</string>
     <string name="ramainingDaysGoal">Te quedan %1$d días para alcanzar la meta</string>
     <string name="infoInitialBalance">¿Empezar con %1$s € ahorrados?  :</string>
 

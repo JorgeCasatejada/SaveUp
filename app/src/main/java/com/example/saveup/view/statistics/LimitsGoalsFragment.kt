@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.example.saveup.databinding.FragmentLimitsGoalsBinding
 import com.example.saveup.model.Account
 import com.example.saveup.model.Notifications
 import com.example.saveup.model.firestore.FireGoal
+import com.example.saveup.view.MainActivity
 import com.example.saveup.viewModel.MainViewModel
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -153,20 +155,6 @@ class LimitsGoalsFragment : Fragment() {
             resetGoal()
         }
 
-        // Valor límite
-        binding.etLimit.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.outlinedTextFieldLimit.error = null
-            } else {
-                if (binding.etLimit.text.isNullOrBlank()) {
-                    binding.outlinedTextFieldLimit.error =
-                        resources.getString(R.string.errBlankLimit)
-                } else {
-                    binding.outlinedTextFieldLimit.error = null
-                }
-            }
-        }
-
         // Nombre meta
         binding.etGoalName.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -223,16 +211,12 @@ class LimitsGoalsFragment : Fragment() {
                 viewModel?.balance?.value!!
             )
         )
-
-        // FAB
-        binding.saveFab.setOnClickListener {
-            createLimit()
-            createGoal()
-        }
     }
 
     private fun toggleEditionLimit(editing: Boolean) {
         binding.etLimit.isEnabled = editing
+
+        binding.removeButtonLimits.isEnabled = !editing
 
         if (editing) {
             binding.linearLayoutLimitsButtons.visibility = View.VISIBLE
@@ -246,6 +230,8 @@ class LimitsGoalsFragment : Fragment() {
         binding.etGoalDate.isEnabled = editing
         binding.etGoalValue.isEnabled = editing
         binding.btSwitchInitialBalance.isEnabled = editing
+
+        binding.removeButtonGoals.isEnabled = !editing
 
         if (editing) {
             binding.linearLayoutGoalsButtons.visibility = View.VISIBLE
@@ -303,7 +289,8 @@ class LimitsGoalsFragment : Fragment() {
             sdf.isLenient = false
             try {
                 date = sdf.parse(newGoalDate)
-                if (date == null) {
+
+                if (date == null || date.year >= Date().year + 1000) {
                     binding.datePickerLayoutGoal.error = resources.getString(R.string.errDate)
                     valid = false
                 }
@@ -427,6 +414,18 @@ class LimitsGoalsFragment : Fragment() {
             return
         }
 
+        val remainingBalance = calculateRemainingBalanceGoal(goal)
+        if (remainingBalance <= 0) { // Ya se ha llegado a la meta
+            val excess = if (remainingBalance == 0.0) 0.0 else -1 * remainingBalance
+
+            binding.progressBarGoal.progress = 100
+            binding.textRemainingBalanceGoal.text = resources.getString(
+                R.string.reachedBalanceGoal,
+                String.format(Locale.getDefault(), "%.2f", excess))
+            binding.textRemainingDaysGoal.text = ""
+            return
+        }
+
         binding.etGoalName.setText(goal.name)
         if (goal.finalDate == null) {
             binding.etGoalDate.setText("")
@@ -445,8 +444,6 @@ class LimitsGoalsFragment : Fragment() {
                 val progressPercent = progress / goal.objectiveBalance * 100
                 binding.progressBarGoal.setProgress(progressPercent.toInt(), true)
             }
-
-            val remainingBalance = calculateRemainingBalanceGoal(goal)
 
             binding.textRemainingBalanceGoal.text = resources.getString(
                 R.string.ramainingBalanceGoal,

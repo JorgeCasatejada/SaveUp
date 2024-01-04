@@ -3,6 +3,7 @@ package com.example.saveup.view.statistics
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,7 +64,7 @@ class GraphsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         _binding = FragmentGraphsBinding.inflate(inflater, container, false)
 
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
@@ -87,9 +88,6 @@ class GraphsFragment : Fragment() {
             showExpenses = false
             createPieChart()
         }
-
-        // Botones FAB
-        binding.shareFab.setOnClickListener { shareStatistics() }
 
         // Filtro de años
         years =
@@ -269,59 +267,6 @@ class GraphsFragment : Fragment() {
 
         // Animación
         binding.graphs.pieChart.animateXY(1000, 1000)
-    }
-
-    fun shareStatistics() {
-        /*
-        Bitmap img = getBitmapGraph();
-
-        String filename = "${System.currentTimeMillis()}.jpg";
-
-        try (FileOutputStream out = new FileOutputStream("filename")) {
-            img.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-            // PNG is a lossless format, the compression factor (100) is ignored
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
-
-        /* es necesario hacer un intent con la constate ACTION_SEND */
-        /*Llama a cualquier app que haga un envío*/
-        val itSend = Intent(Intent.ACTION_SEND)
-        itSend.type = "text/plain"
-        // itSend.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{para});
-        itSend.putExtra(Intent.EXTRA_SUBJECT, "Registro de gastos e ingresos")
-        val stringBuilder = StringBuilder("Historial de gastos / ingresos\n")
-        for (transaction in viewModel?.allUserTransactions?.value!!) {
-            if (transaction.isExpense) {
-                stringBuilder.append("-")
-            } else {
-                stringBuilder.append("+")
-            }
-            val value = transaction.value
-            stringBuilder.append(String.format(Locale.getDefault(), "%.2f", value)).append("€")
-                .append(" ").append("|").append(" ")
-            val simpleDateFormat = SimpleDateFormat(
-                "dd/MM/yyyy",
-                Locale.getDefault()
-            )
-            val date = simpleDateFormat.format(transaction.date)
-            stringBuilder.append(transaction.name).append(" ").append("|").append(" ")
-                .append(date).append("\n\r").append("\n\r")
-        }
-        stringBuilder.append("------------------------------------\n")
-        stringBuilder.append("Balance Total: ")
-            .append(viewModel?.balance?.value?.let { round(it, 2) }).append("€")
-        itSend.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString())
-        val shareIntent = Intent.createChooser(itSend, null)
-        startActivity(shareIntent)
-    }
-
-    private fun round(value: Double, places: Int): Double {
-        require(places >= 0)
-        var bd = BigDecimal.valueOf(value)
-        bd = bd.setScale(places, RoundingMode.HALF_UP)
-        return bd.toDouble()
     }
 
     companion object {
