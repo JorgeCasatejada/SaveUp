@@ -287,7 +287,7 @@ class MainViewModel(
             Log.d("MainViewModel", "Se intenta añadir un participante al grupo")
             val groupParticipant = repository.getParticipant(participant)
             Log.d("MainViewModel", "Nuevo participante para el grupo: $groupParticipant")
-            if (groupParticipant.email.isNotEmpty()) {
+            if (groupParticipant.email.isNotEmpty() && groupParticipant.email != getUserEmail()) {
                 repository.addParticipantToGroup(group, groupParticipant)
                 participantAddedResult.postValue(Pair(true, participant))
             } else {

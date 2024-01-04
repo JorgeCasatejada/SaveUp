@@ -2,8 +2,10 @@ package com.example.saveup.view.group
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import com.example.saveup.R
 
 class GroupDialog : DialogFragment() {
@@ -36,9 +38,24 @@ class GroupDialog : DialogFragment() {
 
             builder.setMessage(messageResId)
                 .setPositiveButton(R.string.aceptar) { dialog, id ->
-                    // START THE GAME!
+                    // Cerrar el fragmento
+                    closeFragment()
                 }
+
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+    override fun onCancel(dialog: DialogInterface) {
+        // Se llama cuando se cancela el diálogo (por ejemplo, haciendo clic fuera de él)
+        super.onCancel(dialog)
+        closeFragment()
+    }
+
+
+    private fun closeFragment() {
+        requireActivity().supportFragmentManager.popBackStack(
+            null,
+            FragmentManager.POP_BACK_STACK_INCLUSIVE
+        )
     }
 }
