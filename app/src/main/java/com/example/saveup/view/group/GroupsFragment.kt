@@ -92,6 +92,7 @@ class GroupsFragment : Fragment() {
                     "No se ha podido añadir a los usuarios: $message",
                     Toast.LENGTH_LONG
                 ).show()
+                showMessage = false
             }
         }
 
