@@ -8,7 +8,6 @@ data class FireGoal(
     val finalDate: Date? = null,
     val initialBalance: Double = 0.0,
     val objectiveBalance: Double? = null,
-    var goalID: String = "",
 ) {
     override fun toString(): String {
         return "Goal [name=$name, initialDate=(${initialDate?.date}/${initialDate?.month?.plus(1)}/${

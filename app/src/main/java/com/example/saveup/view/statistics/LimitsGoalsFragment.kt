@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -91,14 +90,95 @@ class LimitsGoalsFragment : Fragment() {
     }
 
     private fun initializeVariables() {
+        // Desactivar campos de texto
+        binding.etLimit.isEnabled = false
+        binding.etGoalName.isEnabled = false
+        binding.etGoalDate.isEnabled = false
+        binding.etGoalValue.isEnabled = false
+        binding.btSwitchInitialBalance.isEnabled = false
+
+        // Editar límite
+        binding.editButtonLimits.setOnClickListener {
+            toggleEditionLimit(true)
+        }
+
+        // Eliminar límite
+        binding.removeButtonLimits.setOnClickListener {
+            deleteLimit()
+
+            setLimit(null)
+        }
+
+        // Aceptar límite
+        binding.buttonAcceptLimit.setOnClickListener {
+            toggleEditionLimit(false)
+
+            createLimit()
+
+            Notifications.checkLimit(requireActivity(), viewModel!!)
+        }
+
+        // Cancelar límite
+        binding.buttonCancelLimit.setOnClickListener {
+            toggleEditionLimit(false)
+
+            resetLimit()
+        }
+
+        // Editar meta
+        binding.editButtonGoals.setOnClickListener {
+            toggleEditionGoal(true)
+        }
+
+        // Eliminar meta
+        binding.removeButtonGoals.setOnClickListener {
+            deleteGoal()
+
+            setGoal(null)
+        }
+
+        // Aceptar meta
+        binding.buttonAcceptGoal.setOnClickListener {
+            toggleEditionGoal(false)
+
+            createGoal()
+
+            Notifications.checkGoal(requireActivity(), viewModel!!)
+        }
+
+        // Cancelar meta
+        binding.buttonCancelGoal.setOnClickListener {
+            toggleEditionGoal(false)
+
+            resetGoal()
+        }
+
         // Valor límite
         binding.etLimit.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) binding.outlinedTextFieldLimit.error = null
+            if (hasFocus) {
+                binding.outlinedTextFieldLimit.error = null
+            } else {
+                if (binding.etLimit.text.isNullOrBlank()) {
+                    binding.outlinedTextFieldLimit.error =
+                        resources.getString(R.string.errBlankLimit)
+                } else {
+                    binding.outlinedTextFieldLimit.error = null
+                }
+            }
         }
 
         // Nombre meta
         binding.etGoalName.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) binding.outlinedTextFieldGoalName.error = null
+            if (hasFocus) {
+                binding.outlinedTextFieldGoalName.error = null
+            } else {
+                if (binding.etGoalName.text.isNullOrBlank()) {
+                    binding.outlinedTextFieldGoalName.error =
+                        resources.getString(R.string.errBlankGoalName)
+                } else {
+                    binding.outlinedTextFieldGoalName.error = null
+                }
+            }
         }
 
         // Fecha meta
@@ -116,13 +196,61 @@ class LimitsGoalsFragment : Fragment() {
 
         // Valor meta
         binding.etGoalValue.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) binding.outlinedTextFieldGoalValue.error = null
+            if (hasFocus) {
+                binding.outlinedTextFieldGoalValue.error = null
+            } else {
+                if (binding.etGoalValue.text.isNullOrBlank()) {
+                    binding.outlinedTextFieldGoalValue.error =
+                        resources.getString(R.string.errBlankGoalValue)
+                } else {
+                    binding.outlinedTextFieldGoalValue.error = null
+                }
+            }
         }
+
+        // Estado Switch
+        if (viewModel?.goal?.value != null) {
+            binding.btSwitchInitialBalance.isChecked =
+                viewModel?.goal?.value!!.initialBalance <= 0.0
+        }
+
+        // Texto Switch
+        binding.btSwitchInitialBalance.text = resources.getString(
+            R.string.infoInitialBalance,
+            String.format(
+                Locale.getDefault(),
+                "%.2f",
+                viewModel?.balance?.value!!
+            )
+        )
 
         // FAB
         binding.saveFab.setOnClickListener {
             createLimit()
             createGoal()
+        }
+    }
+
+    private fun toggleEditionLimit(editing: Boolean) {
+        binding.etLimit.isEnabled = editing
+
+        if (editing) {
+            binding.linearLayoutLimitsButtons.visibility = View.VISIBLE
+        } else {
+            binding.linearLayoutLimitsButtons.visibility = View.GONE
+        }
+    }
+
+    private fun toggleEditionGoal(editing: Boolean) {
+        binding.etGoalName.isEnabled = editing
+        binding.etGoalDate.isEnabled = editing
+        binding.etGoalValue.isEnabled = editing
+        binding.btSwitchInitialBalance.isEnabled = editing
+
+        if (editing) {
+            binding.linearLayoutGoalsButtons.visibility = View.VISIBLE
+        } else {
+            binding.linearLayoutGoalsButtons.visibility = View.GONE
         }
     }
 
@@ -140,6 +268,14 @@ class LimitsGoalsFragment : Fragment() {
         } else {
             viewModel?.updateLimit(Double.MAX_VALUE)
         }
+
+        Notifications.checkLimit(requireActivity(), viewModel!!)
+    }
+
+    private fun deleteLimit() {
+        viewModel?.deleteLimit()
+
+        binding.etLimit.setText("")
     }
 
     private fun createGoal() {
@@ -147,36 +283,82 @@ class LimitsGoalsFragment : Fragment() {
         val newGoalDate = binding.etGoalDate.text.toString()
         val newGoalValue = binding.etGoalValue.text.toString()
 
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        try {
-            val date = if (newGoalDate.isBlank()) null else sdf.parse(newGoalDate)
+        var date: Date? = null
+        var value = 0.0
 
-            val value =
-                if (newGoalValue.isBlank()) null else newGoalValue.replace(',', '.').toDouble()
+        var valid = true
 
-            if (value != null && value < 0.01) {
-                binding.outlinedTextFieldGoalName.error = resources.getString(R.string.errLowGoal)
-            } else {
-                viewModel?.updateGoal(
-                    FireGoal(
-                        newGoalName,
-                        Date(),
-                        date,
-                        viewModel?.balance?.value!!,
-                        value
-                    )
-                )
-
-                notifyNewGoal(newGoalName, date, value)
-            }
-        } catch (e: ParseException) {
-            binding.datePickerLayoutGoal.error = resources.getString(R.string.errDate)
+        // Nombre
+        if (newGoalName.isBlank()) {
+            binding.outlinedTextFieldGoalName.error = resources.getString(R.string.errBlankGoalName)
+            valid = false
         }
+
+        // Fecha
+        if (newGoalDate.isBlank()) {
+            binding.outlinedTextFieldGoalName.error = resources.getString(R.string.errBlankGoalDate)
+            valid = false
+        } else {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            sdf.isLenient = false
+            try {
+                date = sdf.parse(newGoalDate)
+                if (date == null) {
+                    binding.datePickerLayoutGoal.error = resources.getString(R.string.errDate)
+                    valid = false
+                }
+            } catch (e: ParseException) {
+                binding.datePickerLayoutGoal.error = resources.getString(R.string.errDate)
+                valid = false
+            }
+        }
+
+        // Valor
+        if (newGoalValue.isBlank()) {
+            binding.outlinedTextFieldGoalValue.error =
+                resources.getString(R.string.errBlankGoalValue)
+            valid = false
+        } else {
+            value = newGoalValue.replace(',', '.').toDouble()
+            if (value < 0.01) {
+                binding.outlinedTextFieldGoalValue.error = resources.getString(R.string.errLowGoal)
+            }
+        }
+
+        // Creación de la meta
+        if (valid) {
+            var initialBalance = viewModel?.balance?.value!!
+
+            if (binding.btSwitchInitialBalance.isChecked) {
+                initialBalance = 0.0
+            }
+
+            val goal = FireGoal(
+                newGoalName,
+                Date(),
+                date,
+                initialBalance,
+                value
+            )
+
+            viewModel?.updateGoal(goal)
+
+            notifyNewGoal(goal.name, goal.finalDate, goal.objectiveBalance)
+        }
+    }
+
+    private fun deleteGoal() {
+        viewModel?.deleteGoal()
+
+        binding.etGoalName.setText("")
+        binding.etGoalDate.setText("")
+        binding.etGoalValue.setText("")
     }
 
     private fun validateDate(date: String): Boolean {
         if (date.isBlank()) return true
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        sdf.isLenient = false
         try {
             sdf.parse(date)
         } catch (e: ParseException) {
@@ -188,8 +370,24 @@ class LimitsGoalsFragment : Fragment() {
     private fun setLimit(limit: Double?) {
         if (limit == null) {
             binding.etLimit.setText("")
+            binding.progressBarLimit.progress = 0
+            binding.textRemainingBalanceLimit.text = ""
         } else {
             binding.etLimit.setText(String.format(Locale.getDefault(), "%.2f", limit))
+
+            val expenses = viewModel?.getMonthlyExpenses()
+            if (expenses != null) {
+                val progress = expenses / limit * 100
+                binding.progressBarLimit.setProgress(progress.toInt(), true)
+            }
+
+            val remainingBalance = limit - viewModel?.getMonthlyExpenses()!!
+            if (remainingBalance >= 0) {
+                binding.textRemainingBalanceLimit.text = resources.getString(
+                    R.string.ramainingBalanceLimit,
+                    String.format(Locale.getDefault(), "%.2f", remainingBalance)
+                )
+            }
         }
     }
 
@@ -221,7 +419,14 @@ class LimitsGoalsFragment : Fragment() {
         )
     }
 
-    private fun setGoal(goal: FireGoal) {
+    private fun setGoal(goal: FireGoal?) {
+        if (goal == null) {
+            binding.progressBarGoal.progress = 0
+            binding.textRemainingBalanceGoal.text = ""
+            binding.textRemainingDaysGoal.text = ""
+            return
+        }
+
         binding.etGoalName.setText(goal.name)
         if (goal.finalDate == null) {
             binding.etGoalDate.setText("")
@@ -235,13 +440,13 @@ class LimitsGoalsFragment : Fragment() {
         } else {
             binding.etGoalValue.setText(goal.objectiveBalance.toString())
 
-            val progress = viewModel?.balance?.value?.div(goal.objectiveBalance)?.times(100)
-            Log.d("progress", progress.toString())
-            if (progress != null) {
-                binding.progressBarGoal.setProgress(progress.toInt(), true)
+            val progress = calculateProgress(goal)
+            if (progress >= 0) {
+                val progressPercent = progress / goal.objectiveBalance * 100
+                binding.progressBarGoal.setProgress(progressPercent.toInt(), true)
             }
 
-            val remainingBalance = goal.objectiveBalance - viewModel?.balance?.value!!
+            val remainingBalance = calculateRemainingBalanceGoal(goal)
 
             binding.textRemainingBalanceGoal.text = resources.getString(
                 R.string.ramainingBalanceGoal,
@@ -257,6 +462,22 @@ class LimitsGoalsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun resetLimit() {
+        viewModel?.monthlyLimit?.value?.let { setLimit(it) }
+    }
+
+    private fun resetGoal() {
+        viewModel?.goal?.value?.let { setGoal(it) }
+    }
+
+    private fun calculateProgress(goal: FireGoal): Double {
+        return viewModel?.balance?.value!! - goal.initialBalance
+    }
+
+    private fun calculateRemainingBalanceGoal(goal: FireGoal): Double {
+        return goal.objectiveBalance!! - calculateProgress(goal)
     }
 
     companion object {

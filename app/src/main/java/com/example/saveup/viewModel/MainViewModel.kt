@@ -155,6 +155,14 @@ class MainViewModel(
         }
     }
 
+    fun deleteLimit() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta eliminar el límite del usuario")
+            repository.deleteMonthlyLimit()
+            monthlyLimit.postValue(null)
+        }
+    }
+
     fun getMonthlyExpenses(): Double? {
         val transactions = transactionManager.getGroupedTransactions(Date().year + 1900)
         if (!transactions.isNullOrEmpty()) {
@@ -190,6 +198,14 @@ class MainViewModel(
             repository.updateGoal(newGoal)
             Log.d("MainViewModel", "Nuevo valor para la meta: $newGoal")
             goal.postValue(newGoal)
+        }
+    }
+
+    fun deleteGoal() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta eliminar la meta del usuario")
+            repository.deleteGoal()
+            goal.postValue(null)
         }
     }
 

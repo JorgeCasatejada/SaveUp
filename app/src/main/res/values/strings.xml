@@ -91,10 +91,20 @@
     <string name="currentGoalName">Nombre</string>
     <string name="currentGoalValue">Importe</string>
     <string name="endDateGoal">Fecha Límite</string>
-    <string name="errLowLimit">El límite mensual debe ser mayor a 1 céntimo</string>
-    <string name="errLowGoal">El importe de la meta debe ser mayor a 1 céntimo</string>
-    <string name="errDate">Fecha inválida</string>
+    <string name="ramainingBalanceLimit">Te faltan %1$s € para alcanzar la el límite</string>
     <string name="ramainingBalanceGoal">Te faltan %1$s € para alcanzar la meta</string>
     <string name="ramainingDaysGoal">Te quedan %1$d días para alcanzar la meta</string>
+    <string name="infoInitialBalance">¿Empezar con %1$s € ahorrados?  :</string>
+
+    <string name="errBlankLimit">El valor del límite no debe estar vacío</string>
+    <string name="errBlankGoalName">El nombre de la meta no debe estar vacío</string>
+    <string name="errBlankGoalDate">La fecha de la meta no debe estar vacía</string>
+    <string name="errBlankGoalValue">El importe de la meta no debe estar vacío</string>
+
+    <string name="errLowLimit">El límite mensual debe ser mayor a 1 céntimo</string>
+    <string name="errLowGoal">El importe de la meta debe ser mayor a 1 céntimo</string>
+
+    <string name="errDate">Fecha inválida</string>
+
 
 </resources>

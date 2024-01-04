@@ -142,6 +142,26 @@ class TransactionsRepository {
         }
     }
 
+    suspend fun deleteMonthlyLimit() {
+        withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .update("monthlyLimit", null).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al modificar el límite mensual"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al modificar el límite mensual"
+                        )
+                    }
+                }
+        }
+    }
+
     suspend fun getMonthlyLimit(): Double? {
         return withContext(Dispatchers.IO) {
             return@withContext db.collection("users")
@@ -198,14 +218,9 @@ class TransactionsRepository {
 
     suspend fun updateGoal(goal: FireGoal) {
         withContext(Dispatchers.IO) {
-            val currentGoal = getGoal(auth.currentUser!!.uid)
-            if (currentGoal == null) { // Crear por primera vez la meta (id = "")
-                val docRef = db.collection("users")
-                    .document(auth.currentUser!!.uid)
-                    .collection("goal")
-                    .document()
-                goal.goalID = docRef.id
-                docRef.set(goal).addOnCompleteListener {
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .update(mapOf("goal" to goal)).addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.d(
                             "Repository",
@@ -218,26 +233,26 @@ class TransactionsRepository {
                         )
                     }
                 }
-            } else { // Modificar meta (id != "")
-                goal.goalID = currentGoal.goalID
-                db.collection("users")
-                    .document(auth.currentUser!!.uid)
-                    .collection("goal")
-                    .document(currentGoal.goalID)
-                    .set(goal).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            Log.d(
-                                "Repository",
-                                "Respuesta exitosa de firebase al modificar la meta"
-                            )
-                        } else {
-                            Log.d(
-                                "Repository",
-                                "Respuesta fallida de firebase al modificar la meta"
-                            )
-                        }
+        }
+    }
+
+    suspend fun deleteGoal() {
+        withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .update(mapOf("goal" to null)).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al eliminar la meta"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al eliminar la meta"
+                        )
                     }
-            }
+                }
         }
     }
 
@@ -245,7 +260,6 @@ class TransactionsRepository {
         return withContext(Dispatchers.IO) {
             val respuesta = db.collection("users")
                 .document(userId)
-                .collection("goal")
                 .get().addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.d(
@@ -259,13 +273,8 @@ class TransactionsRepository {
                         )
                     }
                 }
-                .await().map { document ->
-                    document.toObject(FireGoal::class.java)
-                }
-            if (respuesta.isEmpty()) {
-                return@withContext null
-            }
-            return@withContext respuesta[0]
+                .await().get("goal", FireGoal::class.java)
+            return@withContext respuesta
         }
     }
 

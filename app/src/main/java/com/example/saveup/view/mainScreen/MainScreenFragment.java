@@ -3,7 +3,6 @@ package com.example.saveup.view.mainScreen;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +20,9 @@ import com.example.saveup.model.Account;
 import com.example.saveup.model.Notifications;
 import com.example.saveup.model.Transaction;
 import com.example.saveup.model.TransactionManager;
-import com.example.saveup.model.firestore.FireGoal;
 import com.example.saveup.view.adapter.TransactionsListAdapter;
-import com.example.saveup.view.statistics.LimitsGoalsFragment;
 import com.example.saveup.viewModel.MainViewModel;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -101,7 +97,7 @@ public class MainScreenFragment extends Fragment {
         initializeUI();
         setClickListeners();
 
-        checkGoal();
+        Notifications.checkGoal(requireActivity(), viewModel);
 
         return binding.getRoot();
     }
@@ -124,8 +120,8 @@ public class MainScreenFragment extends Fragment {
                 binding.etBalance.setText(balance);
                 updateColor(aDouble);
 
-                checkLimit();
-                checkGoal();
+                Notifications.checkLimit(requireActivity(), viewModel);
+                Notifications.checkGoal(requireActivity(), viewModel);
             }
         });
     }
@@ -228,100 +224,6 @@ public class MainScreenFragment extends Fragment {
         intentAddTransaction.putExtra(ACTIVITY_MODE, MODE_DETAILS);
         intentAddTransaction.putExtra(TRANSACTION_DETAILS, transaction);
         startActivityForResult(intentAddTransaction, INTENT_ADD_TRANSACTION);
-    }
-
-    private void checkLimit() {
-        Double expenses = viewModel.getMonthlyExpenses();
-        Double limit = viewModel.getMonthlyLimit().getValue();
-        if (expenses != null && limit != null) {
-            if (expenses >= limit) {
-                notifyLimitExceeded();
-            }
-        }
-    }
-
-    private void checkGoal() {
-        Double balance = viewModel.getBalance().getValue();
-        FireGoal goal = viewModel.getGoal().getValue();
-        Date currentDate = new Date();
-        if (balance != null) {
-            if (goal != null) {
-                Double objectiveBalance = goal.getObjectiveBalance();
-                Date finalDate = goal.getFinalDate();
-                if (objectiveBalance != null) {
-                    if (currentDate.compareTo(finalDate) < 0) { // Comprobar si ha llegado a la meta
-                        if (balance >= objectiveBalance) {
-                            notifyGoalReached();
-                        }
-                    } else { // Comprobar si se ha pasado la fecha de la meta
-                        if (balance < objectiveBalance) {
-                            Log.d("goal", "checkGoal");
-                            notifyGoalNotReached();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void notifyLimitExceeded() {
-        Notifications.simpleNotification(requireActivity(),
-                "¡Atención! Ha Excedido Su Límite Mensual",
-                "El límite mensual que ha creado de " + viewModel.getMonthlyLimit().getValue()
-                        + " € ha sido excedido, ahora mismo sus gastos mensuales son "
-                        + viewModel.getMonthlyExpenses() + "€",
-                com.google.android.material.R.drawable.navigation_empty_icon,
-                LimitsGoalsFragment.LIMIT_REACHED_NOTIFICATION_ID);
-    }
-
-    private void notifyGoalReached() {
-        FireGoal goal = viewModel.getGoal().getValue();
-
-        if (goal == null) return;
-
-        String name = goal.getName();
-        Double value = goal.getObjectiveBalance();
-        Date date = goal.getFinalDate();
-
-        String title = "¡Atención! Ha Llegado a su meta " + name + "\n";
-        StringBuilder builder = new StringBuilder();
-        if (value != null) {
-            builder.append("Ha llegado a ").append(value).append(" €").append("\n");
-        }
-        if (date != null) {
-            String dateFormatted = date.getDate() + "/" + date.getMonth() + 1 + "/" + (date.getYear() + 1900);
-            builder.append("Antes del ").append(dateFormatted);
-        }
-        Notifications.simpleNotification(requireActivity(),
-                title,
-                builder.toString(),
-                com.google.android.material.R.drawable.navigation_empty_icon,
-                LimitsGoalsFragment.GOAL_REACHED_NOTIFICATION_ID);
-    }
-
-    private void notifyGoalNotReached() {
-        FireGoal goal = viewModel.getGoal().getValue();
-
-        if (goal == null) return;
-
-        String name = goal.getName();
-        Double value = goal.getObjectiveBalance();
-        Date date = goal.getFinalDate();
-
-        String title = "¡Atención! Su meta " + name + " ha expirado\n";
-        StringBuilder builder = new StringBuilder();
-        if (value != null) {
-            builder.append("No ha llegado a ").append(value).append(" €").append("\n");
-        }
-        if (date != null) {
-            String dateFormatted = date.getDate() + "/" + date.getMonth() + 1 + "/" + (date.getYear() + 1900);
-            builder.append("Antes del ").append(dateFormatted);
-        }
-        Notifications.simpleNotification(requireActivity(),
-                title,
-                builder.toString(),
-                com.google.android.material.R.drawable.navigation_empty_icon,
-                LimitsGoalsFragment.GOAL_NOT_REACHED_NOTIFICATION_ID);
     }
 
 }

@@ -11,15 +11,42 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:layout_margin="15dp">
+        android:layout_marginHorizontal="15dp" >
 
-        <TextView
-            android:id="@+id/monthlyLimitsTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/monthlyLimits"
-            android:padding="10dp"
-            android:layout_marginTop="20dp"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/monthlyLimitsTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/monthlyLimits"
+                android:padding="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_weight="0.80" />
+
+            <ImageButton
+                android:id="@+id/editButtonLimits"
+                android:background="@color/white"
+                android:layout_marginTop="15dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".10"
+                android:src="@android:drawable/ic_menu_edit" />
+
+            <ImageButton
+                android:id="@+id/removeButtonLimits"
+                android:background="@color/white"
+                android:layout_marginTop="15dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".10"
+                android:src="@android:drawable/ic_menu_delete" />
+
+        </LinearLayout>
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/outlinedTextFieldLimit"
@@ -27,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/currentLimit"
-            app:suffixText="@string/euroSymbol">
+            app:suffixText="@string/euroSymbol" >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etLimit"
@@ -37,13 +64,81 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <LinearLayout
+            android:id="@+id/linearLayoutLimitsButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone" >
+
+            <Button
+                android:id="@+id/buttonAcceptLimit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="Aceptar" />
+
+            <Button
+                android:id="@+id/buttonCancelLimit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Cancelar"
+                android:layout_weight="0.5"/>
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBarLimit"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="0"
+            android:layout_marginTop="25dp"
+            android:progressBackgroundTint="@color/charcoalTint"
+            android:progressTint="@color/crimsonTint"
+            android:indeterminate="false" />
+
+        <TextView
+            android:id="@+id/textRemainingBalanceLimit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text=""/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
         <TextView
             android:id="@+id/savingGoalsTitle"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/savingGoals"
             android:padding="10dp"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="20dp"
+            android:layout_weight="0.80" />
+
+        <ImageButton
+            android:id="@+id/editButtonGoals"
+            android:background="@color/white"
+            android:layout_marginTop="15dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".10"
+            android:src="@android:drawable/ic_menu_edit" />
+
+        <ImageButton
+            android:id="@+id/removeButtonGoals"
+            android:background="@color/white"
+            android:layout_marginTop="15dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".10"
+            android:src="@android:drawable/ic_menu_delete" />
+
+    </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/outlinedTextFieldGoalName"
@@ -91,12 +186,41 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/btSwitchInitialBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/infoInitialBalance" />
+
+        <LinearLayout
+            android:id="@+id/linearLayoutGoalsButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone" >
+
+            <Button
+                android:id="@+id/buttonAcceptGoal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="Aceptar" />
+
+            <Button
+                android:id="@+id/buttonCancelGoal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Cancelar"
+                android:layout_weight="0.5"/>
+
+        </LinearLayout>
+
         <ProgressBar
             android:id="@+id/progressBarGoal"
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:progress="25"
+            android:progress="0"
             android:layout_marginTop="25dp"
             android:progressBackgroundTint="@color/charcoalTint"
             android:progressTint="@color/emeraldTint"
@@ -106,14 +230,14 @@
             android:id="@+id/textRemainingBalanceGoal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginTop="10dp"
             android:text=""/>
 
         <TextView
             android:id="@+id/textRemainingDaysGoal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginTop="10dp"
             android:text=""/>
 
     </LinearLayout>

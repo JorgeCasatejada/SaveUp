@@ -29,5 +29,6 @@
     <!-- colores para las metas -->
     <color name="charcoalTint">#222021</color>
     <color name="emeraldTint">#50C878</color>
+    <color name="crimsonTint">#A51C30</color>
 
 </resources>

@@ -170,7 +170,7 @@ class GraphsFragment : Fragment() {
         val description = Description()
         description.text = resources.getString(R.string.incomeExpense)
         description.textSize = 15f
-        description.setPosition(550f, 100f)
+        description.setPosition(550f, 90f)
 
         binding.graphs.lineChart.description = description
         binding.graphs.lineChart.axisRight.setDrawLabels(false)
