@@ -13,14 +13,14 @@ class GroupParticipantsListener(private val vm: MainViewModel) :
         if (error != null) {
             Log.d(
                 "Repository",
-                "Respuesta fallida de firebase al recuperar los participantea del grupo"
+                "Respuesta fallida de firebase al recuperar los participantes del grupo"
             )
             return
         }
         if (querySnapshot != null) {
             Log.d(
                 "Repository",
-                "Respuesta exitosa de firebase al recuperar los participantea del grupo"
+                "Respuesta exitosa de firebase al recuperar los participantes del grupo"
             )
             val groupParticipants = querySnapshot
                 .map { document ->

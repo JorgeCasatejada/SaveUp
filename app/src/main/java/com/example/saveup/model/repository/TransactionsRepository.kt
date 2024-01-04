@@ -9,6 +9,7 @@ import com.example.saveup.model.firestore.FireUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
@@ -374,16 +375,19 @@ class TransactionsRepository {
                     )
                 }
             }
+            db.collection("groups")
+                .document(group.id)
+                .update("currentBudget", FieldValue.increment(transaction.signedValue))
             return@withContext docRef.id
         }
     }
 
-    suspend fun deleteTransactionFromGroup(transactionId: String, group: Group) {
+    suspend fun deleteTransactionFromGroup(transaction: Transaction, group: Group) {
         withContext(Dispatchers.IO) {
             db.collection("groups")
                 .document(group.id)
                 .collection("transactions")
-                .document(transactionId)
+                .document(transaction.transactionID)
                 .delete().addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.d(
@@ -397,10 +401,17 @@ class TransactionsRepository {
                         )
                     }
                 }
+            db.collection("groups")
+                .document(group.id)
+                .update("currentBudget", FieldValue.increment(-transaction.signedValue))
         }
     }
 
-    suspend fun modifyTransactionFromGroup(transaction: Transaction, group: Group) {
+    suspend fun modifyTransactionFromGroup(
+        transaction: Transaction,
+        group: Group,
+        valueDifference: Double
+    ) {
         withContext(Dispatchers.IO) {
             db.collection("groups")
                 .document(group.id)
@@ -419,6 +430,9 @@ class TransactionsRepository {
                         )
                     }
                 }
+            db.collection("groups")
+                .document(group.id)
+                .update("currentBudget", FieldValue.increment(valueDifference))
         }
     }
 

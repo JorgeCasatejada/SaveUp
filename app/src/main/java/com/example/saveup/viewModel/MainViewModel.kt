@@ -383,7 +383,7 @@ class MainViewModel(
     fun removeTransactionFromGroup(transaction: Transaction, group: Group) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intentan eliminar una transacción del grupo")
-            repository.deleteTransactionFromGroup(transaction.transactionID, group)
+            repository.deleteTransactionFromGroup(transaction, group)
         }
         // TODO usar y probar esta función
     }
@@ -396,7 +396,8 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intentan modificar una transacción del grupo")
             transactionNew.transactionID = transactionOld.transactionID
-            repository.modifyTransactionFromGroup(transactionNew, group)
+            val valueDifference = transactionNew.signedValue - transactionOld.signedValue
+            repository.modifyTransactionFromGroup(transactionNew, group, valueDifference)
         }
         // TODO usar y probar esta función
     }

@@ -31,7 +31,7 @@ class GroupDetailsFragment : Fragment() {
         cargarMenu()
         mostrarTransacciones()
 
-
+        var registerListeners = true
         viewModel!!.currentGroup.observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d("GroupDetailsFragment", "El grupo seleccionado no existe")
@@ -39,15 +39,21 @@ class GroupDetailsFragment : Fragment() {
                 showGroupDialog(true)
             } else {
                 if (it.id.isNotBlank()) {
-                    viewModel!!.registerGroupParticipantsListener(it)
-                    viewModel!!.registerGroupTransactionsListener(it)
+                    if (registerListeners) {
+                        registerListeners = false
+                        viewModel!!.registerGroupParticipantsListener(it)
+                        viewModel!!.registerGroupTransactionsListener(it)
+                    }
                 } else {
                     Log.d("GroupDetailsFragment", "Abierto el grupo vacio")
                 }
             }
         }
         viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {
-            Log.d("GroupDetailsFragment", "Comprobar si sigo perteneciendo al grupo o se me ha expulsado")
+            Log.d(
+                "GroupDetailsFragment",
+                "Comprobar si sigo perteneciendo al grupo o se me ha expulsado"
+            )
             if (!viewModel!!.checkUserStillInGroup(it)) {
                 viewModel!!.exitFromCurrentGroup()
                 showGroupDialog(false)
