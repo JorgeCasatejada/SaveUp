@@ -383,10 +383,10 @@ class TransactionsRepository {
         }
     }
 
-    suspend fun deleteTransactionFromGroup(transaction: Transaction, group: Group) {
+    suspend fun deleteTransactionFromGroup(transaction: Transaction, id: String, budget: Double) {
         withContext(Dispatchers.IO) {
             db.collection("groups")
-                .document(group.id)
+                .document(id)
                 .collection("transactions")
                 .document(transaction.transactionID)
                 .delete().addOnCompleteListener {
@@ -402,20 +402,21 @@ class TransactionsRepository {
                         )
                     }
                 }
+
             db.collection("groups")
-                .document(group.id)
-                .update("currentBudget", FieldValue.increment(-transaction.signedValue))
+                .document(id)
+                .update("currentBudget", budget)
         }
     }
 
     suspend fun modifyTransactionFromGroup(
         transaction: Transaction,
-        group: Group,
-        valueDifference: Double
+        id: String,
+        budget: Double
     ) {
         withContext(Dispatchers.IO) {
             db.collection("groups")
-                .document(group.id)
+                .document(id)
                 .collection("transactions")
                 .document(transaction.transactionID)
                 .set(transaction.toFirestore()).addOnCompleteListener {
@@ -432,8 +433,8 @@ class TransactionsRepository {
                     }
                 }
             db.collection("groups")
-                .document(group.id)
-                .update("currentBudget", FieldValue.increment(valueDifference))
+                .document(id)
+                .update("currentBudget", budget)
         }
     }
 
