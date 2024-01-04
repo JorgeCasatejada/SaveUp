@@ -11,13 +11,11 @@ class GroupInfoListener(private val vm: MainViewModel, private val searchedGroup
     EventListener<DocumentSnapshot> {
     override fun onEvent(documentSnapshot: DocumentSnapshot?, error: FirebaseFirestoreException?) {
         if (error != null) {
-            Log.d(
-                "Repository",
-                error.message ?: "Error al obtener el listener"
-            )
+            Log.d("Repository", "Respuesta fallida de firebase al obtener el grupo")
             return
         }
         if (documentSnapshot != null) {
+            Log.d("Repository", "Respuesta exitosa de firebase al obtener el grupo")
             val newGroupData = documentSnapshot
                 .toObject(FireGroup::class.java)
             vm.updateGroupInfo(newGroupData, searchedGroupID)

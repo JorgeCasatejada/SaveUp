@@ -3,11 +3,9 @@ package com.example.saveup.model.repository
 import android.util.Log
 import com.example.saveup.model.Group
 import com.example.saveup.model.Transaction
-import com.example.saveup.model.firestore.FireGroup
 import com.example.saveup.model.firestore.FireParticipant
 import com.example.saveup.model.firestore.FireTransaction
 import com.example.saveup.model.firestore.FireUser
-import com.example.saveup.model.firestore.FireUserGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
@@ -178,32 +176,6 @@ class TransactionsRepository {
             .addSnapshotListener(listener)
     }
 
-    suspend fun getUserGroups(userId: String): MutableList<Group> {
-        return withContext(Dispatchers.IO) {
-            val groups = db.collection("users")
-                .document(userId)
-                .collection("myGroups")
-                .get().addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Log.d(
-                            "Repository",
-                            "Respuesta exitosa de firebase al recuperar los grupos del usuario"
-                        )
-                    } else {
-                        Log.d(
-                            "Repository",
-                            "Respuesta fallida de firebase al recuperar los grupos del usuario"
-                        )
-                    }
-                }
-                .await().map { document ->
-                    Log.d("Firestore", "Group: " + document.id + " => " + document.data)
-                    Group(document.toObject(FireUserGroup::class.java))
-                }.toMutableList()
-            return@withContext groups
-        }
-    }
-
     fun getGroupInfoRegistration(
         group: Group,
         listener: EventListener<DocumentSnapshot>
@@ -211,23 +183,6 @@ class TransactionsRepository {
         return db.collection("groups")
             .document(group.id)
             .addSnapshotListener(listener)
-    }
-
-    suspend fun getGroup(group: Group): FireGroup? {
-        return withContext(Dispatchers.IO) {
-            val newGroupData = db.collection("groups")
-                .document(group.id)
-                .get().addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Log.d("Repository", "Respuesta exitosa de firebase al obtener el grupo")
-                    } else {
-                        Log.d("Repository", "Respuesta fallida de firebase al obtener el grupo")
-                    }
-                }
-                .await()
-                .toObject(FireGroup::class.java)
-            return@withContext newGroupData
-        }
     }
 
     suspend fun createGroup(group: Group): String {
@@ -246,22 +201,22 @@ class TransactionsRepository {
         }
     }
 
-    suspend fun deleteGroup(group: Group) {
+    suspend fun deleteGroup(groupID: String) {
         withContext(Dispatchers.IO) {
             db.collection("groups")
-                .document(group.id)
+                .document(groupID)
                 .collection("participants")
                 .get().await().documents.forEach {
                     it.reference.delete()
                 }
             db.collection("groups")
-                .document(group.id)
+                .document(groupID)
                 .collection("transactions")
                 .get().await().documents.forEach {
                     it.reference.delete()
                 }
             db.collection("groups")
-                .document(group.id)
+                .document(groupID)
                 .delete()
         }
     }
@@ -274,31 +229,6 @@ class TransactionsRepository {
             .document(group.id)
             .collection("participants")
             .addSnapshotListener(listener)
-    }
-
-    suspend fun getGroupParticipants(group: Group): List<FireParticipant> {
-        return withContext(Dispatchers.IO) {
-            val groupParticipants = db.collection("groups")
-                .document(group.id)
-                .collection("participants")
-                .get().addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Log.d(
-                            "Repository",
-                            "Respuesta exitosa de firebase al recuperar los participantea del grupo"
-                        )
-                    } else {
-                        Log.d(
-                            "Repository",
-                            "Respuesta fallida de firebase al recuperar los participantea del grupo"
-                        )
-                    }
-                }.await().map { document ->
-                    Log.d("Firestore", "Participante: " + document.id + " => " + document.data)
-                    document.toObject(FireParticipant::class.java)
-                }
-            return@withContext groupParticipants
-        }
     }
 
     suspend fun getParticipant(participant: String): FireParticipant {
@@ -423,31 +353,6 @@ class TransactionsRepository {
             .document(group.id)
             .collection("transactions")
             .addSnapshotListener(listener)
-    }
-
-    suspend fun getGroupTransactions(group: Group): List<Transaction> {
-        return withContext(Dispatchers.IO) {
-            val groupTransactions = db.collection("groups")
-                .document(group.id)
-                .collection("transactions")
-                .get().addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Log.d(
-                            "Repository",
-                            "Respuesta exitosa de firebase al recuperar las transacciones del grupo"
-                        )
-                    } else {
-                        Log.d(
-                            "Repository",
-                            "Respuesta fallida de firebase al recuperar las transacciones del grupo"
-                        )
-                    }
-                }.await().map { document ->
-                    Log.d("Firestore", "Transacción: " + document.id + " => " + document.data)
-                    Transaction(document.toObject(FireTransaction::class.java))
-                }
-            return@withContext groupTransactions
-        }
     }
 
     suspend fun addTransactionToGroup(transaction: Transaction, group: Group): String {

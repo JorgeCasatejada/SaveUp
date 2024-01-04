@@ -13,11 +13,15 @@ class UserGroupsListener(private val vm: MainViewModel) : EventListener<QuerySna
         if (error != null) {
             Log.d(
                 "Repository",
-                error.message ?: "Error al obtener el listener"
+                "Respuesta fallida de firebase al recuperar los grupos del usuario"
             )
             return
         }
         if (querySnapshot != null) {
+            Log.d(
+                "Repository",
+                "Respuesta exitosa de firebase al recuperar los grupos del usuario"
+            )
             val groups = querySnapshot
                 .map { document ->
                     Log.d("Firestore", "Group: " + document.id + " => " + document.data)

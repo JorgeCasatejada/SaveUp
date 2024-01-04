@@ -121,15 +121,12 @@ class GroupsFragment : Fragment() {
                 val participants = data?.getStringArrayListExtra(AddGroupActivity.PARTICIPANTS)
                 if (group != null) {
                     viewModel?.createGroup(group)
-                }
-                if (group != null) {
                     viewModel?.addAdminToGroup(group, viewModel?.getUserEmail().toString())
-                }
-                if (!participants.isNullOrEmpty() && group != null) {
-                    viewModel?.addParticipantsToGroup(group, participants)
+                    if (!participants.isNullOrEmpty()) {
+                        viewModel?.addParticipantsToGroup(group, participants)
+                    }
                 }
             }
-
         }
     }
 
