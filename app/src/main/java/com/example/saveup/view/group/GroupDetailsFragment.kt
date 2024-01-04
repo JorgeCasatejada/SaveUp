@@ -55,9 +55,9 @@ class GroupDetailsFragment : Fragment() {
                 "Comprobar si sigo perteneciendo al grupo o se me ha expulsado"
             )
             if (!viewModel!!.checkUserStillInGroup(it)) {
-                viewModel!!.exitFromCurrentGroup()
-                showGroupDialog(false)
                 Log.d("GroupDetailsFragment", "Se me ha expulsado del grupo")
+                viewModel!!.deleteGroupFromMyGroups()
+                showGroupDialog(false)
             } else {
                 Log.d("GroupDetailsFragment", "Sigo en el grupo")
             }

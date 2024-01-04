@@ -12,6 +12,7 @@ import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -229,7 +230,7 @@ class TransactionsRepository {
         return db.collection("groups")
             .document(group.id)
             .collection("participants")
-            .addSnapshotListener(listener)
+            .addSnapshotListener(MetadataChanges.INCLUDE, listener)
     }
 
     suspend fun getParticipant(participant: String): FireParticipant {

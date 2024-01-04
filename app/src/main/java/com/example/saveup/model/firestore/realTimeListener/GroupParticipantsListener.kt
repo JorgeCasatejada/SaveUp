@@ -17,7 +17,7 @@ class GroupParticipantsListener(private val vm: MainViewModel) :
             )
             return
         }
-        if (querySnapshot != null) {
+        if (querySnapshot != null && !querySnapshot.metadata.isFromCache) {
             Log.d(
                 "Repository",
                 "Respuesta exitosa de firebase al recuperar los participantes del grupo"
