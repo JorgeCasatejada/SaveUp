@@ -1,5 +1,6 @@
 package com.example.saveup.viewModel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -143,11 +144,15 @@ class MainViewModel(
         auth.signOut()
     }
 
-    fun saveData(userName: String) {
+    fun saveData(userName: String, imageUri: Uri?) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("MainViewModel", "Se intenta modificar el al usuario")
+            Log.d("MainViewModel", "Se intenta modificar el usuario")
             repository.modifyUser(userName)
             Log.d("MainViewModel", "Nuevo valor para nombre de usuario: $userName")
+            if (imageUri != null) {
+                Log.d("MainViewModel", "Se intenta modificar la imagen del usuario")
+                repository.updateUserImage(auth.currentUser!!.uid, imageUri)
+            }
         }
     }
 

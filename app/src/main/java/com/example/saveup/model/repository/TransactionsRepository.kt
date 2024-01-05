@@ -1,5 +1,6 @@
 package com.example.saveup.model.repository
 
+import android.net.Uri
 import android.util.Log
 import com.example.saveup.model.Group
 import com.example.saveup.model.Transaction
@@ -7,22 +8,25 @@ import com.example.saveup.model.firestore.FireParticipant
 import com.example.saveup.model.firestore.FireTransaction
 import com.example.saveup.model.firestore.FireUser
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class TransactionsRepository {
 
-    private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance()
+    private var storageRef = storage.reference
 
     suspend fun getUserTransactions(userId: String): List<Transaction> {
         return withContext(Dispatchers.IO) {
@@ -128,10 +132,25 @@ class TransactionsRepository {
         }
     }
 
+    suspend fun updateUserImage(userId: String, imageUri: Uri) {
+        return withContext(Dispatchers.IO) {
+            storageRef.child("profilePics/${userId}")
+                .putFile(imageUri).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d("Storage", "Respuesta exitosa de firebase al guardar la imagen")
+                    } else {
+                        Log.d("Storage", "Respuesta fallida de firebase al guardar la imagen")
+                    }
+                }
+        }
+    }
+
     suspend fun modifyUser(userName: String) {
         withContext(Dispatchers.IO) {
-            auth.currentUser!!.updateProfile(UserProfileChangeRequest.Builder()
-                .setDisplayName(userName).build()).addOnCompleteListener {
+            auth.currentUser!!.updateProfile(
+                UserProfileChangeRequest.Builder()
+                    .setDisplayName(userName).build()
+            ).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.d(
                         "Auth",
@@ -144,26 +163,26 @@ class TransactionsRepository {
                         "Respuesta fallida de firebase al modificar usuario"
                     )
                 }
-                }
+            }
         }
     }
 
     private fun modifyUserFireStore(userName: String) {
-            db.collection("users")
-                .document(auth.currentUser!!.uid)
-                .update("userName", userName).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Log.d(
-                            "Repository",
-                            "Respuesta exitosa de firebase al modificar usuario"
-                        )
-                    } else {
-                        Log.d(
-                            "Repository",
-                            "Respuesta fallida de firebase al modificar usuario"
-                        )
-                    }
+        db.collection("users")
+            .document(auth.currentUser!!.uid)
+            .update("userName", userName).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d(
+                        "Repository",
+                        "Respuesta exitosa de firebase al modificar usuario"
+                    )
+                } else {
+                    Log.d(
+                        "Repository",
+                        "Respuesta fallida de firebase al modificar usuario"
+                    )
                 }
+            }
     }
 
     suspend fun updateMonthlyLimit(limit: Double) {
