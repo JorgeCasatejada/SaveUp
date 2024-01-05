@@ -55,9 +55,9 @@ public class ProfileFragment extends Fragment {
 
     public static void setProfilePic(Context context, String imageUri, ImageView imageView) {
         if (imageUri.isEmpty()) {
-            Glide.with(context).load(R.drawable.user_image).apply(RequestOptions.circleCropTransform()).into(imageView);
+            Glide.with(context).load(R.drawable.user_image).circleCrop().into(imageView);
         } else {
-            Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
+            Glide.with(context).load(imageUri).circleCrop().into(imageView);
         }
     }
 

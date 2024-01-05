@@ -23,15 +23,16 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
-            android:src="@drawable/baseline_groups_24" />
+            app:srcCompat="@drawable/baseline_person_24" />
 
         <TextView
             android:id="@+id/participantName"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:gravity="center"
+            android:text="@string/participants"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     </LinearLayout>
