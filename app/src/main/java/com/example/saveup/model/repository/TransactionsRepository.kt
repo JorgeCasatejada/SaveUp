@@ -132,20 +132,38 @@ class TransactionsRepository {
         }
     }
 
-    suspend fun updateUserImage(userId: String, imageUri: Uri) {
+    fun getCurrentUserRegistration(
+        userId: String,
+        listener: EventListener<DocumentSnapshot>
+    ): ListenerRegistration {
+        return db.collection("users")
+            .document(userId)
+            .addSnapshotListener(listener)
+    }
+
+    suspend fun uploadUserImage(userId: String, imageUri: Uri): String {
         return withContext(Dispatchers.IO) {
-            storageRef.child("profilePics/${userId}")
-                .putFile(imageUri).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Log.d("Storage", "Respuesta exitosa de firebase al guardar la imagen")
-                    } else {
-                        Log.d("Storage", "Respuesta fallida de firebase al guardar la imagen")
-                    }
+            val photoRef = storageRef.child("profilePics").child(userId)
+            var success = false
+            var imageUrl = ""
+            photoRef.putFile(imageUri).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d("Storage", "Respuesta exitosa de firebase al guardar la imagen")
+                    success = true
+                } else {
+                    Log.d("Storage", "Respuesta fallida de firebase al guardar la imagen")
                 }
+            }.await()
+            if (success) {
+                photoRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                    imageUrl = downloadUrl.toString()
+                }.await()
+            }
+            return@withContext imageUrl
         }
     }
 
-    suspend fun modifyUser(userName: String) {
+    suspend fun updateAuthUser(userName: String) {
         withContext(Dispatchers.IO) {
             auth.currentUser!!.updateProfile(
                 UserProfileChangeRequest.Builder()
@@ -156,7 +174,6 @@ class TransactionsRepository {
                         "Auth",
                         "Respuesta exitosa de firebase al modificar usuario"
                     )
-                    modifyUserFireStore(userName)
                 } else {
                     Log.d(
                         "Auth",
@@ -167,22 +184,24 @@ class TransactionsRepository {
         }
     }
 
-    private fun modifyUserFireStore(userName: String) {
-        db.collection("users")
-            .document(auth.currentUser!!.uid)
-            .update("userName", userName).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.d(
-                        "Repository",
-                        "Respuesta exitosa de firebase al modificar usuario"
-                    )
-                } else {
-                    Log.d(
-                        "Repository",
-                        "Respuesta fallida de firebase al modificar usuario"
-                    )
+    suspend fun modifyUserFireStore(userData: MutableMap<String, Any>) {
+        withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .update(userData).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al modificar usuario"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al modificar usuario"
+                        )
+                    }
                 }
-            }
+        }
     }
 
     suspend fun updateMonthlyLimit(limit: Double) {

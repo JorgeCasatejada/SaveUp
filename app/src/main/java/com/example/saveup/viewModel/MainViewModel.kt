@@ -12,6 +12,8 @@ import com.example.saveup.model.Transaction
 import com.example.saveup.model.TransactionManager
 import com.example.saveup.model.firestore.FireGroup
 import com.example.saveup.model.firestore.FireParticipant
+import com.example.saveup.model.firestore.FireUser
+import com.example.saveup.model.firestore.realTimeListener.CurrentUserListener
 import com.example.saveup.model.firestore.realTimeListener.GroupInfoListener
 import com.example.saveup.model.firestore.realTimeListener.GroupParticipantsListener
 import com.example.saveup.model.firestore.realTimeListener.GroupTransactionsListener
@@ -42,14 +44,18 @@ class MainViewModel(
     // ------------------ LimitsFragment ------------------
     val monthlyLimit: MutableLiveData<Double?> = MutableLiveData()
 
+    // ------------------ ProfileFragment ------------------
+    val currentUser: MutableLiveData<FireUser> = MutableLiveData()
+    private var currentUserListenerRegistration: ListenerRegistration? = null
+
     // ------------------ GroupsFragment ------------------
-    val isGroupAdmin = MutableLiveData<Boolean>()
-    val participantAddedResult = MutableLiveData<Pair<Boolean, String>>()
-    val participantsNotAddedResult = MutableLiveData<List<String>>()
     val userGroups: MutableLiveData<List<Group>> = MutableLiveData()
     val currentGroup: MutableLiveData<Group?> = MutableLiveData()
+    val isGroupAdmin = MutableLiveData<Boolean>()
     val currentGroupTransactions: MutableLiveData<List<Transaction>> = MutableLiveData()
     val currentGroupParticipants: MutableLiveData<List<FireParticipant>> = MutableLiveData()
+    val participantAddedResult = MutableLiveData<Pair<Boolean, String>>()
+    val participantsNotAddedResult = MutableLiveData<List<String>>()
 
     var searchedGroupID: String = ""
     private var userGroupsListenerRegistration: ListenerRegistration? = null
@@ -131,12 +137,25 @@ class MainViewModel(
     }
 
     // ------------------ ProfileFragment ------------------
-    fun getUserName(): String {
-        return auth.currentUser?.displayName ?: ""
-    }
 
     fun getUserEmail(): String {
         return auth.currentUser?.email ?: ""
+    }
+
+    fun updateCurrentUserInfo(newUserData: FireUser) {
+        Log.d("MainViewModel", "Nuevo valor para el usuario: $newUserData")
+        currentUser.postValue(newUserData)
+    }
+
+    fun registerCurrentUserListener() {
+        Log.d("MainViewModel", "Se empieza a observar la información del usuario")
+        currentUserListenerRegistration =
+            repository.getCurrentUserRegistration(auth.currentUser!!.uid, CurrentUserListener(this))
+    }
+
+    fun unregisterCurrentUserListener() {
+        Log.d("MainViewModel", "Se deja de observar la información del usuario")
+        currentUserListenerRegistration?.remove()
     }
 
     fun logOutFromCurrentUser() {
@@ -146,16 +165,28 @@ class MainViewModel(
 
     fun saveData(userName: String, imageUri: Uri?) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("MainViewModel", "Se intenta modificar el usuario")
-            repository.modifyUser(userName)
-            Log.d("MainViewModel", "Nuevo valor para nombre de usuario: $userName")
+            val newData = mutableMapOf<String, Any>()
             if (imageUri != null) {
-                Log.d("MainViewModel", "Se intenta modificar la imagen del usuario")
-                repository.updateUserImage(auth.currentUser!!.uid, imageUri)
+                Log.d("MainViewModel", "Se intenta actualizar la imagen del usuario")
+                val imagePath = repository.uploadUserImage(auth.currentUser!!.uid, imageUri)
+                if (imagePath.isNotBlank()) {
+                    newData["imagePath"] = imagePath
+                }
             }
+            if (userName != currentUser.value?.userName) {
+                Log.d("MainViewModel", "Se intenta actualizar el userName del usuario")
+                repository.updateAuthUser(userName)
+                newData["userName"] = userName
+            }
+            if (newData.isNotEmpty()) {
+                Log.d("MainViewModel", "Se intenta modificar el usuario: $newData")
+                repository.modifyUserFireStore(newData)
+            } else {
+                Log.d("MainViewModel", "No hay datos nuevos que actualizar")
+            }
+
         }
     }
-
 
     // ------------------ GraphsFragment ------------------
     fun groupedTransactionsByYear(year: Int): MutableMap<Int, MutableList<Transaction>>? {

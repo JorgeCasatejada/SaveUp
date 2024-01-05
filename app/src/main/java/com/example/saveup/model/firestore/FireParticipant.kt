@@ -6,7 +6,7 @@ import android.os.Parcelable
 data class FireParticipant(
     val id: String = "",
     val email: String = "",
-    val username: String = "",
+    val userName: String = "",
     val imagePath: String = "",
     @field:JvmField var isAdmin: Boolean = false
 ): Parcelable {
@@ -21,7 +21,7 @@ data class FireParticipant(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
         parcel.writeString(email)
-        parcel.writeString(username)
+        parcel.writeString(userName)
         parcel.writeString(imagePath)
         parcel.writeByte(if (isAdmin) 1 else 0)
     }
