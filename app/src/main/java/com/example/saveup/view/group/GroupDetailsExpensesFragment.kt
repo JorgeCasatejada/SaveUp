@@ -26,6 +26,7 @@ class GroupDetailsExpensesFragment : Fragment() {
     private val binding get() = _binding!!
     private var viewModel: MainViewModel? = null
     private lateinit var transactionsListAdapter: TransactionsListAdapter
+    private var lastBudget: Double = 0.0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -100,7 +101,7 @@ class GroupDetailsExpensesFragment : Fragment() {
                 if (detailsTransaction != null) {
                     viewModel?.removeTransactionFromGroup(
                         detailsTransaction,
-                        viewModel!!.currentGroup.value!!
+                        viewModel!!.currentGroup.value!!.id, lastBudget
                     )
                 }
             }
@@ -113,7 +114,7 @@ class GroupDetailsExpensesFragment : Fragment() {
                 if (transactionOld != null && transactionNew != null) {
                     viewModel?.modifyTransactionFromGroup(
                         transactionOld, transactionNew,
-                        viewModel!!.currentGroup.value!!
+                        viewModel!!.currentGroup.value!!.id, lastBudget
                     )
                 }
             }
@@ -122,6 +123,7 @@ class GroupDetailsExpensesFragment : Fragment() {
 
 
     private fun showTransaction(transaction: Transaction?) {
+        lastBudget = viewModel?.getCurrentGroup()?.currentBudget ?: 0.0
         val intentAddTransaction = Intent(activity, AddTransaction::class.java)
         intentAddTransaction.putExtra(
             ACTIVITY_MODE,
