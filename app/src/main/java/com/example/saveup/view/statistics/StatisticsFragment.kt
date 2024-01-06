@@ -114,7 +114,6 @@ class StatisticsFragment : Fragment() {
         if (graphsFragment == null) {
             graphsFragment = GraphsFragment.newInstance(account)
         }
-
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container_statistics, graphsFragment!!)
             .commit()

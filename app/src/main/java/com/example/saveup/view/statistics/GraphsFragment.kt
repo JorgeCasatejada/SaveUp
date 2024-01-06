@@ -1,13 +1,10 @@
 package com.example.saveup.view.statistics
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.R
@@ -28,15 +25,10 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import java.math.BigDecimal
-import java.math.RoundingMode
-import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.Objects
 import java.util.function.Consumer
-import java.util.stream.Collectors
-import java.util.stream.IntStream
 
 class GraphsFragment : Fragment() {
     private var _binding: FragmentGraphsBinding? = null
@@ -51,8 +43,10 @@ class GraphsFragment : Fragment() {
     private var showExpenses = true
     private var yearToShow = 0
     private lateinit var years: List<Int>
-    private var yearsAdapter: ArrayAdapter<Int>? = null
     private var totalBalance = 0.0
+
+    private var maxBalance = 0f
+    private var minBalance = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,24 +84,23 @@ class GraphsFragment : Fragment() {
         }
 
         // Filtro de años
-        years =
-            IntStream.range(1899, Date().year + 1900 + 1).boxed().sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList())
-        yearToShow = years[0]
-        yearsAdapter = ArrayAdapter(requireContext(), R.layout.list_item, years)
-        binding.autocompleteYear.setAdapter(yearsAdapter)
-        binding.autocompleteYear.setText(
-            String.format(
-                Locale.getDefault(),
-                "%04d",
-                yearsAdapter!!.getItem(0)
-            ), false
-        )
-        binding.autocompleteYear.setOnItemClickListener { _, _, position, _ ->
-            val item: Any? = yearsAdapter!!.getItem(position)
-            if (item != null) {
-                yearToShow = item as Int
+        val startYear = 1899
+        val endYear = Date().year + 1900
+
+        binding.menuYear.minValue = startYear
+        binding.menuYear.maxValue = endYear
+        binding.menuYear.setFormatter { value ->
+            if (value < yearToShow || value > yearToShow) {
+                "" // Hide the label for previous years
+            } else {
+               value.toString()
             }
+        }
+        binding.menuYear.value = endYear
+        yearToShow = endYear
+        binding.menuYear.setOnValueChangedListener { _, _, newVal ->
+            yearToShow = newVal
+
             createLineChart()
             createPieChart()
         }
@@ -125,6 +118,7 @@ class GraphsFragment : Fragment() {
         // Ejes y líneas
         val zeroLine = LimitLine(0f, "")
         zeroLine.lineWidth = 2f
+        zeroLine.lineColor = Color.BLACK
 
         val xAxis = binding.graphs.lineChart.xAxis
         xAxis.axisLineWidth = 2f
@@ -142,8 +136,7 @@ class GraphsFragment : Fragment() {
         // Cálculo de datos
         val entries: MutableList<Entry> = ArrayList()
         var balance = 0f
-        var maxBalance = 0f
-        var minBalance = 0f
+
         for (month in 0..11) {
             val transactions = map.getOrDefault(month, ArrayList())
             for (transaction in transactions) {
@@ -155,9 +148,6 @@ class GraphsFragment : Fragment() {
         }
 
         // Configuración
-        yAxis.axisMaximum = maxBalance + 10f
-        yAxis.axisMinimum = minBalance - 10f
-
         val dataset = LineDataSet(entries, "Balance")
         dataset.color = Color.CYAN
         dataset.lineWidth = 2f
@@ -179,10 +169,47 @@ class GraphsFragment : Fragment() {
 
         // Adición de datos
         val lineData = LineData(dataset)
+        if (viewModel!!.monthlyLimit.value != null) {
+            lineData.addDataSet(calculateDatasetLimit())
+        }
         binding.graphs.lineChart.data = lineData
+
+        // Límites
+        yAxis.axisMaximum = maxBalance + 50f
+        yAxis.axisMinimum = minBalance - 50f
 
         // Animación
         binding.graphs.lineChart.animateXY(1000, 1000)
+    }
+
+    private fun calculateDatasetLimit(): LineDataSet {
+        val limit = viewModel!!.monthlyLimit.value ?: return LineDataSet(listOf(), "")
+
+        val map = viewModel?.groupedTransactionsByYear(yearToShow)!!
+        val entries: MutableList<Entry> = ArrayList()
+        var balance = 0f
+
+        for (month in 0..11) {
+            val transactions = map.getOrDefault(month, ArrayList())
+            for (transaction in transactions) {
+                if (!transaction.isExpense) {
+                    balance += transaction.signedValue.toFloat()
+                    if (balance < minBalance) minBalance =
+                    balance else if (balance > maxBalance) maxBalance = balance
+                }
+            }
+
+            entries.add(Entry(month.toFloat(), balance - limit.toFloat()))
+        }
+
+        val datasetLimit = LineDataSet(entries, "Límite")
+        datasetLimit.color = Color.RED
+        datasetLimit.lineWidth = 2f
+        datasetLimit.circleColors = listOf(Color.RED)
+        datasetLimit.setDrawValues(false)
+        datasetLimit.setDrawCircles(false)
+
+        return datasetLimit
     }
 
     private fun createPieChart() {

@@ -15,10 +15,10 @@ tools:context=".view.statistics.GraphsFragment">
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/configItemsLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         app:layout_constraintBottom_toBottomOf="@id/layoutGraphs"
         app:layout_constraintEnd_toEndOf="@id/layoutGraphs"
         app:layout_constraintStart_toStartOf="@id/layoutGraphs"
@@ -31,12 +31,10 @@ tools:context=".view.statistics.GraphsFragment">
             style="?attr/materialButtonToggleGroupStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:orientation="horizontal"
             app:checkedButton="@id/selectExpense"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/menuYear"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="start"
             app:selectionRequired="true"
             app:singleSelection="true"
             android:padding="10dp" >
@@ -58,28 +56,15 @@ tools:context=".view.statistics.GraphsFragment">
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
 
-        <com.google.android.material.textfield.TextInputLayout
+        <NumberPicker
             android:id="@+id/menuYear"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/labelYear"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/toggleButtonStatistics"
-            app:layout_constraintTop_toTopOf="parent"
-            android:paddingBottom="10dp"
-            android:paddingHorizontal="10dp">
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="15dp"
+            android:descendantFocusability="blocksDescendants" />
 
-            <AutoCompleteTextView
-                android:id="@+id/autocompleteYear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number|date" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <include
         android:id="@+id/graphs"
