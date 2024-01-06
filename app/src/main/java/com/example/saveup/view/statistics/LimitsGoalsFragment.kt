@@ -366,14 +366,14 @@ class LimitsGoalsFragment : Fragment() {
             if (expenses != null) {
                 val progress = expenses / limit * 100
                 binding.progressBarLimit.setProgress(progress.toInt(), true)
-            }
 
-            val remainingBalance = limit - viewModel?.getMonthlyExpenses()!!
-            if (remainingBalance >= 0) {
-                binding.textRemainingBalanceLimit.text = resources.getString(
-                    R.string.ramainingBalanceLimit,
-                    String.format(Locale.getDefault(), "%.2f", remainingBalance)
-                )
+                val remainingBalance = limit - viewModel?.getMonthlyExpenses()!!
+                if (remainingBalance >= 0) {
+                    binding.textRemainingBalanceLimit.text = resources.getString(
+                        R.string.ramainingBalanceLimit,
+                        String.format(Locale.getDefault(), "%.2f", remainingBalance)
+                    )
+                }
             }
         }
     }
