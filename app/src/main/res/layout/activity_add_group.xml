@@ -98,7 +98,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="start"
-                        android:hint="@string/id_participant" />
+                        android:hint="@string/id_participant"
+                        android:inputType="text"
+                        android:lines="1" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

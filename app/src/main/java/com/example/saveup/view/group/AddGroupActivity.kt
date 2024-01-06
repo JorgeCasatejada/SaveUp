@@ -3,7 +3,9 @@ package com.example.saveup.view.group
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -24,6 +26,7 @@ class AddGroupActivity : AppCompatActivity() {
     private lateinit var title: TextInputLayout
     private lateinit var budget: TextInputLayout
     private lateinit var description: TextInputLayout
+    private lateinit var tfGroupParticipant: TextInputLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +54,9 @@ class AddGroupActivity : AppCompatActivity() {
             true
         }
 
+        etIdParticipant = findViewById(R.id.etIdParticipant)
         btAddParticipant = findViewById(R.id.btAddParticipant)
         btAddParticipant.setOnClickListener {
-            etIdParticipant = findViewById(R.id.etIdParticipant)
             if (etIdParticipant.text.toString().isNotEmpty()) {
                 adapter.add(etIdParticipant.text.toString())
                 etIdParticipant.setText("")
@@ -87,6 +90,16 @@ class AddGroupActivity : AppCompatActivity() {
                 data.putExtra(PARTICIPANTS, participantsList)
                 setResult(Activity.RESULT_OK, data)
                 finish()
+            }
+        }
+
+        tfGroupParticipant = findViewById(R.id.tfGroupParticipant)
+        etIdParticipant.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || event?.keyCode == KeyEvent.KEYCODE_ENTER) {
+                btAddParticipant.callOnClick()
+                true
+            } else {
+                false
             }
         }
     }
