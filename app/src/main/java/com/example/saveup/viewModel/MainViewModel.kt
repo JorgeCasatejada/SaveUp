@@ -334,7 +334,7 @@ class MainViewModel(
         // TODO: usar y probar esta función
     }
 
-    fun deleteParticipantFromGroup(group: Group, participantID: String) {
+    fun deleteParticipantFromGroup(group: Group = getCurrentGroup()!!, participantID: String) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intenta eliminar un participante del grupo")
             repository.deleteParticipantFromGroup(group, participantID)

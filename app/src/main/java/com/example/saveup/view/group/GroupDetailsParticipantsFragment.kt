@@ -45,7 +45,9 @@ class GroupDetailsParticipantsFragment : Fragment() {
 
         binding.recyclerParticipants.layoutManager = LinearLayoutManager(context)
         binding.recyclerParticipants.setHasFixedSize(true)
-        participantAdapter = ParticipantAdapter(viewModel)
+        participantAdapter = ParticipantAdapter(onItemSelected = { participant ->
+            viewModel!!.deleteParticipantFromGroup(viewModel!!.currentGroup.value!!, participant.id)
+        })
         binding.recyclerParticipants.adapter = participantAdapter
 
         viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {

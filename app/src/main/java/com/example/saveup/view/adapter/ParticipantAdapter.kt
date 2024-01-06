@@ -10,10 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.saveup.R
 import com.example.saveup.model.firestore.FireParticipant
-import com.example.saveup.viewModel.MainViewModel
 
 class ParticipantAdapter(
-    private var viewModel: MainViewModel? = null,
+    private val onItemSelected: (FireParticipant) -> Unit,
     private var participantsList: List<FireParticipant> = emptyList(),
     private var isAdmin: Boolean = false
 ) : RecyclerView.Adapter<ParticipantAdapter.ParticipantViewHolder>() {
@@ -23,7 +22,7 @@ class ParticipantAdapter(
         private val tvTitle = itemView.findViewById<TextView>(R.id.participantName)
         private val btDelete = itemView.findViewById<ImageButton>(R.id.deleteButton)
 
-        fun bindView(fireParticipant: FireParticipant, isAdmin: Boolean, viewModel: MainViewModel?) {
+        fun bindView(fireParticipant: FireParticipant, isAdmin: Boolean, onItemSelected: (FireParticipant) -> Unit) {
 
             tvTitle.text = fireParticipant.email
             imgView.load(fireParticipant.imagePath) {
@@ -34,7 +33,7 @@ class ParticipantAdapter(
             btDelete.visibility = if (isAdmin && !fireParticipant.isAdmin) View.VISIBLE else View.GONE
 
             btDelete.setOnClickListener {
-                viewModel!!.deleteParticipantFromGroup(viewModel.currentGroup.value!!,fireParticipant.id)
+                onItemSelected(fireParticipant)
             }
         }
     }
@@ -53,7 +52,7 @@ class ParticipantAdapter(
     override fun getItemCount(): Int = participantsList.size
 
     override fun onBindViewHolder(holder: ParticipantViewHolder, position: Int) =
-        holder.bindView(participantsList[position], isAdmin, viewModel)
+        holder.bindView(participantsList[position], isAdmin, onItemSelected)
 
     fun setBtVisibilty(admin: Boolean) {
         isAdmin = admin
