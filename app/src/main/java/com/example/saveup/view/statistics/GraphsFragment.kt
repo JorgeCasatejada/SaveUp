@@ -2,6 +2,7 @@ package com.example.saveup.view.statistics
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -202,6 +203,10 @@ class GraphsFragment : Fragment() {
                     if (balance < minBalance) minBalance =
                     balance else if (balance > maxBalance) maxBalance = balance
                 }
+            }
+
+            if (transactions.isEmpty()) {
+                minBalance = (balance - limit).toFloat()
             }
 
             entries.add(Entry(month.toFloat(), balance - limit.toFloat()))
