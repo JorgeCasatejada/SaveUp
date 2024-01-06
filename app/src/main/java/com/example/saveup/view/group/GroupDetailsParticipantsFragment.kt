@@ -45,7 +45,7 @@ class GroupDetailsParticipantsFragment : Fragment() {
 
         binding.recyclerParticipants.layoutManager = LinearLayoutManager(context)
         binding.recyclerParticipants.setHasFixedSize(true)
-        participantAdapter = ParticipantAdapter()
+        participantAdapter = ParticipantAdapter(viewModel)
         binding.recyclerParticipants.adapter = participantAdapter
 
         viewModel!!.currentGroupParticipants.observe(viewLifecycleOwner) {
@@ -109,6 +109,7 @@ class GroupDetailsParticipantsFragment : Fragment() {
         binding.addParticipant.visibility = if (isAdmin) View.VISIBLE else View.GONE
         binding.btExitGroup.visibility = if (!isAdmin) View.VISIBLE else View.GONE
         binding.btDeleteGroup.visibility = if (isAdmin) View.VISIBLE else View.GONE
+        participantAdapter.setBtVisibilty(isAdmin)
     }
 
 }
