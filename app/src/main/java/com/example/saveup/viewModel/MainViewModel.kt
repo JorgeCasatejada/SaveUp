@@ -171,6 +171,7 @@ class MainViewModel(
                 val imagePath = repository.uploadUserImage(auth.currentUser!!.uid, imageUri)
                 if (imagePath.isNotBlank()) {
                     newData["imagePath"] = imagePath
+                    propagateImageChangeToGroups(imagePath)
                 }
             }
             if (userName != currentUser.value?.userName) {
@@ -185,6 +186,15 @@ class MainViewModel(
                 Log.d("MainViewModel", "No hay datos nuevos que actualizar")
             }
 
+        }
+    }
+
+    private fun propagateImageChangeToGroups(imagePath: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val groups = repository.getUserGroups(auth.currentUser!!.uid)
+            groups.forEach {
+                repository.updateUserImageInGroup(it.id, auth.currentUser!!.uid, imagePath)
+            }
         }
     }
 

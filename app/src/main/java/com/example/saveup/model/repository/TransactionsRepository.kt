@@ -7,6 +7,7 @@ import com.example.saveup.model.Transaction
 import com.example.saveup.model.firestore.FireParticipant
 import com.example.saveup.model.firestore.FireTransaction
 import com.example.saveup.model.firestore.FireUser
+import com.example.saveup.model.firestore.FireUserGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.DocumentSnapshot
@@ -163,6 +164,20 @@ class TransactionsRepository {
         }
     }
 
+    suspend fun updateUserImageInGroup(groupId: String, userId: String, imagePath: String) {
+        withContext(Dispatchers.IO) {
+            db.collection("groups")
+                .document(groupId)
+                .collection("participants")
+                .document(userId)
+                .get().addOnSuccessListener { document ->
+                    document?.reference?.update("imagePath", imagePath)?.addOnSuccessListener {
+                        Log.d("Repository", "Actualizada foto de usuario $userId en grupo $groupId")
+                    }
+                }
+        }
+    }
+
     suspend fun updateAuthUser(userName: String) {
         withContext(Dispatchers.IO) {
             auth.currentUser!!.updateProfile(
@@ -253,6 +268,32 @@ class TransactionsRepository {
             .document(userId)
             .collection("myGroups")
             .addSnapshotListener(listener)
+    }
+
+    suspend fun getUserGroups(
+        userId: String,
+    ): List<FireUserGroup> {
+        return withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(userId)
+                .collection("myGroups")
+                .get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al recuperar los grupos del usuario"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al recuperar los grupos del usuario"
+                        )
+                    }
+                }.await().map { document ->
+                    Log.d("Firestore", "Group: " + document.id + " => " + document.data)
+                    document.toObject(FireUserGroup::class.java)
+                }
+        }
     }
 
     fun getGroupInfoRegistration(
