@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.saveup.R;
 import com.example.saveup.databinding.FragmentProfileBinding;
 import com.example.saveup.model.Account;
@@ -50,7 +49,7 @@ public class ProfileFragment extends Fragment {
     }
 
     public static void checkProfilePic(Context context, Uri imageUri, ImageView imageView) {
-        Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
+        Glide.with(context).load(imageUri).circleCrop().into(imageView);
     }
 
     public static void setProfilePic(Context context, String imageUri, ImageView imageView) {

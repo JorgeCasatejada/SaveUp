@@ -28,6 +28,7 @@
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="3"
+            android:text="@string/labelTransactionTitle"
             android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"

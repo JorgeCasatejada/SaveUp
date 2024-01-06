@@ -2,6 +2,7 @@ package com.example.saveup.view.group
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -120,12 +121,9 @@ class GroupsFragment : Fragment() {
             if (resultCode == Activity.RESULT_OK) {
                 val group = data?.getParcelableExtra<Group>(AddGroupActivity.CREATED_GROUP)
                 val participants = data?.getStringArrayListExtra(AddGroupActivity.PARTICIPANTS)
+                val imageUri = data?.getParcelableExtra<Uri>(AddGroupActivity.IMAGE_URI)
                 if (group != null) {
-                    viewModel?.createGroup(group)
-                    viewModel?.addAdminToGroup(group, viewModel?.getUserEmail().toString())
-                    if (!participants.isNullOrEmpty()) {
-                        viewModel?.addParticipantsToGroup(group, participants)
-                    }
+                    viewModel?.createGroup(group, participants, imageUri)
                 }
             }
         }

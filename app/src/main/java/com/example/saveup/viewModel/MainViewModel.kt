@@ -291,11 +291,24 @@ class MainViewModel(
         groupsInfoListenerRegistration?.remove()
     }
 
-    fun createGroup(group: Group) {
+    fun createGroup(group: Group, participants: List<String>?, imageUri: Uri?) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("MainViewModel", "Se intentan crear un grupo por el usuario")
-            val groupId = repository.createGroup(group)
+            val groupId = repository.getNewIdForGroup()
+            group.id = groupId
             Log.d("MainViewModel", "Nuevo id para el grupo: $groupId")
+            if (imageUri != null) {
+                Log.d("MainViewModel", "Se intenta actualizar la imagen del grupo")
+                val imagePath = repository.uploadGroupImage(groupId, imageUri)
+                if (imagePath.isNotBlank()) {
+                    group.urlGroupImage = imagePath
+                }
+            }
+            Log.d("MainViewModel", "Se intentan crear un grupo por el usuario")
+            repository.createGroup(group)
+            addAdminToGroup(group, getUserEmail())
+            if (!participants.isNullOrEmpty()) {
+                addParticipantsToGroup(group, participants)
+            }
         }
         // TODO: usar y probar esta función
     }

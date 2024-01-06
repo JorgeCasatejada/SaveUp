@@ -305,11 +305,38 @@ class TransactionsRepository {
             .addSnapshotListener(listener)
     }
 
+    suspend fun uploadGroupImage(groupId: String, imageUri: Uri): String {
+        return withContext(Dispatchers.IO) {
+            val photoRef = storageRef.child("groupPics").child(groupId)
+            var success = false
+            var imageUrl = ""
+            photoRef.putFile(imageUri).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d("Storage", "Respuesta exitosa de firebase al guardar la imagen")
+                    success = true
+                } else {
+                    Log.d("Storage", "Respuesta fallida de firebase al guardar la imagen")
+                }
+            }.await()
+            if (success) {
+                photoRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                    imageUrl = downloadUrl.toString()
+                }.await()
+            }
+            return@withContext imageUrl
+        }
+    }
+
+    fun getNewIdForGroup(): String {
+        val docRef = db.collection("groups")
+            .document()
+        return docRef.id
+    }
+
     suspend fun createGroup(group: Group): String {
         return withContext(Dispatchers.IO) {
             val docRef = db.collection("groups")
-                .document()
-            group.id = docRef.id
+                .document(group.id)
             docRef.set(group.toFireGroup()).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.d("Repository", "Respuesta exitosa de firebase al crear el grupo")

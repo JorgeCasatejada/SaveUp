@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.saveup.model.Group
-import coil.load
+import com.bumptech.glide.Glide
 import com.example.saveup.R
+import com.example.saveup.model.Group
 
 class GroupAdapter(
     private var groupList: List<Group> = emptyList(),
@@ -23,10 +23,11 @@ class GroupAdapter(
         fun bindView(group: Group, onItemSelected: (Group) -> Unit) {
 
             tvTitle.text = group.title
-            imgView.load(group.urlGroupImage) {
-                crossfade(true)
-                crossfade(500)
-            }
+            val image = group.urlGroupImage.ifBlank { R.drawable.baseline_groups_24 }
+            Glide.with(itemView)
+                .load(image)
+                .circleCrop()
+                .into(imgView)
 
             //Listener
             rootView.setOnClickListener { onItemSelected(group) }
@@ -40,12 +41,13 @@ class GroupAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
         return GroupViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.line_recycler_view_group, parent, false)
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.line_recycler_view_group, parent, false)
         )
     }
 
     override fun getItemCount(): Int = groupList.size
 
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int) =
-        holder.bindView(groupList[position],onItemSelected)
+        holder.bindView(groupList[position], onItemSelected)
 }
