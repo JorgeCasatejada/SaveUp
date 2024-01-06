@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.R
@@ -29,6 +30,8 @@ import java.util.Date
 import java.util.Locale
 import java.util.Objects
 import java.util.function.Consumer
+import java.util.stream.Collectors
+import java.util.stream.IntStream
 
 class GraphsFragment : Fragment() {
     private var _binding: FragmentGraphsBinding? = null
@@ -42,6 +45,7 @@ class GraphsFragment : Fragment() {
 
     private var showExpenses = true
     private var yearToShow = 0
+    private var yearsAdapter: ArrayAdapter<Int>? = null
     private lateinit var years: List<Int>
     private var totalBalance = 0.0
 
@@ -84,23 +88,24 @@ class GraphsFragment : Fragment() {
         }
 
         // Filtro de años
-        val startYear = 1899
-        val endYear = Date().year + 1900
-
-        binding.menuYear.minValue = startYear
-        binding.menuYear.maxValue = endYear
-        binding.menuYear.setFormatter { value ->
-            if (value < yearToShow || value > yearToShow) {
-                "" // Hide the label for previous years
-            } else {
-               value.toString()
+        years =
+            IntStream.range(1899, Date().year + 1900 + 1).boxed().sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList())
+        yearToShow = years[0]
+        yearsAdapter = ArrayAdapter(requireContext(), R.layout.list_item, years)
+        binding.autocompleteYear.setAdapter(yearsAdapter)
+        binding.autocompleteYear.setText(
+            String.format(
+                Locale.getDefault(),
+                "%04d",
+                yearsAdapter!!.getItem(0)
+            ), false
+        )
+        binding.autocompleteYear.setOnItemClickListener { _, _, position, _ ->
+            val item: Any? = yearsAdapter!!.getItem(position)
+            if (item != null) {
+                yearToShow = item as Int
             }
-        }
-        binding.menuYear.value = endYear
-        yearToShow = endYear
-        binding.menuYear.setOnValueChangedListener { _, _, newVal ->
-            yearToShow = newVal
-
             createLineChart()
             createPieChart()
         }

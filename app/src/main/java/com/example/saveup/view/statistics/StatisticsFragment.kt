@@ -26,10 +26,6 @@ class StatisticsFragment : Fragment() {
 
     private var viewModel: MainViewModel? = null
 
-    private var limitsGoalsFragment: LimitsGoalsFragment? = null
-
-    private var graphsFragment: GraphsFragment? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
@@ -111,19 +107,15 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun showGraphs() {
-        if (graphsFragment == null) {
-            graphsFragment = GraphsFragment.newInstance(account)
-        }
-        requireActivity().supportFragmentManager.beginTransaction()
+        val graphsFragment = GraphsFragment.newInstance(account)
+        childFragmentManager.beginTransaction()
             .replace(R.id.fragment_container_statistics, graphsFragment!!)
             .commit()
     }
 
     private fun showLimitsGoals() {
-        if (limitsGoalsFragment == null) {
-            limitsGoalsFragment = LimitsGoalsFragment.newInstance(account)
-        }
-        requireActivity().supportFragmentManager.beginTransaction()
+        val limitsGoalsFragment = LimitsGoalsFragment.newInstance(account)
+        childFragmentManager.beginTransaction()
             .replace(R.id.fragment_container_statistics, limitsGoalsFragment!!)
             .commit()
     }
