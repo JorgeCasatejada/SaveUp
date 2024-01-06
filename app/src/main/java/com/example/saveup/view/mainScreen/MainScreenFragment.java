@@ -14,14 +14,14 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.saveup.viewModel.MainViewModel;
 import com.example.saveup.R;
-import com.example.saveup.view.adapter.TransactionsListAdapter;
 import com.example.saveup.databinding.FragmentMainScreenBinding;
 import com.example.saveup.model.Account;
 import com.example.saveup.model.Notifications;
 import com.example.saveup.model.Transaction;
 import com.example.saveup.model.TransactionManager;
+import com.example.saveup.view.adapter.TransactionsListAdapter;
+import com.example.saveup.viewModel.MainViewModel;
 
 import java.util.List;
 import java.util.Locale;
@@ -89,9 +89,15 @@ public class MainScreenFragment extends Fragment {
             viewModel.getLimit();
         }
 
+        if (!viewModel.getGoal().isInitialized()) {
+            viewModel.getCurrentGoal();
+        }
+
         setUpRecyclerView();
         initializeUI();
         setClickListeners();
+
+        Notifications.checkGoal(requireActivity(), viewModel);
 
         return binding.getRoot();
     }
@@ -114,7 +120,8 @@ public class MainScreenFragment extends Fragment {
                 binding.etBalance.setText(balance);
                 updateColor(aDouble);
 
-                checkLimit();
+                Notifications.checkLimit(requireActivity(), viewModel);
+                Notifications.checkGoal(requireActivity(), viewModel);
             }
         });
     }
@@ -217,25 +224,6 @@ public class MainScreenFragment extends Fragment {
         intentAddTransaction.putExtra(ACTIVITY_MODE, MODE_DETAILS);
         intentAddTransaction.putExtra(TRANSACTION_DETAILS, transaction);
         startActivityForResult(intentAddTransaction, INTENT_ADD_TRANSACTION);
-    }
-
-    private void checkLimit() {
-        Double expenses = viewModel.getMonthlyExpenses();
-        Double limit = viewModel.getMonthlyLimit().getValue();
-        if (expenses != null && limit != null) {
-            if (expenses >= limit) {
-                notifyLimitExceeded();
-            }
-        }
-    }
-
-    private void notifyLimitExceeded() {
-        Notifications.simpleNotification(requireActivity(),
-                "¡Atención! Ha Excedido Su Límite Mensual",
-                "El límite mensual que ha creado de " + viewModel.getMonthlyLimit().getValue()
-                        + " € ha sido excedido, ahora mismo sus gastos mensuales son "
-                        + viewModel.getMonthlyExpenses() + "€",
-                com.google.android.material.R.drawable.navigation_empty_icon);
     }
 
 }

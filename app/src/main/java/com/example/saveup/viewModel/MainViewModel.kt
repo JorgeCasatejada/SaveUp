@@ -15,6 +15,7 @@ import com.example.saveup.model.firestore.realTimeListener.GroupInfoListener
 import com.example.saveup.model.firestore.realTimeListener.GroupParticipantsListener
 import com.example.saveup.model.firestore.realTimeListener.GroupTransactionsListener
 import com.example.saveup.model.firestore.realTimeListener.UserGroupsListener
+import com.example.saveup.model.firestore.FireGoal
 import com.example.saveup.model.repository.TransactionsRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
@@ -40,6 +41,7 @@ class MainViewModel(
 
     // ------------------ LimitsFragment ------------------
     val monthlyLimit: MutableLiveData<Double?> = MutableLiveData()
+    val goal: MutableLiveData<FireGoal?> = MutableLiveData()
 
     // ------------------ GroupsFragment ------------------
     val isGroupAdmin = MutableLiveData<Boolean>()
@@ -167,7 +169,11 @@ class MainViewModel(
             Log.d("MainViewModel", "Se intenta obtener el límite del usuario")
             val limit = repository.getMonthlyLimit()
             Log.d("MainViewModel", "Nuevo valor para límite mensual: $limit")
-            monthlyLimit.postValue(limit)
+            if (limit == null || limit >= 1_000_000_000) {
+                monthlyLimit.postValue(null)
+            } else {
+                monthlyLimit.postValue(limit)
+            }
         }
     }
 
@@ -176,7 +182,19 @@ class MainViewModel(
             Log.d("MainViewModel", "Se intenta modificar el límite del usuario")
             repository.updateMonthlyLimit(limit)
             Log.d("MainViewModel", "Nuevo valor para límite mensual: $limit")
-            monthlyLimit.postValue(limit)
+            if (limit >= 1_000_000_000) {
+                monthlyLimit.postValue(null)
+            } else {
+                monthlyLimit.postValue(limit)
+            }
+        }
+    }
+
+    fun deleteLimit() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta eliminar el límite del usuario")
+            repository.deleteMonthlyLimit()
+            monthlyLimit.postValue(null)
         }
     }
 
@@ -185,13 +203,44 @@ class MainViewModel(
         if (!transactions.isNullOrEmpty()) {
             val transactionsInMonth = transactions[Date().month]
             if (!transactionsInMonth.isNullOrEmpty()) {
-                return transactionsInMonth
+                val expenses = transactionsInMonth
                     .filter { it.isExpense }
-                    .map { transaction -> transaction.value }
-                    .reduce { total, expense -> total + expense }
+                return if (expenses.isEmpty()) {
+                    null
+                } else {
+                    expenses
+                        .map { transaction -> transaction.value }
+                        .reduce { total, expense -> total + expense }
+                }
             }
         }
         return null
+    }
+
+    fun getCurrentGoal() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta obtener la meta del usuario")
+            val newGoal = repository.getGoal(auth.currentUser!!.uid)
+            Log.d("MainViewModel", "Nuevo valor para la meta: $newGoal")
+            goal.postValue(newGoal)
+        }
+    }
+
+    fun updateGoal(newGoal: FireGoal) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta modificar la meta del usuario")
+            repository.updateGoal(newGoal)
+            Log.d("MainViewModel", "Nuevo valor para la meta: $newGoal")
+            goal.postValue(newGoal)
+        }
+    }
+
+    fun deleteGoal() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("MainViewModel", "Se intenta eliminar la meta del usuario")
+            repository.deleteGoal()
+            goal.postValue(null)
+        }
     }
 
     // ------------------ GroupsFragment ------------------

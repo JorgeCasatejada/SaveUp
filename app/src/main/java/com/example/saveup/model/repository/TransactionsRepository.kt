@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.saveup.model.Group
 import com.example.saveup.model.Transaction
 import com.example.saveup.model.firestore.FireParticipant
+import com.example.saveup.model.firestore.FireGoal
 import com.example.saveup.model.firestore.FireTransaction
 import com.example.saveup.model.firestore.FireUser
 import com.google.firebase.auth.FirebaseAuth
@@ -18,6 +19,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.Date
 
 class TransactionsRepository {
 
@@ -171,6 +173,26 @@ class TransactionsRepository {
             db.collection("users")
                 .document(auth.currentUser!!.uid)
                 .update("monthlyLimit", limit).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al modificar el límite mensual"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al modificar el límite mensual"
+                        )
+                    }
+                }
+        }
+    }
+
+    suspend fun deleteMonthlyLimit() {
+        withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .update("monthlyLimit", null).addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.d(
                             "Repository",
@@ -476,5 +498,69 @@ class TransactionsRepository {
                 .update("currentBudget", budget)
         }
     }
+
+    suspend fun updateGoal(goal: FireGoal) {
+        withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .update(mapOf("goal" to goal)).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al modificar la meta"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al modificar la meta"
+                        )
+                    }
+                }
+        }
+    }
+
+    suspend fun deleteGoal() {
+        withContext(Dispatchers.IO) {
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .update(mapOf("goal" to null)).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al eliminar la meta"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al eliminar la meta"
+                        )
+                    }
+                }
+        }
+    }
+
+    suspend fun getGoal(userId: String): FireGoal? {
+        return withContext(Dispatchers.IO) {
+            val respuesta = db.collection("users")
+                .document(userId)
+                .get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.d(
+                            "Repository",
+                            "Respuesta exitosa de firebase al recuperar la meta del usuario"
+                        )
+                    } else {
+                        Log.d(
+                            "Repository",
+                            "Respuesta fallida de firebase al recuperar la meta del usuario"
+                        )
+                    }
+                }
+                .await().get("goal", FireGoal::class.java)
+            return@withContext respuesta
+        }
+    }
+
+}
 
 }
