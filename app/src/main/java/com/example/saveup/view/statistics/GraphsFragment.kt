@@ -2,7 +2,6 @@ package com.example.saveup.view.statistics
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,7 +62,7 @@ class GraphsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentGraphsBinding.inflate(inflater, container, false)
 
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
@@ -161,9 +160,6 @@ class GraphsFragment : Fragment() {
             entries.add(Entry(month.toFloat(), balance))
         }
 
-        Log.d("minBalance", minBalance.toString())
-        Log.d("maxBalance", maxBalance.toString())
-
         // Configuración
         val dataset = LineDataSet(entries, "Balance")
         dataset.color = Color.CYAN
@@ -224,9 +220,6 @@ class GraphsFragment : Fragment() {
 
             entries.add(Entry(month.toFloat(), balance - limit.toFloat()))
         }
-
-        Log.d("minBalance", minBalance.toString())
-        Log.d("maxBalance", maxBalance.toString())
 
         val datasetLimit = LineDataSet(entries, "Límite")
         datasetLimit.color = Color.RED
