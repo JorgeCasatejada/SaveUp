@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.R
 import com.example.saveup.databinding.FragmentStatisticsBinding
-import com.example.saveup.model.Account
 import com.example.saveup.viewModel.MainViewModel
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -20,18 +19,10 @@ class StatisticsFragment : Fragment() {
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!
 
-    private var account: Account? = null
-
-    private val ACCOUNT = "Account"
-
     private var viewModel: MainViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            account = requireArguments().getParcelable(ACCOUNT)
-        }
-
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
     }
 
@@ -107,29 +98,24 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun showGraphs() {
-        val graphsFragment = GraphsFragment.newInstance(account)
+        val graphsFragment = GraphsFragment.newInstance()
         childFragmentManager.beginTransaction()
             .replace(R.id.fragment_container_statistics, graphsFragment)
             .commit()
     }
 
     private fun showLimitsGoals() {
-        val limitsGoalsFragment = LimitsGoalsFragment.newInstance(account)
+        val limitsGoalsFragment = LimitsGoalsFragment.newInstance()
         childFragmentManager.beginTransaction()
             .replace(R.id.fragment_container_statistics, limitsGoalsFragment)
             .commit()
     }
 
     companion object {
-        private const val ACCOUNT = "Account"
 
         @JvmStatic
-        fun newInstance(account: Account?): StatisticsFragment {
-            val fragment = StatisticsFragment()
-            val args = Bundle()
-            args.putParcelable(ACCOUNT, account)
-            fragment.arguments = args
-            return fragment
+        fun newInstance(): StatisticsFragment {
+            return StatisticsFragment()
         }
     }
 }

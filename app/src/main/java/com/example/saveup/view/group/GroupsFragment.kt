@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.saveup.R
 import com.example.saveup.databinding.FragmentGroupsBinding
-import com.example.saveup.model.Account
 import com.example.saveup.model.Group
 import com.example.saveup.view.adapter.GroupAdapter
 import com.example.saveup.viewModel.MainViewModel
@@ -21,9 +20,6 @@ import com.example.saveup.viewModel.MainViewModel
 class GroupsFragment : Fragment() {
     private var _binding: FragmentGroupsBinding? = null
     private val binding get() = _binding!!
-    val INTENT_ADD_GROUP: Int = 1
-
-    private var account: Account? = null
 
     private var viewModel: MainViewModel? = null
 
@@ -32,12 +28,6 @@ class GroupsFragment : Fragment() {
     private var showMessage = false
     private var isFragmentVisible = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            account = requireArguments().getParcelable(ACCOUNT)
-        }
-    }
 
     override fun onResume() {
         super.onResume()
@@ -140,15 +130,11 @@ class GroupsFragment : Fragment() {
     }
 
     companion object {
-        private const val ACCOUNT = "Account"
+        const val INTENT_ADD_GROUP: Int = 1
 
         @JvmStatic
-        fun newInstance(account: Account?): GroupsFragment {
-            val fragment = GroupsFragment()
-            val args = Bundle()
-            args.putParcelable(ACCOUNT, account)
-            fragment.arguments = args
-            return fragment
+        fun newInstance(): GroupsFragment {
+            return GroupsFragment()
         }
 
     }

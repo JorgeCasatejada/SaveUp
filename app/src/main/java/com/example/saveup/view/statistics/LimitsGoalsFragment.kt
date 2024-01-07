@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.R
 import com.example.saveup.databinding.FragmentLimitsGoalsBinding
-import com.example.saveup.model.Account
 import com.example.saveup.model.Notifications
 import com.example.saveup.model.firestore.FireGoal
 import com.example.saveup.viewModel.MainViewModel
@@ -25,18 +24,10 @@ class LimitsGoalsFragment : Fragment() {
     private var _binding: FragmentLimitsGoalsBinding? = null
     private val binding get() = _binding!!
 
-    private var account: Account? = null
-
     private var viewModel: MainViewModel? = null
-
-    private val ACCOUNT = "Account"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            account = requireArguments().getParcelable(ACCOUNT)
-        }
-
         createNotificationChannel()
     }
 
@@ -488,8 +479,6 @@ class LimitsGoalsFragment : Fragment() {
     }
 
     companion object {
-        private const val ACCOUNT = "Account"
-
         const val SIMPLE_CHANNEL = "Canal simple"
 
         const val GOAL_REACHED_NOTIFICATION_ID = 1
@@ -499,12 +488,8 @@ class LimitsGoalsFragment : Fragment() {
         const val LIMIT_STABLISHED_NOTIFICATION_ID = 5
 
         @JvmStatic
-        fun newInstance(account: Account?): LimitsGoalsFragment {
-            val fragment = LimitsGoalsFragment()
-            val args = Bundle()
-            args.putParcelable(ACCOUNT, account)
-            fragment.arguments = args
-            return fragment
+        fun newInstance(): LimitsGoalsFragment {
+            return LimitsGoalsFragment()
         }
     }
 }

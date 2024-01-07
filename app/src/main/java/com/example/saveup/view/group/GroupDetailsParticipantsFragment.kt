@@ -60,7 +60,6 @@ class GroupDetailsParticipantsFragment : Fragment() {
         }
 
         binding.btDeleteGroup.setOnClickListener {
-            //TODO: Falta borrar de la lista de grupos del usuario
             viewModel!!.deleteGroup(viewModel!!.getCurrentGroup()!!)
         }
 

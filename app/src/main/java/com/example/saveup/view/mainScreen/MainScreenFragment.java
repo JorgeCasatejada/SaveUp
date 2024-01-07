@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.saveup.R;
 import com.example.saveup.databinding.FragmentMainScreenBinding;
-import com.example.saveup.model.Account;
 import com.example.saveup.model.Notifications;
 import com.example.saveup.model.Transaction;
 import com.example.saveup.model.TransactionManager;
@@ -35,15 +34,11 @@ public class MainScreenFragment extends Fragment {
     public static final int INTENT_ADD_TRANSACTION = 1;
     private static final int MODE_ADD = 1;
     private static final int MODE_DETAILS = 2;
-    private static final String ACCOUNT = "Account";
 
     // View binding
     private FragmentMainScreenBinding binding;
 
     private MainViewModel viewModel;
-
-    // User account
-    private Account account;
 
     // TransactionsListAdapter
     private TransactionsListAdapter ltAdapter;
@@ -52,22 +47,10 @@ public class MainScreenFragment extends Fragment {
     private int appliedFilter;
 
 
-    public static MainScreenFragment newInstance(Account account) {
-        MainScreenFragment fragment = new MainScreenFragment();
-        Bundle args = new Bundle();
-        //Esto no tiene mucha ciencia -> Clave, valor.
-        args.putParcelable(ACCOUNT, account);
-        fragment.setArguments(args);
-        return fragment;
+    public static MainScreenFragment newInstance() {
+        return new MainScreenFragment();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            account = getArguments().getParcelable(ACCOUNT);
-        }
-    }
 
     /* Al crear la vista, cargamos los valores necesarios */
     @Override
@@ -190,11 +173,9 @@ public class MainScreenFragment extends Fragment {
         switch (mode) {
             case AddTransaction.MODE_ADD:
                 viewModel.addTransaction(data.getParcelableExtra(AddTransaction.CREATED_TRANSACTION));
-//                account.addTransaction(data.getParcelableExtra(AddTransaction.CREATED_TRANSACTION));
                 break;
             case AddTransaction.MODE_DELETE:
                 viewModel.removeTransaction(data.getParcelableExtra(AddTransaction.DETAILS_TRANSACTION));
-//                account.removeTransaction(data.getParcelableExtra(AddTransaction.DETAILS_TRANSACTION));
                 break;
             case AddTransaction.MODE_MODIFY:
                 Transaction transactionOld = data.getParcelableExtra(AddTransaction.OLD_MODIFIED_TRANSACTION);
@@ -202,11 +183,6 @@ public class MainScreenFragment extends Fragment {
                 viewModel.modifyTransaction(transactionOld, transactionNew);
                 break;
         }
-
-//        viewModel.filterTransactions(appliedFilter);
-//        binding.etBalance.setText(account.getStrBalance());
-//        ltAdapter.setTransactionsList(account.getFilteredTransactionsList(appliedFilter));
-//        updateColor();
     }
 
     private void updateColor(Double balance) {

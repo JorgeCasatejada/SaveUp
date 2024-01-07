@@ -21,7 +21,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.example.saveup.R;
 import com.example.saveup.databinding.FragmentProfileBinding;
-import com.example.saveup.model.Account;
 import com.example.saveup.model.firestore.FireUser;
 import com.example.saveup.view.login.LoginActivity;
 import com.example.saveup.viewModel.MainViewModel;
@@ -34,18 +33,12 @@ import com.example.saveup.viewModel.MainViewModel;
 public class ProfileFragment extends Fragment {
 
     public static final int INTENT_SELECT_IMAGE = 1;
-    private static final String ACCOUNT = "Account";
-    private Account account;
     private FragmentProfileBinding binding;
     private MainViewModel viewModel;
     private Uri imageUri;
 
-    public static ProfileFragment newInstance(Account account) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(ACCOUNT, account);
-        fragment.setArguments(args);
-        return fragment;
+    public static ProfileFragment newInstance() {
+        return new ProfileFragment();
     }
 
     public static void checkProfilePic(Context context, Uri imageUri, ImageView imageView) {
@@ -57,14 +50,6 @@ public class ProfileFragment extends Fragment {
             Glide.with(context).load(R.drawable.user_image).circleCrop().into(imageView);
         } else {
             Glide.with(context).load(imageUri).circleCrop().into(imageView);
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            account = getArguments().getParcelable(ACCOUNT);
         }
     }
 

@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.saveup.R;
 import com.example.saveup.model.Transaction;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -80,8 +80,6 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
 
     public static class TransactionViewHolder extends RecyclerView.ViewHolder {
 
-        private final LinearLayout recyclerLineLayout;
-
         private final CardView cardView;
         private final TextView title;
         private final TextView description;
@@ -89,7 +87,6 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
 
         public TransactionViewHolder(@NonNull View itemView) {
             super(itemView);
-            recyclerLineLayout = itemView.findViewById(R.id.recyclerLineLayout);
             title = itemView.findViewById(R.id.titleTransaction);
             description = itemView.findViewById(R.id.descriptionTransaction);
             value = itemView.findViewById(R.id.valueTransaction);

@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.R
-import com.example.saveup.model.Account
 import com.example.saveup.model.repository.TransactionsRepository
 import com.example.saveup.view.group.GroupsFragment
 import com.example.saveup.view.login.LoginActivity
@@ -20,14 +19,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var viewModel: MainViewModel
     private var activeUser: FirebaseUser? = null
-    private val db: FirebaseFirestore? = null
-    private var account: Account? = null
     private lateinit var bottomNavigation: BottomNavigationView
     private var selectedFragment: Fragment? = null
     private fun inicializarVariables() {
@@ -37,8 +33,7 @@ class MainActivity : AppCompatActivity() {
             finish()
             Toast.makeText(this, resources.getString(R.string.errMessage), Toast.LENGTH_LONG).show()
         }
-        account = Account("1", activeUser!!.displayName, activeUser!!.email, "pass")
-        selectedFragment = MainScreenFragment.newInstance(account)
+        selectedFragment = MainScreenFragment.newInstance()
         bottomNavigation = findViewById(R.id.bottom_navigation)
         bottomNavigation.selectedItemId = R.id.mnItmBalance
     }
@@ -64,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         }
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_fragment_container, selectedFragment!!).commit()
-        bottomNavigation!!.setOnItemSelectedListener(NavigationBarView.OnItemSelectedListener { item ->
+        bottomNavigation.setOnItemSelectedListener(NavigationBarView.OnItemSelectedListener { item ->
             val itemId = item.itemId
             switchSelectedFragment(itemId)
             if (selectedFragment != null) {
@@ -74,30 +69,32 @@ class MainActivity : AppCompatActivity() {
             }
             false
         })
-
-        // NAVEGACION
-        /*val navView: NavigationView = findViewById(R.id.bottom_navigation)
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-
-        navView.setupWithNavController(navController)*/
     }
 
     private fun switchSelectedFragment(mnItmID: Int) {
         selectedFragment = null
-        if (mnItmID == R.id.mnItmGroups) {
-            selectedFragment = GroupsFragment.newInstance(account)
-        } else if (mnItmID == R.id.mnItmBalance) {
-            selectedFragment = MainScreenFragment.newInstance(account)
-        } else if (mnItmID == R.id.mnItmStatistics) {
-            selectedFragment = StatisticsFragment.newInstance(account)
-        } else if (mnItmID == R.id.mnItmProfile) {
-            selectedFragment = ProfileFragment.newInstance(account)
+        when (mnItmID) {
+            R.id.mnItmGroups -> {
+                selectedFragment = GroupsFragment.newInstance()
+            }
+
+            R.id.mnItmBalance -> {
+                selectedFragment = MainScreenFragment.newInstance()
+            }
+
+            R.id.mnItmStatistics -> {
+                selectedFragment = StatisticsFragment.newInstance()
+            }
+
+            R.id.mnItmProfile -> {
+                selectedFragment = ProfileFragment.newInstance()
+            }
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val mnItemSelected = bottomNavigation!!.selectedItemId
+        val mnItemSelected = bottomNavigation.selectedItemId
         outState.putInt("SelectedMenu", mnItemSelected)
     }
 }

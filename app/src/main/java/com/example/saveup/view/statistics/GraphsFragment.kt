@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.R
 import com.example.saveup.databinding.FragmentGraphsBinding
-import com.example.saveup.model.Account
 import com.example.saveup.model.Category
 import com.example.saveup.viewModel.MainViewModel
 import com.github.mikephil.charting.components.Description
@@ -37,11 +36,7 @@ class GraphsFragment : Fragment() {
     private var _binding: FragmentGraphsBinding? = null
     private val binding get() = _binding!!
 
-    private var account: Account? = null
-
     private var viewModel: MainViewModel? = null
-
-    private val ACCOUNT = "Account"
 
     private var showExpenses = true
     private var yearToShow = 0
@@ -52,12 +47,6 @@ class GraphsFragment : Fragment() {
     private var maxBalance = Float.MIN_VALUE
     private var minBalance = Float.MAX_VALUE
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            account = requireArguments().getParcelable(ACCOUNT)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -316,15 +305,10 @@ class GraphsFragment : Fragment() {
     }
 
     companion object {
-        private const val ACCOUNT = "Account"
 
         @JvmStatic
-        fun newInstance(account: Account?): GraphsFragment {
-            val fragment = GraphsFragment()
-            val args = Bundle()
-            args.putParcelable(ACCOUNT, account)
-            fragment.arguments = args
-            return fragment
+        fun newInstance(): GraphsFragment {
+            return GraphsFragment()
         }
     }
 }
