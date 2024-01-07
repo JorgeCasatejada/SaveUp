@@ -50,8 +50,8 @@ class GraphsFragment : Fragment() {
     private lateinit var years: List<Int>
     private var totalBalance = 0.0
 
-    private var maxBalance = 0f
-    private var minBalance = 0f
+    private var maxBalance = Float.MIN_VALUE
+    private var minBalance = Float.MAX_VALUE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,15 +143,26 @@ class GraphsFragment : Fragment() {
         val entries: MutableList<Entry> = ArrayList()
         var balance = 0f
 
+        minBalance = Float.MAX_VALUE
+        maxBalance = Float.MIN_VALUE
+
         for (month in 0..11) {
             val transactions = map.getOrDefault(month, ArrayList())
             for (transaction in transactions) {
                 balance += transaction.signedValue.toFloat()
-                if (balance < minBalance) minBalance =
-                    balance else if (balance > maxBalance) maxBalance = balance
             }
+
+            if (balance < minBalance) {
+                minBalance = balance
+            } else if (balance > maxBalance) {
+                maxBalance = balance
+            }
+
             entries.add(Entry(month.toFloat(), balance))
         }
+
+        Log.d("minBalance", minBalance.toString())
+        Log.d("maxBalance", maxBalance.toString())
 
         // Configuración
         val dataset = LineDataSet(entries, "Balance")
@@ -181,8 +192,8 @@ class GraphsFragment : Fragment() {
         binding.graphs.lineChart.data = lineData
 
         // Límites
-        yAxis.axisMaximum = maxBalance + 50f
-        yAxis.axisMinimum = minBalance - 50f
+        yAxis.axisMaximum = maxBalance + 70f
+        yAxis.axisMinimum = minBalance - 70f
 
         // Animación
         binding.graphs.lineChart.animateXY(1000, 1000)
@@ -193,24 +204,29 @@ class GraphsFragment : Fragment() {
 
         val map = viewModel?.groupedTransactionsByYear(yearToShow)!!
         val entries: MutableList<Entry> = ArrayList()
-        var balance = 0f
 
         for (month in 0..11) {
+            var balance = 0f
             val transactions = map.getOrDefault(month, ArrayList())
             for (transaction in transactions) {
                 if (!transaction.isExpense) {
                     balance += transaction.signedValue.toFloat()
-                    if (balance < minBalance) minBalance =
-                    balance else if (balance > maxBalance) maxBalance = balance
                 }
             }
-
             if (transactions.isEmpty()) {
                 minBalance = (balance - limit).toFloat()
+            }
+            if (balance - limit < minBalance) {
+                minBalance = (balance - limit).toFloat()
+            } else if (balance - limit > maxBalance) {
+                maxBalance = (balance - limit).toFloat()
             }
 
             entries.add(Entry(month.toFloat(), balance - limit.toFloat()))
         }
+
+        Log.d("minBalance", minBalance.toString())
+        Log.d("maxBalance", maxBalance.toString())
 
         val datasetLimit = LineDataSet(entries, "Límite")
         datasetLimit.color = Color.RED

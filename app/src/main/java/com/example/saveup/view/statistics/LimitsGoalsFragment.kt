@@ -153,6 +153,13 @@ class LimitsGoalsFragment : Fragment() {
             resetGoal()
         }
 
+        // Valor límite
+        binding.etLimit.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.outlinedTextFieldLimit.error = null
+            }
+        }
+
         // Nombre meta
         binding.etGoalName.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -243,6 +250,8 @@ class LimitsGoalsFragment : Fragment() {
         if (newLimit.isNotBlank()) {
             val limit = newLimit.replace(',', '.').toDouble()
             if (limit > 0.01) {
+                binding.outlinedTextFieldLimit.error = null
+
                 viewModel?.updateLimit(limit)
 
                 notifyNewLimit(limit)
@@ -288,7 +297,7 @@ class LimitsGoalsFragment : Fragment() {
             try {
                 date = sdf.parse(newGoalDate)
 
-                if (date == null || date.year >= Date().year + 1000) {
+                if (date == null || date.year >= Date().year + 1000 || date < Date()) {
                     binding.datePickerLayoutGoal.error = resources.getString(R.string.errDate)
                     valid = false
                 }
@@ -312,6 +321,10 @@ class LimitsGoalsFragment : Fragment() {
 
         // Creación de la meta
         if (valid) {
+            binding.outlinedTextFieldGoalName.error = null
+            binding.datePickerLayoutGoal.error = null
+            binding.outlinedTextFieldGoalValue.error = null
+
             var initialBalance = viewModel?.balance?.value!!
 
             if (binding.btSwitchInitialBalance.isChecked) {

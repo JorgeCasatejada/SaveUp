@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:text="@string/savingGoals"
             android:padding="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="0dp"
             android:layout_weight="0.80" />
 
         <ImageButton

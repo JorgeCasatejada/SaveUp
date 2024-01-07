@@ -109,14 +109,14 @@ class StatisticsFragment : Fragment() {
     private fun showGraphs() {
         val graphsFragment = GraphsFragment.newInstance(account)
         childFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container_statistics, graphsFragment!!)
+            .replace(R.id.fragment_container_statistics, graphsFragment)
             .commit()
     }
 
     private fun showLimitsGoals() {
         val limitsGoalsFragment = LimitsGoalsFragment.newInstance(account)
         childFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container_statistics, limitsGoalsFragment!!)
+            .replace(R.id.fragment_container_statistics, limitsGoalsFragment)
             .commit()
     }
 
