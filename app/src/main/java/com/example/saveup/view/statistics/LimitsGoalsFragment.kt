@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,6 @@ import com.example.saveup.databinding.FragmentLimitsGoalsBinding
 import com.example.saveup.model.Account
 import com.example.saveup.model.Notifications
 import com.example.saveup.model.firestore.FireGoal
-import com.example.saveup.view.MainActivity
 import com.example.saveup.viewModel.MainViewModel
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -383,7 +381,6 @@ class LimitsGoalsFragment : Fragment() {
             requireActivity(),
             "Nuevo Límite Mensual Establecido",
             "Se ha actualizado el límite mensual\nDurante este mes el límite es de $limit €",
-            com.google.android.material.R.drawable.navigation_empty_icon,
             LIMIT_STABLISHED_NOTIFICATION_ID
         )
     }
@@ -401,7 +398,6 @@ class LimitsGoalsFragment : Fragment() {
             requireActivity(),
             "Nueva Meta Establecida",
             builder.toString(),
-            com.google.android.material.R.drawable.navigation_empty_icon,
             GOAL_STABLISHED_NOTIFICATION_ID
         )
     }
@@ -421,7 +417,8 @@ class LimitsGoalsFragment : Fragment() {
             binding.progressBarGoal.progress = 100
             binding.textRemainingBalanceGoal.text = resources.getString(
                 R.string.reachedBalanceGoal,
-                String.format(Locale.getDefault(), "%.2f", excess))
+                String.format(Locale.getDefault(), "%.2f", excess)
+            )
             binding.textRemainingDaysGoal.text = ""
             return
         }

@@ -5,25 +5,24 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.saveup.R
 import com.example.saveup.model.firestore.FireGoal
 import com.example.saveup.view.MainActivity
 import com.example.saveup.view.statistics.LimitsGoalsFragment
 import com.example.saveup.viewModel.MainViewModel
-import com.google.android.material.R
 import java.util.Date
 
 // https://developer.android.com/develop/ui/views/notifications/expanded
 object Notifications {
 
     @JvmStatic
-    fun simpleNotification(activity: Activity, title: String, body: String, icon: Int, id: Int) {
+    fun simpleNotification(activity: Activity, title: String, body: String, id: Int) {
         val noti = NotificationCompat.Builder(
             activity.applicationContext,
             LimitsGoalsFragment.SIMPLE_CHANNEL
         )
-            .setSmallIcon(icon) //El icono. Es obligatorio. El resto es opcional.
+            .setSmallIcon(R.drawable.ic_launcher_notification) //El icono. Es obligatorio. El resto es opcional.
             .setContentTitle(title) // Título
             .setContentText(body) //Cuerpo
             .setPriority(NotificationCompat.PRIORITY_DEFAULT) //Compatibilidad con API 25 y anteriores. (Android 7.1)
@@ -91,7 +90,6 @@ object Notifications {
             "El límite mensual que ha creado de " + viewModel.monthlyLimit.value
                     + " € ha sido excedido, ahora mismo sus gastos mensuales son "
                     + viewModel.getMonthlyExpenses() + "€",
-            R.drawable.navigation_empty_icon,
             LimitsGoalsFragment.LIMIT_REACHED_NOTIFICATION_ID
         )
     }
@@ -112,7 +110,6 @@ object Notifications {
             activity,
             title,
             builder.toString(),
-            R.drawable.navigation_empty_icon,
             LimitsGoalsFragment.GOAL_REACHED_NOTIFICATION_ID
         )
     }
@@ -133,7 +130,6 @@ object Notifications {
             activity,
             title,
             builder.toString(),
-            R.drawable.navigation_empty_icon,
             LimitsGoalsFragment.GOAL_NOT_REACHED_NOTIFICATION_ID
         )
     }
