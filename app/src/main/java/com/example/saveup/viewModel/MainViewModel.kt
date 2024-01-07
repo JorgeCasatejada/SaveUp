@@ -384,7 +384,7 @@ class MainViewModel(
 
     fun addAdminToGroup(group: Group, participant: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("MainViewModel", "Se intenta añadir un participante al grupo")
+            Log.d("MainViewModel", "Se intenta añadir un administrador al grupo")
             val groupParticipant = repository.getParticipant(participant)
             groupParticipant.isAdmin = true
             Log.d("MainViewModel", "Nuevo participante para el grupo: $groupParticipant")
