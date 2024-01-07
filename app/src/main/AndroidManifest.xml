@@ -13,9 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SaveUp"
         tools:targetApi="31">
-        <activity
-            android:name=".view.statistics.MonthlyLimit"
-            android:exported="false" />
+
         <activity
             android:name=".view.login.LoginActivity"
             android:exported="true">
