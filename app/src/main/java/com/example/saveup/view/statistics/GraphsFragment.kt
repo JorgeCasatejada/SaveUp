@@ -1,19 +1,19 @@
 package com.example.saveup.view.statistics
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.saveup.viewModel.MainViewModel
 import com.example.saveup.R
 import com.example.saveup.databinding.FragmentGraphsBinding
 import com.example.saveup.model.Account
 import com.example.saveup.model.Category
+import com.example.saveup.viewModel.MainViewModel
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.LimitLine
@@ -27,9 +27,6 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import java.math.BigDecimal
-import java.math.RoundingMode
-import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.Objects
@@ -49,9 +46,12 @@ class GraphsFragment : Fragment() {
 
     private var showExpenses = true
     private var yearToShow = 0
-    private lateinit var years: List<Int>
     private var yearsAdapter: ArrayAdapter<Int>? = null
+    private lateinit var years: List<Int>
     private var totalBalance = 0.0
+
+    private var maxBalance = 0f
+    private var minBalance = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +63,7 @@ class GraphsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         _binding = FragmentGraphsBinding.inflate(inflater, container, false)
 
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
@@ -87,9 +87,6 @@ class GraphsFragment : Fragment() {
             showExpenses = false
             createPieChart()
         }
-
-        // Botones FAB
-        binding.shareFab.setOnClickListener { shareStatistics() }
 
         // Filtro de años
         years =
@@ -127,6 +124,7 @@ class GraphsFragment : Fragment() {
         // Ejes y líneas
         val zeroLine = LimitLine(0f, "")
         zeroLine.lineWidth = 2f
+        zeroLine.lineColor = Color.BLACK
 
         val xAxis = binding.graphs.lineChart.xAxis
         xAxis.axisLineWidth = 2f
@@ -144,11 +142,9 @@ class GraphsFragment : Fragment() {
         // Cálculo de datos
         val entries: MutableList<Entry> = ArrayList()
         var balance = 0f
-        var maxBalance = 0f
-        var minBalance = 0f
+
         for (month in 0..11) {
             val transactions = map.getOrDefault(month, ArrayList())
-                ?: return
             for (transaction in transactions) {
                 balance += transaction.signedValue.toFloat()
                 if (balance < minBalance) minBalance =
@@ -158,9 +154,6 @@ class GraphsFragment : Fragment() {
         }
 
         // Configuración
-        yAxis.axisMaximum = maxBalance + 10f
-        yAxis.axisMinimum = minBalance - 10f
-
         val dataset = LineDataSet(entries, "Balance")
         dataset.color = Color.CYAN
         dataset.lineWidth = 2f
@@ -171,7 +164,7 @@ class GraphsFragment : Fragment() {
         val description = Description()
         description.text = resources.getString(R.string.incomeExpense)
         description.textSize = 15f
-        description.setPosition(550f, 100f)
+        description.setPosition(550f, 90f)
 
         binding.graphs.lineChart.description = description
         binding.graphs.lineChart.axisRight.setDrawLabels(false)
@@ -182,10 +175,51 @@ class GraphsFragment : Fragment() {
 
         // Adición de datos
         val lineData = LineData(dataset)
+        if (viewModel!!.monthlyLimit.value != null) {
+            lineData.addDataSet(calculateDatasetLimit())
+        }
         binding.graphs.lineChart.data = lineData
+
+        // Límites
+        yAxis.axisMaximum = maxBalance + 50f
+        yAxis.axisMinimum = minBalance - 50f
 
         // Animación
         binding.graphs.lineChart.animateXY(1000, 1000)
+    }
+
+    private fun calculateDatasetLimit(): LineDataSet {
+        val limit = viewModel!!.monthlyLimit.value ?: return LineDataSet(listOf(), "")
+
+        val map = viewModel?.groupedTransactionsByYear(yearToShow)!!
+        val entries: MutableList<Entry> = ArrayList()
+        var balance = 0f
+
+        for (month in 0..11) {
+            val transactions = map.getOrDefault(month, ArrayList())
+            for (transaction in transactions) {
+                if (!transaction.isExpense) {
+                    balance += transaction.signedValue.toFloat()
+                    if (balance < minBalance) minBalance =
+                    balance else if (balance > maxBalance) maxBalance = balance
+                }
+            }
+
+            if (transactions.isEmpty()) {
+                minBalance = (balance - limit).toFloat()
+            }
+
+            entries.add(Entry(month.toFloat(), balance - limit.toFloat()))
+        }
+
+        val datasetLimit = LineDataSet(entries, "Límite")
+        datasetLimit.color = Color.RED
+        datasetLimit.lineWidth = 2f
+        datasetLimit.circleColors = listOf(Color.RED)
+        datasetLimit.setDrawValues(false)
+        datasetLimit.setDrawCircles(false)
+
+        return datasetLimit
     }
 
     private fun createPieChart() {
@@ -212,7 +246,8 @@ class GraphsFragment : Fragment() {
         // Configuración
         // Colores
         val colors = resources.getIntArray(R.array.pieChartColorsHexCode)
-        val pieDataSet = PieDataSet(categories, resources.getString(R.string.labelTransactionCategory))
+        val pieDataSet =
+            PieDataSet(categories, resources.getString(R.string.labelTransactionCategory))
         pieDataSet.setColors(*colors)
         pieDataSet.valueTextColor = Color.BLACK
         pieDataSet.valueTextSize = 15f
@@ -269,58 +304,6 @@ class GraphsFragment : Fragment() {
 
         // Animación
         binding.graphs.pieChart.animateXY(1000, 1000)
-    }
-
-    fun shareStatistics() {
-        /*
-        Bitmap img = getBitmapGraph();
-
-        String filename = "${System.currentTimeMillis()}.jpg";
-
-        try (FileOutputStream out = new FileOutputStream("filename")) {
-            img.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-            // PNG is a lossless format, the compression factor (100) is ignored
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
-
-        /* es necesario hacer un intent con la constate ACTION_SEND */
-        /*Llama a cualquier app que haga un envío*/
-        val itSend = Intent(Intent.ACTION_SEND)
-        itSend.type = "text/plain"
-        // itSend.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{para});
-        itSend.putExtra(Intent.EXTRA_SUBJECT, "Registro de gastos e ingresos")
-        val stringBuilder = StringBuilder("Historial de gastos / ingresos\n")
-        for (transaction in account!!.transactionsList) {
-            if (transaction.isExpense) {
-                stringBuilder.append("-")
-            } else {
-                stringBuilder.append("+")
-            }
-            val value = transaction.value
-            stringBuilder.append(String.format(Locale.getDefault(), "%.2f", value)).append("€")
-                .append(" ").append("|").append(" ")
-            val simpleDateFormat = SimpleDateFormat(
-                "dd/MM/yyyy",
-                Locale.getDefault()
-            )
-            val date = simpleDateFormat.format(transaction.date)
-            stringBuilder.append(transaction.name).append(" ").append("|").append(" ")
-                .append(date).append("\n\r").append("\n\r")
-        }
-        stringBuilder.append("------------------------------------\n")
-        stringBuilder.append("Balance Total: ").append(round(account!!.balance, 2)).append("€")
-        itSend.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString())
-        val shareIntent = Intent.createChooser(itSend, null)
-        startActivity(shareIntent)
-    }
-
-    private fun round(value: Double, places: Int): Double {
-        require(places >= 0)
-        var bd = BigDecimal.valueOf(value)
-        bd = bd.setScale(places, RoundingMode.HALF_UP)
-        return bd.toDouble()
     }
 
     companion object {

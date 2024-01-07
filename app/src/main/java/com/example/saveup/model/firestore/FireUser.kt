@@ -6,11 +6,10 @@ data class FireUser(
     val userName: String = "",
     val imagePath: String = "",
     val monthlyLimit: Double? = null,
+    val goal: FireGoal? = null,
 ) {
 
     fun toFireParticipant(): FireParticipant {
         return FireParticipant(id, email, userName, imagePath, false)
     }
 }
-
-

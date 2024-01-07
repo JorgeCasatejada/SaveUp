@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -75,10 +77,21 @@ class AddGroupActivity : AppCompatActivity() {
                         participantsList.add(item)
                     }
                 }
+
                 data.putExtra(PARTICIPANTS, participantsList)
                 data.putExtra(IMAGE_URI, imageUri)
                 setResult(Activity.RESULT_OK, data)
                 finish()
+            }
+        }
+
+
+        binding.etIdParticipant.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || event?.keyCode == KeyEvent.KEYCODE_ENTER) {
+                binding.btAddParticipant.callOnClick()
+                true
+            } else {
+                false
             }
         }
     }

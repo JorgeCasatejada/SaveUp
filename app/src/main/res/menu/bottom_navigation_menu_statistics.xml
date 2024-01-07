@@ -6,6 +6,6 @@
         android:title="@string/mnItmGraphs" />
     <item
         android:id="@+id/mnItmLimits"
-        android:title="@string/mnItmLimits" />
+        android:title="@string/mnItmLimitsGoals" />
 
 </menu>

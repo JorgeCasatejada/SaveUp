@@ -6,9 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.saveup.R
 import com.example.saveup.databinding.FragmentStatisticsBinding
 import com.example.saveup.model.Account
+import com.example.saveup.viewModel.MainViewModel
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class StatisticsFragment : Fragment() {
     private var _binding: FragmentStatisticsBinding? = null
@@ -16,23 +22,17 @@ class StatisticsFragment : Fragment() {
 
     private var account: Account? = null
 
-    val ACTIVITY_MODE = "activity_mode"
-    val INTENT_LIMITS = 1
-    val MODE_LIMIT = 1
-    val MODE_GOAL = 2
     private val ACCOUNT = "Account"
+
+    private var viewModel: MainViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             account = requireArguments().getParcelable(ACCOUNT)
         }
-    }
 
-    private fun pasarALimitesMensuales() {
-        val intentMonthlyLimits = Intent(activity, MonthlyLimit::class.java)
-        intentMonthlyLimits.putExtra(ACTIVITY_MODE, MODE_LIMIT)
-        startActivityForResult(intentMonthlyLimits, INTENT_LIMITS)
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -41,13 +41,54 @@ class StatisticsFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
-        //initializeVariables()
 
         loadMenu()
 
         showGraphs()
 
+        // Botón FAB
+        binding.shareFab.setOnClickListener { shareStatistics() }
+
         return binding.root
+    }
+
+    private fun shareStatistics() {
+
+        val itSend = Intent(Intent.ACTION_SEND)
+        itSend.type = "text/plain"
+        // itSend.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{para});
+        itSend.putExtra(Intent.EXTRA_SUBJECT, "Registro de gastos e ingresos")
+        val stringBuilder = StringBuilder("Historial de gastos / ingresos\n")
+        for (transaction in viewModel?.allUserTransactions?.value!!) {
+            if (transaction.isExpense) {
+                stringBuilder.append("-")
+            } else {
+                stringBuilder.append("+")
+            }
+            val value = transaction.value
+            stringBuilder.append(String.format(Locale.getDefault(), "%.2f", value)).append("€")
+                .append(" ").append("|").append(" ")
+            val simpleDateFormat = SimpleDateFormat(
+                "dd/MM/yyyy",
+                Locale.getDefault()
+            )
+            val date = simpleDateFormat.format(transaction.date)
+            stringBuilder.append(transaction.name).append(" ").append("|").append(" ")
+                .append(date).append("\n\r").append("\n\r")
+        }
+        stringBuilder.append("------------------------------------\n")
+        stringBuilder.append("Balance Total: ")
+            .append(viewModel?.balance?.value?.let { round(it, 2) }).append("€")
+        itSend.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString())
+        val shareIntent = Intent.createChooser(itSend, null)
+        startActivity(shareIntent)
+    }
+
+    private fun round(value: Double, places: Int): Double {
+        require(places >= 0)
+        var bd = BigDecimal.valueOf(value)
+        bd = bd.setScale(places, RoundingMode.HALF_UP)
+        return bd.toDouble()
     }
 
     private fun loadMenu() {
@@ -58,7 +99,7 @@ class StatisticsFragment : Fragment() {
                 }
 
                 R.id.mnItmLimits -> {
-                    showLimits()
+                    showLimitsGoals()
                 }
             }
             true
@@ -67,15 +108,15 @@ class StatisticsFragment : Fragment() {
 
     private fun showGraphs() {
         val graphsFragment = GraphsFragment.newInstance(account)
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container_statistics, graphsFragment)
+        childFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container_statistics, graphsFragment!!)
             .commit()
     }
 
-    private fun showLimits() {
-        val limitsFragment = LimitsFragment.newInstance(account)
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container_statistics, limitsFragment)
+    private fun showLimitsGoals() {
+        val limitsGoalsFragment = LimitsGoalsFragment.newInstance(account)
+        childFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container_statistics, limitsGoalsFragment!!)
             .commit()
     }
 
