@@ -72,6 +72,7 @@ class GroupDetailsExpensesFragment : Fragment() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == INTENT_ADD_TRANSACTION && resultCode == Activity.RESULT_OK) {
@@ -120,7 +121,6 @@ class GroupDetailsExpensesFragment : Fragment() {
             }
         }
     }
-
 
     private fun showTransaction(transaction: Transaction?) {
         lastBudget = viewModel?.getCurrentGroup()?.currentBudget ?: 0.0
