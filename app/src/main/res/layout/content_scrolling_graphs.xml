@@ -14,7 +14,13 @@
             android:layout_marginBottom="60dp">
 
             <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/lineChart"
+                android:id="@+id/lineChartBalance"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_weight="1" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/lineChartIncomeExpense"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_weight="1" />

@@ -1,6 +1,7 @@
 package com.example.saveup.view.statistics
 
 import android.graphics.Color
+import android.graphics.DashPathEffect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.example.saveup.model.Category
 import com.example.saveup.viewModel.MainViewModel
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.components.LegendEntry
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -44,9 +46,8 @@ class GraphsFragment : Fragment() {
     private lateinit var years: List<Int>
     private var totalBalance = 0.0
 
-    private var maxBalance = Float.MIN_VALUE
     private var minBalance = Float.MAX_VALUE
-
+    private var maxBalance = Float.MIN_VALUE
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,16 +96,18 @@ class GraphsFragment : Fragment() {
             if (item != null) {
                 yearToShow = item as Int
             }
-            createLineChart()
+            createLineChartBalance()
+            createLineChartIncomeExpense()
             createPieChart()
         }
 
         // Creación de los gráficos
-        createLineChart()
+        createLineChartBalance()
+        createLineChartIncomeExpense()
         createPieChart()
     }
 
-    private fun createLineChart() {
+    private fun createLineChartBalance() {
         // Datos (x e y)
         val values = resources.getStringArray(R.array.months)
         val map = viewModel?.groupedTransactionsByYear(yearToShow)!!
@@ -114,14 +117,14 @@ class GraphsFragment : Fragment() {
         zeroLine.lineWidth = 2f
         zeroLine.lineColor = Color.BLACK
 
-        val xAxis = binding.graphs.lineChart.xAxis
+        val xAxis = binding.graphs.lineChartBalance.xAxis
         xAxis.axisLineWidth = 2f
         xAxis.labelCount = 11
         xAxis.labelRotationAngle = 45f
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.valueFormatter = IndexAxisValueFormatter(values)
 
-        val yAxis = binding.graphs.lineChart.axisLeft
+        val yAxis = binding.graphs.lineChartBalance.axisLeft
         yAxis.axisLineWidth = 2f
         yAxis.axisLineColor = Color.BLACK
         yAxis.addLimitLine(zeroLine)
@@ -131,8 +134,8 @@ class GraphsFragment : Fragment() {
         val entries: MutableList<Entry> = ArrayList()
         var balance = 0f
 
-        minBalance = Float.MAX_VALUE
-        maxBalance = Float.MIN_VALUE
+        var minBalance = Float.MAX_VALUE
+        var maxBalance = Float.MIN_VALUE
 
         for (month in 0..11) {
             val transactions = map.getOrDefault(month, ArrayList())
@@ -154,70 +157,173 @@ class GraphsFragment : Fragment() {
         dataset.color = Color.CYAN
         dataset.lineWidth = 2f
 
-        binding.graphs.lineChart.isDragEnabled = false
-        binding.graphs.lineChart.setScaleEnabled(false)
+        binding.graphs.lineChartBalance.isDragEnabled = false
+        binding.graphs.lineChartBalance.setScaleEnabled(false)
 
         val description = Description()
-        description.text = resources.getString(R.string.incomeExpense)
+        description.text = resources.getString(R.string.totalBalance)
         description.textSize = 15f
         description.setPosition(550f, 90f)
 
-        binding.graphs.lineChart.description = description
-        binding.graphs.lineChart.axisRight.setDrawLabels(false)
+        binding.graphs.lineChartBalance.description = description
+        binding.graphs.lineChartBalance.axisRight.setDrawLabels(false)
 
-        binding.graphs.lineChart.axisRight.setDrawGridLines(false)
-        binding.graphs.lineChart.axisLeft.setDrawGridLines(false)
-        binding.graphs.lineChart.xAxis.setDrawGridLines(false)
+        binding.graphs.lineChartBalance.axisRight.setDrawGridLines(false)
+        binding.graphs.lineChartBalance.axisLeft.setDrawGridLines(false)
+        binding.graphs.lineChartBalance.xAxis.setDrawGridLines(false)
 
         // Adición de datos
         val lineData = LineData(dataset)
-        if (viewModel!!.monthlyLimit.value != null) {
-            lineData.addDataSet(calculateDatasetLimit())
-        }
-        binding.graphs.lineChart.data = lineData
+        binding.graphs.lineChartBalance.data = lineData
 
         // Límites
         yAxis.axisMaximum = maxBalance + 70f
         yAxis.axisMinimum = minBalance - 70f
 
         // Animación
-        binding.graphs.lineChart.animateXY(1000, 1000)
+        binding.graphs.lineChartBalance.animateXY(1000, 1000)
+    }
+
+    private fun createLineChartIncomeExpense() {
+        // Datos (x e y)
+        val values = resources.getStringArray(R.array.months)
+        val map = viewModel?.groupedTransactionsByYear(yearToShow)!!
+
+        // Ejes y líneas
+        val zeroLine = LimitLine(0f, "")
+        zeroLine.lineWidth = 2f
+        zeroLine.lineColor = Color.BLACK
+
+        val xAxis = binding.graphs.lineChartIncomeExpense.xAxis
+        xAxis.axisLineWidth = 2f
+        xAxis.labelCount = 11
+        xAxis.labelRotationAngle = 45f
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.valueFormatter = IndexAxisValueFormatter(values)
+
+        val yAxis = binding.graphs.lineChartIncomeExpense.axisLeft
+        yAxis.axisLineWidth = 2f
+        yAxis.axisLineColor = Color.BLACK
+        yAxis.addLimitLine(zeroLine)
+        yAxis.setDrawLimitLinesBehindData(true)
+
+        // Configuración
+        binding.graphs.lineChartIncomeExpense.isDragEnabled = false
+        binding.graphs.lineChartIncomeExpense.setScaleEnabled(false)
+
+        val description = Description()
+        description.text = resources.getString(R.string.incomeExpense)
+        description.textSize = 15f
+        description.setPosition(550f, 90f)
+
+        binding.graphs.lineChartIncomeExpense.description = description
+        binding.graphs.lineChartIncomeExpense.axisRight.setDrawLabels(false)
+
+        binding.graphs.lineChartIncomeExpense.axisRight.setDrawGridLines(false)
+        binding.graphs.lineChartIncomeExpense.axisLeft.setDrawGridLines(false)
+        binding.graphs.lineChartIncomeExpense.xAxis.setDrawGridLines(false)
+
+        // Adición de datos
+        val pairDatasets = calculateDatasetsIncomesAndExpenses()
+
+        val lineData = LineData(calculateDatasetLimit())
+        lineData.addDataSet(pairDatasets.first)
+        lineData.addDataSet(pairDatasets.second)
+        binding.graphs.lineChartIncomeExpense.data = lineData
+
+        // Límites
+        yAxis.axisMaximum = maxBalance + 70f
+        yAxis.axisMinimum = minBalance - 70f
+
+        // Leyenda
+        val dashedArray = floatArrayOf(8f, 8f)
+        val nonDashedArray = floatArrayOf(0f, 0f)
+        val legendEntryLimit = LegendEntry("Límite", Legend.LegendForm.LINE, 20f, 2f, DashPathEffect(dashedArray, 10f), Color.RED)
+        val legendEntryExpenses = LegendEntry("Gastos", Legend.LegendForm.LINE, 20f, 2f, DashPathEffect(nonDashedArray, 10f), Color.RED)
+        val legendEntryIncomes = LegendEntry("Ingresos", Legend.LegendForm.LINE, 20f, 2f, DashPathEffect(nonDashedArray, 10f), Color.GREEN)
+        val entries = arrayOf(legendEntryLimit, legendEntryExpenses, legendEntryIncomes)
+        val legend = binding.graphs.lineChartIncomeExpense.legend
+        legend.setCustom(entries)
+
+        // Animación
+        binding.graphs.lineChartIncomeExpense.animateXY(1000, 1000)
     }
 
     private fun calculateDatasetLimit(): LineDataSet {
-        val limit = viewModel!!.monthlyLimit.value ?: return LineDataSet(listOf(), "")
-
-        val map = viewModel?.groupedTransactionsByYear(yearToShow)!!
+        var limit = viewModel!!.monthlyLimit.value ?: return LineDataSet(listOf(), "")
+        if (limit < 0) limit *= -1
         val entries: MutableList<Entry> = ArrayList()
 
         for (month in 0..11) {
-            var balance = 0f
-            val transactions = map.getOrDefault(month, ArrayList())
-            for (transaction in transactions) {
-                if (!transaction.isExpense) {
-                    balance += transaction.signedValue.toFloat()
-                }
-            }
-            if (transactions.isEmpty()) {
-                minBalance = (balance - limit).toFloat()
-            }
-            if (balance - limit < minBalance) {
-                minBalance = (balance - limit).toFloat()
-            } else if (balance - limit > maxBalance) {
-                maxBalance = (balance - limit).toFloat()
-            }
+            entries.add(Entry(month.toFloat(), limit.toFloat()))
+        }
 
-            entries.add(Entry(month.toFloat(), balance - limit.toFloat()))
+        // Cálculo de nuevos mínimos o máximos
+        if (limit < minBalance) {
+            minBalance = limit.toFloat()
+        } else if (limit > maxBalance) {
+            maxBalance = limit.toFloat()
         }
 
         val datasetLimit = LineDataSet(entries, "Límite")
         datasetLimit.color = Color.RED
         datasetLimit.lineWidth = 2f
         datasetLimit.circleColors = listOf(Color.RED)
+        datasetLimit.enableDashedLine(10f, 10f, 10f)
         datasetLimit.setDrawValues(false)
         datasetLimit.setDrawCircles(false)
 
         return datasetLimit
+    }
+
+    private fun calculateDatasetsIncomesAndExpenses(): Pair<LineDataSet, LineDataSet> {
+        val map = viewModel?.groupedTransactionsByYear(yearToShow)!!
+
+        val entriesExpenses: MutableList<Entry> = ArrayList()
+        val entriesIncomes: MutableList<Entry> = ArrayList()
+        for (month in 0 .. 11) {
+            var balanceExpenses = 0f
+            var balanceIncomes = 0f
+            val transactions = map.getOrDefault(month, ArrayList())
+            for (transaction in transactions) {
+                if (transaction.isExpense) {
+                    balanceExpenses += transaction.value.toFloat()
+                } else {
+                    balanceIncomes += transaction.value.toFloat()
+                }
+            }
+
+            // Cálculo de nuevos mínimos o máximos
+            if (balanceExpenses < minBalance) {
+                minBalance = balanceExpenses
+            } else if (balanceExpenses > maxBalance) {
+                maxBalance = balanceExpenses
+            }
+
+            if (balanceIncomes < minBalance) {
+                minBalance = balanceIncomes
+            } else if (balanceIncomes > maxBalance) {
+                maxBalance = balanceIncomes
+            }
+
+            entriesExpenses.add(Entry(month.toFloat(), balanceExpenses))
+            entriesIncomes.add(Entry(month.toFloat(), balanceIncomes))
+        }
+
+        val datasetExpenses = LineDataSet(entriesExpenses, "Gastos")
+        datasetExpenses.color = Color.RED
+        datasetExpenses.lineWidth = 2f
+        datasetExpenses.circleColors = listOf(Color.BLUE)
+        datasetExpenses.setDrawCircles(false)
+
+        val datasetIncomes = LineDataSet(entriesIncomes, "Ingresos")
+        datasetIncomes.color = Color.GREEN
+        datasetIncomes.lineWidth = 2f
+        datasetIncomes.circleColors = listOf(Color.GREEN)
+        datasetIncomes.setDrawCircles(false)
+
+
+        return Pair(datasetExpenses, datasetIncomes)
     }
 
     private fun createPieChart() {

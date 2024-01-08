@@ -77,6 +77,7 @@
     <string name="mnItmLimitsGoals">Límites &amp; Metas</string>
 
     <!-- estadísticas -->
+    <string name="totalBalance">Balance Total</string>
     <string name="incomeExpense">Ingresos / Gastos</string>
     <string name="total">TOTAL</string>
     <string name="centerText">%1$s € \n %2$s</string>
