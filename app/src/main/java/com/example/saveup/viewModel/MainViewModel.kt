@@ -10,6 +10,7 @@ import com.example.saveup.model.Group
 import com.example.saveup.model.GroupManager
 import com.example.saveup.model.Transaction
 import com.example.saveup.model.TransactionManager
+import com.example.saveup.model.firestore.FireGoal
 import com.example.saveup.model.firestore.FireGroup
 import com.example.saveup.model.firestore.FireParticipant
 import com.example.saveup.model.firestore.FireUser
@@ -18,7 +19,6 @@ import com.example.saveup.model.firestore.realTimeListener.GroupInfoListener
 import com.example.saveup.model.firestore.realTimeListener.GroupParticipantsListener
 import com.example.saveup.model.firestore.realTimeListener.GroupTransactionsListener
 import com.example.saveup.model.firestore.realTimeListener.UserGroupsListener
-import com.example.saveup.model.firestore.FireGoal
 import com.example.saveup.model.repository.TransactionsRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
@@ -59,7 +59,7 @@ class MainViewModel(
     val participantAddedResult = MutableLiveData<Pair<Boolean, String>>()
     val participantsNotAddedResult = MutableLiveData<List<String>>()
 
-    var searchedGroupID: String = ""
+    private var searchedGroupID: String = ""
     private var userGroupsListenerRegistration: ListenerRegistration? = null
     private var groupsInfoListenerRegistration: ListenerRegistration? = null
     private var groupParticipantsListenerRegistration: ListenerRegistration? = null
@@ -140,7 +140,7 @@ class MainViewModel(
 
     // ------------------ ProfileFragment ------------------
 
-    fun getUserEmail(): String {
+    private fun getUserEmail(): String {
         return auth.currentUser?.email ?: ""
     }
 
@@ -413,7 +413,7 @@ class MainViewModel(
         // TODO: usar y probar esta función
     }
 
-    fun addParticipantsToGroup(group: Group, participants: List<String>) {
+    private fun addParticipantsToGroup(group: Group, participants: List<String>) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intentan añadir participantes al grupo")
             val participantsNotAdded: MutableList<String> = mutableListOf()
@@ -431,7 +431,7 @@ class MainViewModel(
         // TODO: usar y probar esta función
     }
 
-    fun addAdminToGroup(group: Group, participant: String) {
+    private fun addAdminToGroup(group: Group, participant: String) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("MainViewModel", "Se intenta añadir un administrador al grupo")
             val groupParticipant = repository.getParticipant(participant)

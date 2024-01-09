@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -22,7 +21,6 @@ import com.example.saveup.model.TransactionManager;
 import com.example.saveup.view.adapter.TransactionsListAdapter;
 import com.example.saveup.viewModel.MainViewModel;
 
-import java.util.List;
 import java.util.Locale;
 
 // Fragmento para la pantalla principal
@@ -54,7 +52,7 @@ public class MainScreenFragment extends Fragment {
 
     /* Al crear la vista, cargamos los valores necesarios */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the fragment layout using View Binding
         binding = FragmentMainScreenBinding.inflate(inflater, container, false);
@@ -88,24 +86,18 @@ public class MainScreenFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel.getShowedMainTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
-            @Override
-            public void onChanged(List<Transaction> transactions) {
-                binding.progressBar.setVisibility(View.GONE);
-                binding.recyclerTransactions.setVisibility(View.VISIBLE);
-                ltAdapter.setTransactionsList(transactions);
-            }
+        viewModel.getShowedMainTransactions().observe(getViewLifecycleOwner(), transactions -> {
+            binding.progressBar.setVisibility(View.GONE);
+            binding.recyclerTransactions.setVisibility(View.VISIBLE);
+            ltAdapter.setTransactionsList(transactions);
         });
-        viewModel.getBalance().observe(getViewLifecycleOwner(), new Observer<Double>() {
-            @Override
-            public void onChanged(Double aDouble) {
-                String balance = String.format(Locale.getDefault(), "%.2f", aDouble);
-                binding.etBalance.setText(balance);
-                updateColor(aDouble);
+        viewModel.getBalance().observe(getViewLifecycleOwner(), aDouble -> {
+            String balance = String.format(Locale.getDefault(), "%.2f", aDouble);
+            binding.etBalance.setText(balance);
+            updateColor(aDouble);
 
-                Notifications.checkLimit(requireActivity(), viewModel);
-                Notifications.checkGoal(requireActivity(), viewModel);
-            }
+            Notifications.checkLimit(requireActivity(), viewModel);
+            Notifications.checkGoal(requireActivity(), viewModel);
         });
     }
 
@@ -119,7 +111,9 @@ public class MainScreenFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(resultCode, resultCode, data);
         if (requestCode == INTENT_ADD_TRANSACTION && resultCode == Activity.RESULT_OK) {
-            handleTransactionResult(data);
+            if (data != null) {
+                handleTransactionResult(data);
+            }
         }
     }
 
@@ -170,17 +164,26 @@ public class MainScreenFragment extends Fragment {
 
     private void handleTransactionResult(Intent data) {
         int mode = data.getIntExtra(AddTransaction.MODE, 0);
+        Transaction transaction;
         switch (mode) {
             case AddTransaction.MODE_ADD:
-                viewModel.addTransaction(data.getParcelableExtra(AddTransaction.CREATED_TRANSACTION));
+                transaction = data.getParcelableExtra(AddTransaction.CREATED_TRANSACTION);
+                if (transaction != null) {
+                    viewModel.addTransaction(transaction);
+                }
                 break;
             case AddTransaction.MODE_DELETE:
-                viewModel.removeTransaction(data.getParcelableExtra(AddTransaction.DETAILS_TRANSACTION));
+                transaction = data.getParcelableExtra(AddTransaction.DETAILS_TRANSACTION);
+                if (transaction != null) {
+                    viewModel.removeTransaction(transaction);
+                }
                 break;
             case AddTransaction.MODE_MODIFY:
                 Transaction transactionOld = data.getParcelableExtra(AddTransaction.OLD_MODIFIED_TRANSACTION);
                 Transaction transactionNew = data.getParcelableExtra(AddTransaction.NEW_MODIFIED_TRANSACTION);
-                viewModel.modifyTransaction(transactionOld, transactionNew);
+                if (transactionOld != null && transactionNew != null) {
+                    viewModel.modifyTransaction(transactionOld, transactionNew);
+                }
                 break;
         }
     }
@@ -188,9 +191,9 @@ public class MainScreenFragment extends Fragment {
     private void updateColor(Double balance) {
         int color;
         if (balance > 0)
-            color = getResources().getColor(R.color.greenBalance);
+            color = getResources().getColor(R.color.greenBalance, null);
         else
-            color = getResources().getColor(R.color.redBalance);
+            color = getResources().getColor(R.color.redBalance, null);
         binding.outlinedTextFieldBalance.setBoxBackgroundColor(color);
     }
 

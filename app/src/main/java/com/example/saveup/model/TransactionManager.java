@@ -66,11 +66,6 @@ public class TransactionManager implements Parcelable {
         return balance;
     }
 
-    private TransactionManager setBalance(double balance) {
-        this.balance = balance;
-        return this;
-    }
-
     private double reCalculateBalance() {
         double balance = 0;
         for (Transaction t : transactionsList) {

@@ -1,5 +1,6 @@
 package com.example.saveup.view.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,8 +21,6 @@ import java.util.Locale;
 
 public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsListAdapter.TransactionViewHolder> {
 
-    public static final int APPEND = 0;
-    public static final int CHANGE_TRANSACTION_LIST = 1;
     private final OnItemClickListener listener;
     private final Context context;
     private List<Transaction> transactionsList;
@@ -32,18 +31,10 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
         this.context = context;
     }
 
-    public void updateData(int flag) {
-        if (flag == APPEND) { //append
-            notifyItemInserted(getItemCount());
-            notifyItemRangeChanged(0, getItemCount());
-        } else {
-            notifyDataSetChanged();
-        }
-    }
-
+    @SuppressLint("NotifyDataSetChanged")
     public void setTransactionsList(List<Transaction> transactionsList) {
         this.transactionsList = transactionsList;
-        updateData(CHANGE_TRANSACTION_LIST);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -67,11 +58,6 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
     @Override
     public int getItemCount() {
         return transactionsList.size();
-    }
-
-    public void update(List<Transaction> transactions) {
-        this.transactionsList = transactions;
-        notifyDataSetChanged();
     }
 
     public interface OnItemClickListener {
@@ -104,12 +90,7 @@ public class TransactionsListAdapter extends RecyclerView.Adapter<TransactionsLi
             description.setText(cutString(transaction.getDescription(), 32));
             value.setText(String.format(Locale.getDefault(), "%.2f €", transaction.getSignedValue()));
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(transaction);
-                }
-            });
+            itemView.setOnClickListener(v -> listener.onItemClick(transaction));
             updateColor(context, transaction);
         }
 

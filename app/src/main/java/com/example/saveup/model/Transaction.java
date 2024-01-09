@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import com.example.saveup.model.firestore.FireTransaction;
 
 import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 
 public class Transaction implements Parcelable {
@@ -123,10 +122,6 @@ public class Transaction implements Parcelable {
     public double getSignedValue() {
         if (isExpense()) return (-1) * getValue();
         return getValue();
-    }
-
-    public String getStrSignedValue() {
-        return String.format(Locale.getDefault(), "%.2f", getSignedValue());
     }
 
     @Override

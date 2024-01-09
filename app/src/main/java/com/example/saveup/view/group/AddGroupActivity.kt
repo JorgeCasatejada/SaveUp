@@ -30,8 +30,7 @@ class AddGroupActivity : AppCompatActivity() {
         binding.listParticipants.adapter = adapter
 
         binding.listParticipants.setOnTouchListener { v, event ->
-            val action = event.action
-            when (action) {
+            when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     // Disallow ScrollView to intercept touch events.
                     v.parent.requestDisallowInterceptTouchEvent(true)
@@ -103,6 +102,7 @@ class AddGroupActivity : AppCompatActivity() {
         startActivityForResult(intent, INTENT_SELECT_IMAGE)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == INTENT_SELECT_IMAGE) {

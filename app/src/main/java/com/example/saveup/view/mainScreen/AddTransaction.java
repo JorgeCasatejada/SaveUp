@@ -17,7 +17,6 @@ import com.example.saveup.databinding.ActivityAddTransactionBinding;
 import com.example.saveup.databinding.ContentScrollingBinding;
 import com.example.saveup.model.Category;
 import com.example.saveup.model.Transaction;
-import com.example.saveup.view.mainScreen.MainScreenFragment;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.ParseException;
@@ -78,7 +77,9 @@ public class AddTransaction extends AppCompatActivity {
             showAddMode();
         } else if (mode == FROM_MODE_DETAILS) {
             transactionDetails = intent.getParcelableExtra(MainScreenFragment.TRANSACTION_DETAILS);
-            showDetailsMode(transactionDetails);
+            if (transactionDetails != null) {
+                showDetailsMode(transactionDetails);
+            }
         }
 
         setClickListeners();
@@ -252,16 +253,14 @@ public class AddTransaction extends AppCompatActivity {
                 validateFocusField(contentBinding.menuCategory, hasFocus));
     }
 
-    private boolean validateFocusField(TextInputLayout component, boolean hasFocus) {
+    private void validateFocusField(TextInputLayout component, boolean hasFocus) {
         if (!hasFocus) {
             if (component.getEditText().getText().toString().isEmpty()) {
                 component.setError(getResources().getString(R.string.errCampoVacio));
-                return false;
             }
         } else {
             component.setError(null);
         }
-        return true;
     }
 
     private Transaction validateTransactionData() {
@@ -284,8 +283,7 @@ public class AddTransaction extends AppCompatActivity {
 
         String description = contentBinding.etDescription.getText().toString();
 
-        Transaction transaction = new Transaction(isExpense, name, value, cat, date, description);
-        return transaction;
+        return new Transaction(isExpense, name, value, cat, date, description);
     }
 
     private String validateTextField(TextInputLayout etLayout) {
@@ -312,7 +310,7 @@ public class AddTransaction extends AppCompatActivity {
         return date;
     }
 
-    private class ValidationTextWatcher implements TextWatcher {
+    private static class ValidationTextWatcher implements TextWatcher {
         private final TextInputLayout etLayout;
 
         private ValidationTextWatcher(TextInputLayout etLayout) {

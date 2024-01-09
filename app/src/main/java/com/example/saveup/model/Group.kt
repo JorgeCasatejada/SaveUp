@@ -5,7 +5,6 @@ import android.os.Parcelable
 import com.example.saveup.model.firestore.FireGroup
 import com.example.saveup.model.firestore.FireParticipant
 import com.example.saveup.model.firestore.FireUserGroup
-import java.util.Collections
 
 data class Group(
     var id: String = "",
@@ -62,51 +61,6 @@ data class Group(
             title,
             urlGroupImage
         )
-    }
-
-    fun addData(newGroupData: FireGroup) {
-        this.title = newGroupData.title
-        this.initialBudget = newGroupData.initialBudget
-        this.currentBudget = newGroupData.currentBudget
-        this.description = newGroupData.description
-        this.urlGroupImage = newGroupData.urlGroupImage
-    }
-
-    fun setParticipantsList(groupParticipants: List<FireParticipant>) {
-        participants = groupParticipants.toMutableList()
-    }
-
-    fun setTransactionsList(groupTransactions: List<Transaction>) {
-        transactionList = groupTransactions.toMutableList()
-        transactionList.sortWith(Collections.reverseOrder(Comparator.comparing(Transaction::getDate)))
-        currentBudget = recalculateBudget()
-    }
-
-    private fun recalculateBudget(): Double {
-        var budget = initialBudget
-        for (t in transactionList) {
-            budget += t.signedValue
-        }
-        return budget
-    }
-
-    fun deleteParticipant(participant: FireParticipant) {
-        participants.remove(participant)
-    }
-
-    fun addParticipant(participant: FireParticipant) {
-        participants.add(participant)
-    }
-
-    fun addTransaction(transaction: Transaction) {
-        transactionList.add(transaction)
-        transactionList.sortWith(Collections.reverseOrder(Comparator.comparing(Transaction::getDate)))
-        currentBudget += transaction.signedValue
-    }
-
-    fun removeTransaction(transaction: Transaction) {
-        transactionList.remove(transaction)
-        currentBudget -= transaction.signedValue
     }
 
     override fun equals(other: Any?): Boolean {
