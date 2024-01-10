@@ -1,9 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Base.Theme.SaveUp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+    <style name="Base.Theme.SaveUp" parent="Theme.Material3.DayNight.NoActionBar" />
 
     <style name="Theme.SaveUp" parent="Base.Theme.SaveUp" />
 
@@ -11,8 +8,4 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
-    <style name="Theme.SaveUp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.SaveUp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
