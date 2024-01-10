@@ -42,8 +42,10 @@
     <string name="infoCreatedUser">Se ha creado el usuario</string>
     <string name="errMismatchingPasswords">Las contraseñas no coinciden</string>
     <string name="errMinLengthPassword">Tiene que tener al menos %1$d carácteres</string>
+    <string name="errSigningUp">Error al crear la cuenta</string>
     <string name="infoLoggedOut">Se ha cerrado la sesión</string>
     <string name="infoLoggedIn">Se ha iniciado sesión</string>
+    <string name="errLoggingIn">Error al iniciar sesión</string>
     <string name="titleGrupos">Mis grupos</string>
     <string name="addgroup">addGroup</string>
     <string name="stringBudget">Presupuesto</string>

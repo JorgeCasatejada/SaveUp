@@ -7,9 +7,9 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.saveup.view.MainActivity
 import com.example.saveup.R
 import com.example.saveup.databinding.ActivityLoginBinding
+import com.example.saveup.view.MainActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 
@@ -52,7 +52,11 @@ class LoginActivity : AppCompatActivity() {
                         finish()
                     } else {
                         enableForm(true)
-                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            it.exception?.message ?: resources.getString(R.string.errLoggingIn),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }

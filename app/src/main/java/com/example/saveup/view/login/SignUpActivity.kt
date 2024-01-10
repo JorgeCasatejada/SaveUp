@@ -55,7 +55,11 @@ class SignUpActivity : AppCompatActivity() {
                     viewModel.saveUserInFirestore(it.result.user)
                 } else {
                     enableForm(true)
-                    Toast.makeText(this, it.exception.toString(), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this,
+                        it.exception?.message ?: resources.getString(R.string.errLoggingIn),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -82,7 +86,7 @@ class SignUpActivity : AppCompatActivity() {
             binding.outlinedTextFieldEmail.error = resources.getString(R.string.errCampoVacio)
             etFocus = binding.etEmail
         }
-        val minLen = 4
+        val minLen = 6
         if (password.length < minLen) {
             binding.outlinedTextFieldPassword.error =
                 resources.getString(R.string.errMinLengthPassword, minLen)
