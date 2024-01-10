@@ -37,7 +37,7 @@
     <string name="signUp">Sign Up</string>
     <string name="alreadyHaveAccount">¿Ya tienes cuenta? Inicia sesión</string>
     <string name="loginIn">Iniciar Sesión</string>
-    <string name="signinUp">Resgistrarse</string>
+    <string name="signinUp">Registrarse</string>
     <string name="passwordRepeat">Repetir contraseña</string>
     <string name="infoCreatedUser">Se ha creado el usuario</string>
     <string name="errMismatchingPasswords">Las contraseñas no coinciden</string>
@@ -49,7 +49,7 @@
     <string name="stringBudget">Presupuesto</string>
     <string name="label_group_description">Descripción del grupo</string>
     <string name="bt_create_group">Crear grupo</string>
-    <string name="id_participant">Id del participante</string>
+    <string name="id_participant">Email del participante</string>
     <string name="add_participant">Añadir</string>
     <string name="actual_budget">Presupuesto actual:</string>
     <string name="initial_budget">Presupuesto inicial:</string>
