@@ -85,7 +85,7 @@ class AddGroupActivity : AppCompatActivity() {
         }
 
 
-        binding.etIdParticipant.setOnEditorActionListener { v, actionId, event ->
+        binding.etIdParticipant.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || event?.keyCode == KeyEvent.KEYCODE_ENTER) {
                 binding.btAddParticipant.callOnClick()
                 true

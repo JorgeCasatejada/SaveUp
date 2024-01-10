@@ -187,7 +187,6 @@ class GraphsFragment : Fragment() {
     private fun createLineChartIncomeExpense() {
         // Datos (x e y)
         val values = resources.getStringArray(R.array.months)
-        val map = viewModel?.groupedTransactionsByYear(yearToShow)!!
 
         // Ejes y líneas
         val zeroLine = LimitLine(0f, "")

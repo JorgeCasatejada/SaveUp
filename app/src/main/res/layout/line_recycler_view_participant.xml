@@ -39,8 +39,6 @@
             android:id="@+id/deleteButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
             android:background="?android:attr/selectableItemBackground"
             android:src="@android:drawable/ic_menu_delete" />
 

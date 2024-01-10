@@ -255,7 +255,7 @@ public class AddTransaction extends AppCompatActivity {
 
     private void validateFocusField(TextInputLayout component, boolean hasFocus) {
         if (!hasFocus) {
-            if (component.getEditText().getText().toString().isEmpty()) {
+            if (component.getEditText() == null || component.getEditText().getText().toString().isEmpty()) {
                 component.setError(getResources().getString(R.string.errCampoVacio));
             }
         } else {
@@ -281,13 +281,19 @@ public class AddTransaction extends AppCompatActivity {
         Date date = validateDate();
         if (date == null) return null;
 
-        String description = contentBinding.etDescription.getText().toString();
+        String description = "";
+        if (contentBinding.etDescription.getText() != null) {
+            description = contentBinding.etDescription.getText().toString();
+        }
 
         return new Transaction(isExpense, name, value, cat, date, description);
     }
 
     private String validateTextField(TextInputLayout etLayout) {
-        String str = etLayout.getEditText().getText().toString().trim();
+        String str = "";
+        if (etLayout.getEditText() != null) {
+            str = etLayout.getEditText().getText().toString().trim();
+        }
         if (str.isEmpty()) {
             etLayout.setError(getResources().getString(R.string.errCampoVacio));
             etLayout.getEditText().requestFocus();
@@ -302,7 +308,7 @@ public class AddTransaction extends AppCompatActivity {
         Date date;
         try {
             date = sdf.parse(contentBinding.etTransactionDate.getText().toString());
-        } catch (ParseException e) {
+        } catch (ParseException | NullPointerException e) {
             contentBinding.datePickerLayout.setError(getResources().getString(R.string.errFechaInvalida));
             contentBinding.etTransactionDate.requestFocus();
             return null;

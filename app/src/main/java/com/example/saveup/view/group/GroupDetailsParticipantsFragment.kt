@@ -82,7 +82,7 @@ class GroupDetailsParticipantsFragment : Fragment() {
 
         showMessage = false
 
-        viewModel!!.participantAddedResult.observe(this) { result ->
+        viewModel!!.participantAddedResult.observe(viewLifecycleOwner) { result ->
             val (success, message) = result
             if (success && showMessage) {
                 Toast.makeText(context, "Se ha añadido al usuario: $message", Toast.LENGTH_SHORT)

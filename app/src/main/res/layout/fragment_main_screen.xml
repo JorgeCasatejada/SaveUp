@@ -100,7 +100,7 @@
         android:layout_height="wrap_content"
         android:adjustViewBounds="false"
         android:clickable="true"
-        android:contentDescription="addTransaction"
+        android:contentDescription="@string/contentDescription_addtransaction"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

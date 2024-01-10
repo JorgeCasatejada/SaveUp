@@ -72,7 +72,7 @@ class GroupsFragment : Fragment() {
 
         showMessage = false
 
-        viewModel!!.participantsNotAddedResult.observe(this) { result ->
+        viewModel!!.participantsNotAddedResult.observe(viewLifecycleOwner) { result ->
             if (showMessage) {
                 var message = ""
                 for (p in result)
@@ -104,6 +104,7 @@ class GroupsFragment : Fragment() {
         startActivityForResult(intent, INTENT_ADD_GROUP)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         // Maneja el resultado aquí

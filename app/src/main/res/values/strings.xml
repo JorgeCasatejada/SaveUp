@@ -1,13 +1,12 @@
 <resources>
     <string name="app_name">SaveUp</string>
     <string name="labelBalance">Balance</string>
-    <string name="lblFilter">Filtrar:</string>
     <string name="title_activity_add_transaction">AddTransaction</string>
-    <string name="action_settings">Settings</string>
     <string name="labelTransactionTitle">Título</string>
     <string name="labelTransactionQuantity">Cantidad</string>
     <string name="labelTransactionCategory">Categoría</string>
     <string name="euroSymbol">€</string>
+    <string name="euroCuantity">%1$.2f €</string>
     <string name="labelTransactionDate">Selecciona la fecha</string>
     <string name="labelTransactionDescription">Descripción del gasto</string>
     <string name="txAdd">Añadir</string>
@@ -19,8 +18,6 @@
     <string name="filterIncome">Ingresos</string>
     <string name="filterAll">Todo</string>
     <string name="filterExpense">Gastos</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="user">Usuario</string>
     <string name="email">Email</string>
     <string name="emailPrueba">prueba@gmail.com</string>
@@ -32,8 +29,6 @@
     <string name="txDelete">Eliminar</string>
     <string name="txSave">Guardar</string>
     <string name="txClose">Cerrar</string>
-    <string name="txLimits">Límites</string>
-    <string name="txGoal">Metas</string>
     <string name="fab_cd">Editar o eliminar transacción</string>
     <string name="welcomeTo">Bienvenido a</string>
     <string name="login">Login</string>
@@ -81,6 +76,7 @@
     <string name="incomeExpense">Ingresos / Gastos</string>
     <string name="total">TOTAL</string>
     <string name="centerText">%1$s € \n %2$s</string>
+    <string name="contentDescription_shareStatistics">Shares the statistics</string>
 
     <!-- límites -->
     <string name="monthlyLimits">Límites Mensuales</string>
@@ -88,7 +84,6 @@
 
     <!-- metas -->
     <string name="savingGoals">Metas de Ahorro</string>
-    <string name="currentGoal">Meta de Ahorro Actual</string>
     <string name="currentGoalName">Nombre</string>
     <string name="currentGoalValue">Importe</string>
     <string name="endDateGoal">Fecha Límite</string>
@@ -98,7 +93,6 @@
     <string name="ramainingDaysGoal">Te quedan %1$d días para alcanzar la meta</string>
     <string name="infoInitialBalance">¿Empezar con %1$s € ahorrados?  :</string>
 
-    <string name="errBlankLimit">El valor del límite no debe estar vacío</string>
     <string name="errBlankGoalName">El nombre de la meta no debe estar vacío</string>
     <string name="errBlankGoalDate">La fecha de la meta no debe estar vacía</string>
     <string name="errBlankGoalValue">El importe de la meta no debe estar vacío</string>
@@ -116,5 +110,6 @@
     <string name="case_group_deleted">El grupo ha sido eliminado</string>
     <string name="case_deleted_from_group">Ha sido eliminado del grupo</string>
     <string name="aceptar">Aceptar</string>
+    <string name="contentDescription_addtransaction">Adds a transaction</string>
 
 </resources>

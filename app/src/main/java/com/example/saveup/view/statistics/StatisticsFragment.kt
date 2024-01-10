@@ -69,16 +69,15 @@ class StatisticsFragment : Fragment() {
         }
         stringBuilder.append("------------------------------------\n")
         stringBuilder.append("Balance Total: ")
-            .append(viewModel?.balance?.value?.let { round(it, 2) }).append("€")
+            .append(viewModel?.balance?.value?.let { round2decimals(it) }).append("€")
         itSend.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString())
         val shareIntent = Intent.createChooser(itSend, null)
         startActivity(shareIntent)
     }
 
-    private fun round(value: Double, places: Int): Double {
-        require(places >= 0)
+    private fun round2decimals(value: Double): Double {
         var bd = BigDecimal.valueOf(value)
-        bd = bd.setScale(places, RoundingMode.HALF_UP)
+        bd = bd.setScale(2, RoundingMode.HALF_UP)
         return bd.toDouble()
     }
 

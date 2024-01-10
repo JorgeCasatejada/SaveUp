@@ -1,5 +1,6 @@
 package com.example.saveup.view.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ class GroupAdapter(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun update(groupList: List<Group>) {
         this.groupList = groupList
         notifyDataSetChanged()

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.saveup.R
 import com.example.saveup.databinding.FragmentGroupDetailsExpensesBinding
 import com.example.saveup.model.Transaction
 import com.example.saveup.view.adapter.TransactionsListAdapter
@@ -63,12 +64,14 @@ class GroupDetailsExpensesFragment : Fragment() {
         viewModel!!.currentGroup.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.tvTitleGroup.text = it.title
-                binding.tvInitialBudgetGroup.text = "${it.initialBudget} €"
-                binding.tvActualBudgetGroup.text = "${it.currentBudget} €"
+                binding.tvInitialBudgetGroup.text =
+                    getString(R.string.euroCuantity, it.initialBudget)
+                binding.tvActualBudgetGroup.text =
+                    getString(R.string.euroCuantity, it.currentBudget)
             }
         }
         viewModel!!.currentGroupTransactions.observe(viewLifecycleOwner) {
-            transactionsListAdapter.update(it)
+            transactionsListAdapter.setTransactionsList(it)
         }
     }
 

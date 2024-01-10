@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -54,18 +55,26 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
-        binding.btExit.setOnClickListener(__ -> finishAffinity(getActivity()));
+        binding.btExit.setOnClickListener(__ -> {
+            FragmentActivity activity = getActivity();
+            if (activity != null) {
+                finishAffinity(getActivity());
+            }
+        });
 
         binding.btCloseSession.setOnClickListener(__ -> {
             viewModel.logOutFromCurrentUser();
             startActivity(new Intent(getContext(), LoginActivity.class));
-            getActivity().finish();
+            FragmentActivity activity = getActivity();
+            if (activity != null) {
+                activity.finish();
+            }
             Toast.makeText(getContext(), getResources().getString(R.string.infoLoggedOut), Toast.LENGTH_LONG).show();
         });
 
@@ -131,7 +140,11 @@ public class ProfileFragment extends Fragment {
 
     private void saveData() {
         // Guarda nuevos datos
-        viewModel.saveData(binding.etUser.getText().toString(), imageUri);
+        String username = "";
+        if (binding.etUser.getText() != null) {
+            username = binding.etUser.getText().toString();
+        }
+        viewModel.saveData(username, imageUri);
         imageUri = null;
     }
 }

@@ -37,7 +37,7 @@ class GroupDialog : DialogFragment() {
             }
 
             builder.setMessage(messageResId)
-                .setPositiveButton(R.string.aceptar) { dialog, id ->
+                .setPositiveButton(R.string.aceptar) { _, _ ->
                     // Cerrar el fragmento
                     closeFragment()
                 }

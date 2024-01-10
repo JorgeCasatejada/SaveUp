@@ -76,13 +76,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="Aceptar" />
+                android:text="@string/aceptar" />
 
             <Button
                 android:id="@+id/buttonCancelLimit"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Cancelar"
+                android:text="@string/txCancel"
                 android:layout_weight="0.5"/>
 
         </LinearLayout>
@@ -204,13 +204,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="Aceptar" />
+                android:text="@string/aceptar" />
 
             <Button
                 android:id="@+id/buttonCancelGoal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Cancelar"
+                android:text="@string/txCancel"
                 android:layout_weight="0.5"/>
 
         </LinearLayout>

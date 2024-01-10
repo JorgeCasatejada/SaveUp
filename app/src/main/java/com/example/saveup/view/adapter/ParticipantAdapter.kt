@@ -1,5 +1,6 @@
 package com.example.saveup.view.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +41,7 @@ class ParticipantAdapter(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun update(participantsList: List<FireParticipant>) {
         this.participantsList = participantsList
         notifyDataSetChanged()
@@ -57,6 +59,7 @@ class ParticipantAdapter(
     override fun onBindViewHolder(holder: ParticipantViewHolder, position: Int) =
         holder.bindView(participantsList[position], isAdmin, onItemSelected)
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setBtVisibilty(admin: Boolean) {
         isAdmin = admin
         notifyDataSetChanged()
